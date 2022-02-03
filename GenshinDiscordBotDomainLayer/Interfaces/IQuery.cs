@@ -8,6 +8,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces
 {
     public interface IQuery<TParam, TResult>
     {
-        public TResult Query(TParam param);
+        public Task<TResult> QueryAsync(TParam param, bool retry);
     }
 }

@@ -8,6 +8,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces
 {
     public interface ICommand<TParam, TResult>
     {
-        public TResult Execute(TParam param, bool useTransaction = true);
+        public Task<TResult> ExecuteAsync(TParam param, bool useTransaction = true);
     }
 }
