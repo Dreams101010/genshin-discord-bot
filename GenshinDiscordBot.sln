@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32106.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinDiscordBotUI", "GenshinDiscordBot\GenshinDiscordBotUI.csproj", "{D6C6BF95-5342-4E2F-BA4F-AD8427DE3260}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinDiscordBotDomainLayer", "GenshinDiscordBotDomainLayer\GenshinDiscordBotDomainLayer.csproj", "{FCC41235-3445-41FB-87A4-5EDC040C01B4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6C6BF95-5342-4E2F-BA4F-AD8427DE3260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6C6BF95-5342-4E2F-BA4F-AD8427DE3260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6C6BF95-5342-4E2F-BA4F-AD8427DE3260}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6C6BF95-5342-4E2F-BA4F-AD8427DE3260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCC41235-3445-41FB-87A4-5EDC040C01B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCC41235-3445-41FB-87A4-5EDC040C01B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCC41235-3445-41FB-87A4-5EDC040C01B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCC41235-3445-41FB-87A4-5EDC040C01B4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {27D9344F-CBA9-4C14-AFA8-D9374FDABDDE}
+	EndGlobalSection
+EndGlobal
