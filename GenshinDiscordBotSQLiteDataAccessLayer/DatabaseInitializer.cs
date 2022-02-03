@@ -4,45 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
+using System.Data.Common;
 using Serilog;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer
 {
     public class DatabaseInitializer
     {
-        string PathToDbFile { get; }
         ILogger Logger { get; set; }
-        public DatabaseInitializer(ILogger logger, string path = null)
+        SQLiteConnectionProvider ConnectionProvider { get; set; }
+        public DatabaseInitializer(ILogger logger,
+            SQLiteConnectionProvider dbConnectionProvider)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (path == null)
-            {
-                PathToDbFile = GetDefaultPathToDbFile();
-            }
-            else
-            {
-                PathToDbFile = path;
-            }
-        }
-
-        string GetDefaultPathToDbFile()
-        {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "file.dat");
-            return path;
-        }
-
-        bool DbFileExists()
-        {
-            return File.Exists(PathToDbFile);
+            ConnectionProvider = dbConnectionProvider ?? throw new ArgumentNullException(nameof(dbConnectionProvider));
         }
 
         void InitializeTableStructure()
         {
-            // TODO: use connection string from configuration
-            using var conn = new SQLiteConnection(@$"Data Source=""{PathToDbFile}"";Version=3");
+            SqliteConnection conn = ConnectionProvider.GetConnection();
             conn.Open();
-            using var command = new SQLiteCommand(conn);
+            using var command = new SqliteCommand(null, conn);
             command.CommandText = @"CREATE TABLE IF NOT EXISTS users
             (
 	            discord_user_id numeric(20),
@@ -92,15 +75,12 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
         {
             try
             {
-                if (!DbFileExists())
-                {
-                    SQLiteConnection.CreateFile(PathToDbFile);
-                    InitializeTableStructure();
-                }
+                InitializeTableStructure();
             }
             catch (Exception e)
             {
                 Logger.Error($"Error while trying to initialize SQLite database : {e}");
+                throw;
             }
         }
     }
