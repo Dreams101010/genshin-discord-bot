@@ -16,6 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GenshinDiscordBotDomainLayer\GenshinDiscordBotDomainLayer.csproj" />
+    <ProjectReference Include="..\GenshinDiscordBotSQLiteDataAccessLayer\GenshinDiscordBotSQLiteDataAccessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsecrets.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
