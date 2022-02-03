@@ -6,6 +6,7 @@ using Discord.Commands;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Sinks;
+using GenshinDiscordBotSQLiteDataAccessLayer;
 
 namespace GenshinDiscordBotUI
 {
@@ -25,20 +26,28 @@ namespace GenshinDiscordBotUI
     }
     class Program
     {
+        // Logger for logging unhandled exceptions
+        static ILogger Logger { get; set; } = null; 
         static IContainer CompositionRoot()
         {
             var builder = new ContainerBuilder();
+            // Application
             builder.RegisterType<Application>();
+            // Configuration
             builder.Register(c => BuildConfigurationRoot()).InstancePerLifetimeScope();
+            // Discord.NET
             builder.RegisterType<Bot>();
             builder.RegisterType<DiscordSocketClient>().InstancePerLifetimeScope();
             builder.Register(c => new CommandService()).InstancePerLifetimeScope();
             builder.RegisterType<CommandHandler>().InstancePerLifetimeScope();
+            // Logger
             builder.Register<ILogger>(
                 c => new LoggerConfiguration()
                 .WriteTo.Console()
                 .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day)
                 .CreateLogger()).SingleInstance();
+            // DAL
+            builder.RegisterType<DatabaseInitializer>().SingleInstance();
             return builder.Build();
         }
 
@@ -51,10 +60,20 @@ namespace GenshinDiscordBotUI
 
         static void Main(string[] args)
         {
-            var container = CompositionRoot();
-            var app = container.Resolve<Application>();
-            app.StartApplication();
-            Console.ReadLine();
+            try
+            {
+                var container = CompositionRoot();
+                Logger = container.Resolve<ILogger>();
+                var databaseInitializer = container.Resolve<DatabaseInitializer>();
+                databaseInitializer.InitializeDb();
+                var app = container.Resolve<Application>();
+                app.StartApplication();
+                Console.ReadLine();
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Unhandled exception in Main : {e}");
+            }
         }
     }
 }
