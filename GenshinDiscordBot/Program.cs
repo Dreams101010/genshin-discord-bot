@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Sinks;
 using GenshinDiscordBotSQLiteDataAccessLayer;
+using System.Data.Common;
+using Microsoft.Data.Sqlite;
 
 namespace GenshinDiscordBotUI
 {
@@ -47,13 +49,16 @@ namespace GenshinDiscordBotUI
                 .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day)
                 .CreateLogger()).SingleInstance();
             // DAL
+            builder.RegisterType<SQLiteConnectionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
             return builder.Build();
         }
 
         static IConfigurationRoot BuildConfigurationRoot()
         {
-            IConfigurationBuilder builder = new ConfigurationBuilder().AddJsonFile("appsecrets.json", false, true);
+            IConfigurationBuilder builder = new ConfigurationBuilder()
+                .AddJsonFile("appsecrets.json", false, true)
+                .AddJsonFile("appsettings.json", false, true);
             IConfigurationRoot root = builder.Build();
             return root;
         }
@@ -64,8 +69,11 @@ namespace GenshinDiscordBotUI
             {
                 var container = CompositionRoot();
                 Logger = container.Resolve<ILogger>();
-                var databaseInitializer = container.Resolve<DatabaseInitializer>();
-                databaseInitializer.InitializeDb();
+                using (var scope = container.BeginLifetimeScope())
+                {
+                    var databaseInitializer = scope.Resolve<DatabaseInitializer>();
+                    databaseInitializer.InitializeDb();
+                }
                 var app = container.Resolve<Application>();
                 app.StartApplication();
                 Console.ReadLine();
