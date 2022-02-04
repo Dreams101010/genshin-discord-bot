@@ -18,7 +18,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                 ?? throw new ArgumentNullException(nameof(connectionProvider));
         }
 
-        public async Task AddOrUpdateResinCount(ResinTrackingInfoDataModel resinTrackingInfo)
+        public async Task AddOrUpdateResinCountAsync(ResinTrackingInfoDataModel resinTrackingInfo)
         {
             var conn = ConnectionProvider.GetConnection();
             var insertSql = @"INSERT OR IGNORE INTO resin_tracking 
@@ -39,7 +39,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             }
         }
 
-        public async Task<ResinTrackingInfoDataModel?> GetResinTrackingInfoByDiscordId(ulong id)
+        public async Task<ResinTrackingInfoDataModel?> GetResinTrackingInfoByDiscordIdAsync(ulong id)
         {
             var conn = ConnectionProvider.GetConnection();
             var selectSql = @"SELECT 
