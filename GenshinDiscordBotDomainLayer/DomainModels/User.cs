@@ -15,5 +15,15 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
         public ulong DiscordId { get; set; }
         public string Location { get; set; }
         public UserLocale Locale { get; set; }
+
+        public static User GetDefaultUser()
+        {
+            return new User
+            {
+                DiscordId = 0,
+                Location = "Not specified",
+                Locale = UserLocale.enGB,
+            };
+        }
     }
 }
