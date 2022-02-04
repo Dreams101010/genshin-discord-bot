@@ -7,6 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using System.Reflection;
+using GenshinDiscordBotUI.CommandModules;
 
 namespace GenshinDiscordBotUI
 {
@@ -14,18 +15,22 @@ namespace GenshinDiscordBotUI
     {
         private DiscordSocketClient Client { get; }
         private CommandService Commands { get; }
+        // To provide to AddModulesAsync and ExecuteAsync (needed to resolve dependencies
+        // during CommandModule class construction)
+        public IServiceProvider ServiceProvider { get; }
 
-        public CommandHandler(DiscordSocketClient client, CommandService commands)
+        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider provider)
         {
             Commands = commands ?? throw new ArgumentNullException(nameof(commands));
             Client = client ?? throw new ArgumentNullException(nameof(client));
+            ServiceProvider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
         public async Task InstallCommandsAsync()
         {
             Client.MessageReceived += HandleCommandAsync;
             await Commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                            services: null);
+            services: ServiceProvider);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -50,7 +55,7 @@ namespace GenshinDiscordBotUI
             await Commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
-                services: null);
+                services: ServiceProvider);
         }
     }
 }

@@ -4,11 +4,21 @@ using Autofac;
 using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Autofac.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Sinks;
 using GenshinDiscordBotSQLiteDataAccessLayer;
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
+using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
+using GenshinDiscordBotSQLiteDataAccessLayer.Commands;
+using GenshinDiscordBotSQLiteDataAccessLayer.Queries;
+using GenshinDiscordBotDomainLayer.Parameters.Command;
+using GenshinDiscordBotDomainLayer.Parameters.Query;
+using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotDomainLayer.Interfaces;
+using GenshinDiscordBotDomainLayer.Facades;
 
 namespace GenshinDiscordBotUI
 {
@@ -33,6 +43,8 @@ namespace GenshinDiscordBotUI
         static IContainer CompositionRoot()
         {
             var builder = new ContainerBuilder();
+            // Microsoft.Extensions.DependencyInjection support
+            builder.Populate(new ServiceCollection());
             // Application
             builder.RegisterType<Application>();
             // Configuration
@@ -51,6 +63,17 @@ namespace GenshinDiscordBotUI
             // DAL
             builder.RegisterType<SQLiteConnectionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
+            // User Commands
+            builder.RegisterType<AddOrUpdateUserSQLiteCommand>()
+                .As(typeof(ICommand<AddOrUpdateUserCommandParam, bool>));
+            // User Queries
+            builder.RegisterType<GetUserByDiscordIdQuery>()
+                .As(typeof(IQuery<GetUserByDiscordIdQueryParam, User?>));
+            // Repositories
+            builder.RegisterType<UserRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<ResinTrackingInfoRepository>().InstancePerLifetimeScope();
+            // Facades
+            builder.RegisterType<UserFacade>().InstancePerLifetimeScope();
             return builder.Build();
         }
 
