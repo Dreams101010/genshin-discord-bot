@@ -37,7 +37,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
             );
             ";
             command.ExecuteNonQuery();
-            command.CommandText = @"CREATE TABLE resin_tracking
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS resin_tracking
             (
 	            user_discord_id numeric(20),
 	            init_time text NOT NULL,
@@ -47,15 +47,18 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 	            CONSTRAINT resin_count_valid CHECK (resin_count >= 0 AND resin_count <= 160)
             );";
             command.ExecuteNonQuery();
-            command.CommandText = @"CREATE TABLE artifact_tracking
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS artifact_tracking
             (
+	            id text,
 	            user_discord_id numeric(20),
 	            init_time text NOT NULL,
-	            PRIMARY KEY(user_discord_id),
+	            description text NOT NULL,
+	            UNIQUE (user_discord_id, description),
+	            PRIMARY KEY(id),
  	            FOREIGN KEY (user_discord_id) REFERENCES users(discord_user_id)
             );";
             command.ExecuteNonQuery();
-            command.CommandText = @"CREATE TABLE pity_tracking
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS pity_tracking
             (
 	            user_discord_id numeric(20),
 	            banner text NOT NULL,
