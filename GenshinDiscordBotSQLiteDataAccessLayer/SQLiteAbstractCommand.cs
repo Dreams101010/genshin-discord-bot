@@ -9,7 +9,7 @@ using GenshinDiscordBotDomainLayer.Interfaces;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer
 {
-    internal abstract class SQLiteAbstractCommand<TParam, TResult> : ICommand<TParam, TResult>
+    public abstract class SQLiteAbstractCommand<TParam, TResult> : ICommand<TParam, TResult>
     {
         SQLiteConnectionProvider ConnectionProvider { get; }
         ILogger Logger { get; set; }
