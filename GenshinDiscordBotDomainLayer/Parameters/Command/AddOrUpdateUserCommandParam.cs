@@ -7,7 +7,7 @@ using GenshinDiscordBotDomainLayer.DomainModels;
 
 namespace GenshinDiscordBotDomainLayer.Parameters.Command
 {
-    public class AddOrUpdateUserCommandParam
+    public struct AddOrUpdateUserCommandParam
     {
         public User User { get; set; }
     }
