@@ -35,7 +35,11 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
                 {
                     try
                     {
-                        return await ErrorHandlingDecoratorAsync(param);
+                        var conn = ConnectionProvider.GetConnection();
+                        await conn.OpenAsync();
+                        var res = await ErrorHandlingDecoratorAsync(param);
+                        await conn.CloseAsync();
+                        return res;
                     }
                     catch
                     {
