@@ -12,7 +12,7 @@ using Serilog;
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Queries
 {
     public class GetUserByDiscordIdQuery
-        : SQLiteAbstractQuery<GetUserByDiscordIdQueryParam, User>
+        : SQLiteAbstractQuery<GetUserByDiscordIdQueryParam, User?>
     {
         public UserRepository UserRepository { get; }
         public GetUserByDiscordIdQuery(
@@ -25,9 +25,18 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Queries
                 ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
-        protected override Task<User> PayloadAsync(GetUserByDiscordIdQueryParam param)
+        protected override async Task<User?> PayloadAsync(GetUserByDiscordIdQueryParam param)
         {
-            throw new NotImplementedException();
+            var userDataModel = await UserRepository.GetUserByDiscordIdAsync(param.DiscordId);
+            if (userDataModel.HasValue)
+            {
+                var user = userDataModel.Value;
+                return user.ToUserDomain();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
