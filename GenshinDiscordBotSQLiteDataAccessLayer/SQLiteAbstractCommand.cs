@@ -25,7 +25,20 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
         public async Task<TResult> ExecuteAsync(TParam param, bool useTransaction = true)
         {
             Logger.Information($"In command with param of type {typeof(TParam)}");
-            return await RetryDecoratorAsync(param, useTransaction);
+            return await ErrorHandlingDecoratorAsync(param, useTransaction);
+        }
+
+        private async Task<TResult> ErrorHandlingDecoratorAsync(TParam param, bool useTransaction)
+        {
+            try
+            {
+                return await RetryDecoratorAsync(param, useTransaction);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while executing command: {e}");
+                throw;
+            }
         }
 
         private async Task<TResult> RetryDecoratorAsync(TParam param, bool useTransaction)
@@ -68,7 +81,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
                 var transaction = await conn.BeginTransactionAsync();
                 try
                 {
-                    var result = await ErrorHandlingDecoratorAsync(param);
+                    var result = await PayloadAsync(param);
                     await transaction.CommitAsync();
                     await conn.CloseAsync();
                     return result;
@@ -81,20 +94,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
             }
             else
             {
-                return await ErrorHandlingDecoratorAsync(param);
-            }
-        }
-
-        private async Task<TResult> ErrorHandlingDecoratorAsync(TParam param)
-        {
-            try
-            {
                 return await PayloadAsync(param);
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"An error has occured while executing command: {e}");
-                throw;
             }
         }
 
