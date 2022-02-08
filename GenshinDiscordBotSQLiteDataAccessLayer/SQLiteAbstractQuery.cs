@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using GenshinDiscordBotDomainLayer.Interfaces;
+using GenshinDiscordBotDomainLayer.Exceptions;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer
 {
@@ -36,7 +37,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
             catch (Exception e)
             {
                 Logger.Error($"An error has occured while executing query: {e}");
-                throw;
+                throw new DatabaseInteractionException(e.Message);
             }
         }
 

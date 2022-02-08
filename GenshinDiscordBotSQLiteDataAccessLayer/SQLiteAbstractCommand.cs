@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Serilog;
 using GenshinDiscordBotDomainLayer.Interfaces;
+using GenshinDiscordBotDomainLayer.Exceptions;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer
 {
@@ -37,7 +38,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
             catch (Exception e)
             {
                 Logger.Error($"An error has occured while executing command: {e}");
-                throw;
+                throw new DatabaseInteractionException(e.Message);
             }
         }
 
