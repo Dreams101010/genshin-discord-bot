@@ -15,7 +15,7 @@ using GenshinDiscordBotDomainLayer.Parameters.Command;
 using GenshinDiscordBotDomainLayer.Parameters.Query;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
-using GenshinDiscordBotDomainLayer.Facades;
+using GenshinDiscordBotDomainLayer.DatabaseFacades;
 using GenshinDiscordBotUI.Helpers;
 
 namespace GenshinDiscordBotUI

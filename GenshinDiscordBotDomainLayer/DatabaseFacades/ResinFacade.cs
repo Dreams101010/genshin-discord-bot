@@ -9,7 +9,7 @@ using GenshinDiscordBotDomainLayer.Parameters.Command;
 using GenshinDiscordBotDomainLayer.Parameters.Query;
 using GenshinDiscordBotDomainLayer.ResultModels;
 
-namespace GenshinDiscordBotDomainLayer.Facades
+namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {
     public class ResinFacade
     {

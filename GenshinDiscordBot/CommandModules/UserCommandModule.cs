@@ -4,20 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
-using GenshinDiscordBotDomainLayer.Facades;
+using GenshinDiscordBotDomainLayer.DatabaseFacades;
 using GenshinDiscordBotUI.Helpers;
 using Autofac;
 using Serilog;
 
 namespace GenshinDiscordBotUI.CommandModules
 {
-    public class GeneralCommandModule : ModuleBase<SocketCommandContext>
+    public class UserCommandModule : ModuleBase<SocketCommandContext>
     {
         public ILifetimeScope Scope { get; }
         public UserHelper UserHelper { get; }
         public ILogger Logger { get; }
 
-        public GeneralCommandModule(ILifetimeScope scope, UserHelper userHelper, ILogger logger) : base()
+        public UserCommandModule(ILifetimeScope scope, UserHelper userHelper, ILogger logger) : base()
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             UserHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));

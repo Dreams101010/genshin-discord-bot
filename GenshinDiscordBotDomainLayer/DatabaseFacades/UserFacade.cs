@@ -8,7 +8,7 @@ using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.Parameters.Command;
 using GenshinDiscordBotDomainLayer.Parameters.Query;
 
-namespace GenshinDiscordBotDomainLayer.Facades
+namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {
     public class UserFacade
     {
