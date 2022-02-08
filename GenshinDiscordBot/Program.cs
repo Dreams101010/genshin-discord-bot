@@ -18,6 +18,7 @@ using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DatabaseFacades;
 using GenshinDiscordBotDomainLayer.CommandFacades;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
+using GenshinDiscordBotDomainLayer.ValidationLogic;
 using GenshinDiscordBotDomainLayer.Providers;
 using GenshinDiscordBotUI.Helpers;
 
@@ -89,8 +90,10 @@ namespace GenshinDiscordBotUI
             // Database Facades
             builder.RegisterType<UserDatabaseFacade>().InstancePerLifetimeScope();
             builder.RegisterType<ResinDatabaseFacade>().InstancePerLifetimeScope();
-            // BusinessLogic
+            // Business Logic
             builder.RegisterType<ResinBusinessLogic>().SingleInstance();
+            // Validation Logic
+            builder.RegisterType<ResinCommandArgumentValidator>().SingleInstance();
             // Helpers
             builder.RegisterType<UserHelper>().InstancePerLifetimeScope();
             // Providers

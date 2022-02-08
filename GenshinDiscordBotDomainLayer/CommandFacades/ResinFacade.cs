@@ -10,6 +10,7 @@ using GenshinDiscordBotDomainLayer.Parameters.Command;
 using GenshinDiscordBotDomainLayer.Parameters.Query;
 using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
+using GenshinDiscordBotDomainLayer.ValidationLogic;
 
 namespace GenshinDiscordBotDomainLayer.CommandFacades
 {
@@ -18,11 +19,13 @@ namespace GenshinDiscordBotDomainLayer.CommandFacades
         public UserDatabaseFacade UserDatabaseFacade { get; }
         public ResinDatabaseFacade ResinDatabaseFacade { get; }
         public ResinBusinessLogic ResinBusinessLogic { get; }
+        public ResinCommandArgumentValidator ResinValidator { get; }
 
         public ResinFacade(
             UserDatabaseFacade userDatabaseFacade,
             ResinDatabaseFacade resinDatabaseFacade,
-            ResinBusinessLogic resinBusinessLogic)
+            ResinBusinessLogic resinBusinessLogic,
+            ResinCommandArgumentValidator resinValidator)
         {
             UserDatabaseFacade = userDatabaseFacade 
                 ?? throw new ArgumentNullException(nameof(userDatabaseFacade));
@@ -30,10 +33,13 @@ namespace GenshinDiscordBotDomainLayer.CommandFacades
                 ?? throw new ArgumentNullException(nameof(resinDatabaseFacade));
             ResinBusinessLogic = resinBusinessLogic 
                 ?? throw new ArgumentNullException(nameof(resinBusinessLogic));
+            ResinValidator = resinValidator 
+                ?? throw new ArgumentNullException(nameof(resinValidator));
         }
 
         public async Task<bool> SetResinForUser(ulong discordId, int resinCount)
         {
+            ResinValidator.SetResinCount_Validate(resinCount);
             await UserDatabaseFacade.CreateUserIfNotExistsAsync(discordId);
             await ResinDatabaseFacade.SetResinForUser(discordId, resinCount);
             return true;
