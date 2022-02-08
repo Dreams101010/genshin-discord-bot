@@ -21,6 +21,7 @@ using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using GenshinDiscordBotDomainLayer.Providers;
 using GenshinDiscordBotDomainLayer.ErrorHandlers;
+using GenshinDiscordBotDomainLayer.DataProviders;
 using GenshinDiscordBotUI.Helpers;
 
 namespace GenshinDiscordBotUI
@@ -102,6 +103,8 @@ namespace GenshinDiscordBotUI
             // Providers
             builder.RegisterType<DateTimeNowProvider>()
                 .As<IDateTimeProvider>().SingleInstance();
+            // Data Providers
+            builder.RegisterType<ResinDataProvider>().SingleInstance();
             return builder.Build();
         }
 

@@ -8,18 +8,18 @@ using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.Parameters.Command;
 using GenshinDiscordBotDomainLayer.Parameters.Query;
 using GenshinDiscordBotDomainLayer.ResultModels;
+using GenshinDiscordBotDomainLayer.DataProviders;
 
 namespace GenshinDiscordBotDomainLayer.BusinessLogic
 {
     public class ResinBusinessLogic
     {
-        const int MAX_RESIN = 160;
-        const int TIME_PER_ONE_RESIN_IN_MINUTES = 8;
-
+        public ResinDataProvider DataProvider { get; }
         private IDateTimeProvider DateTimeProvider { get; }
 
-        public ResinBusinessLogic(IDateTimeProvider dateTimeProvider)
+        public ResinBusinessLogic(ResinDataProvider dataProvider, IDateTimeProvider dateTimeProvider)
         {
+            DataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
             DateTimeProvider = dateTimeProvider 
                 ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
@@ -49,22 +49,23 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             var utcStartTime = resinInfo.StartTime;
             var differenceInMinutesFromStartToNow = 
                 GetDifferenceInMinutes(currentTimeInUtc, utcStartTime);
-            return Math.Min(MAX_RESIN,
+            return Math.Min(DataProvider.MaxResin,
                 resinInfo.StartCount + 
-                differenceInMinutesFromStartToNow / TIME_PER_ONE_RESIN_IN_MINUTES);
+                differenceInMinutesFromStartToNow / DataProvider.MinutesPerOneResin);
         }
 
         private TimeSpan GetTimeToFullResin(int currentCount)
         {
-            if (currentCount >= MAX_RESIN) // is complete
+            if (currentCount >= DataProvider.MaxResin) // is complete
             {
                 return new TimeSpan(0, 0, 0);
             }
             else
             {
-                int resinCountDiff = MAX_RESIN - currentCount;
+                int resinCountDiff = DataProvider.MaxResin - currentCount;
                 // must be a better way to initialize this
-                return new TimeSpan(0, TIME_PER_ONE_RESIN_IN_MINUTES, 0).Multiply(resinCountDiff);
+                return new TimeSpan(0, DataProvider.MinutesPerOneResin, 0)
+                    .Multiply(resinCountDiff);
             }
         }
 

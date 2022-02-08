@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GenshinDiscordBotDomainLayer.DataProviders;
 
 namespace GenshinDiscordBotDomainLayer.ValidationLogic
 {
     public class ResinCommandArgumentValidator
     {
-        const int MIN_RESIN = 0;
-        const int MAX_RESIN = 160;
+        public ResinCommandArgumentValidator(ResinDataProvider dataProvider)
+        {
+            DataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
+        }
+
+        public ResinDataProvider DataProvider { get; }
+
         public bool SetResinCount_ResinCountValid(int count)
         {
-            if (count < MIN_RESIN || count > MAX_RESIN)
+            if (count < DataProvider.MinResin || count > DataProvider.MaxResin)
             {
                 return false;
             }
