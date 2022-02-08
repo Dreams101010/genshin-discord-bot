@@ -33,9 +33,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			{
 				using var scope = Scope.BeginLifetimeScope();
 				var resinFacade = scope.Resolve<ResinFacade>();
-				var userFacade = scope.Resolve<UserFacade>();
 				var id = Context.Message.Author.Id;
-				await userFacade.CreateUserIfNotExistsAsync(id);
 				var result = await resinFacade.GetResinForUser(id);
 				if (result.HasValue)
 				{
@@ -69,10 +67,8 @@ namespace GenshinDiscordBotUI.CommandModules
 			try
 			{
 				using var scope = Scope.BeginLifetimeScope();
-				var userFacade = scope.Resolve<UserFacade>();
 				var resinFacade = scope.Resolve<ResinFacade>();
 				var id = Context.Message.Author.Id;
-				await userFacade.CreateUserIfNotExistsAsync(id);
 				var result = await resinFacade.SetResinForUser(id, newValue);
 				await ReplyAsync($"Resin has been set.");
 			}
