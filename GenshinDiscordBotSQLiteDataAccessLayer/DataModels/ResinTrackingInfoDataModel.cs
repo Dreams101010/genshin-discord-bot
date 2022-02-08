@@ -16,7 +16,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DataModels
         public ResinTrackingInfoDataModel(ResinTrackingInfo resinTrackingInfo)
         {
             UserDiscordId = resinTrackingInfo.UserDiscordId;
-            StartTime = resinTrackingInfo.StartTime.ToString("yyyy-MM-dd HH:MM:ss.fff");
+            StartTime = resinTrackingInfo.StartTime.ToString("s");
             StartCount = resinTrackingInfo.StartCount;
         }
 
