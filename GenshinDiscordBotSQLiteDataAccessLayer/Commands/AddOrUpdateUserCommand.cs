@@ -10,10 +10,10 @@ using Serilog;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Commands
 {
-    public class AddOrUpdateUserSQLiteCommand : SQLiteAbstractCommand<AddOrUpdateUserCommandParam, bool>
+    public class AddOrUpdateUserCommand : SQLiteAbstractCommand<AddOrUpdateUserCommandParam, bool>
     {
         private UserRepository UserRepository { get; }
-        public AddOrUpdateUserSQLiteCommand(
+        public AddOrUpdateUserCommand(
             SQLiteConnectionProvider connectionProvider,
             ILogger logger,
             UserRepository userRepository
