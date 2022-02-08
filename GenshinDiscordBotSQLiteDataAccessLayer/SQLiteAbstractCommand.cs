@@ -24,6 +24,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 
         public async Task<TResult> ExecuteAsync(TParam param, bool useTransaction = true)
         {
+            Logger.Information($"In command with param of type {typeof(TParam)}");
             return await RetryDecoratorAsync(param, useTransaction);
         }
 

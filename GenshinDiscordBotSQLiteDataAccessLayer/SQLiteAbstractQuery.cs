@@ -23,6 +23,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 
         public async Task<TResult> QueryAsync(TParam param, bool retry = true)
         {
+            Logger.Information($"In query with param of type {typeof(TParam)}");
             return await RetryDecoratorAsync(param, retry);
         }
 
