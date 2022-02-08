@@ -9,6 +9,6 @@ namespace GenshinDiscordBotDomainLayer.Parameters.Command
 {
     public struct AddOrUpdateResinInfoCommandParam
     {
-        public ResinTrackingInfo ResinTrackingInfo { get; set; }
+        public ResinTrackingInfo ResinInfo { get; set; }
     }
 }
