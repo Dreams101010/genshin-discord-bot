@@ -10,7 +10,7 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
     {
         enGB, ruRU
     }
-    public struct User
+    public struct User : IEquatable<User>
     {
         public ulong DiscordId { get; set; }
         public string Location { get; set; }
@@ -24,6 +24,33 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
                 Location = "Not specified",
                 Locale = UserLocale.enGB,
             };
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is User user && Equals(user);
+        }
+
+        public bool Equals(User other)
+        {
+            return DiscordId == other.DiscordId &&
+                   Location == other.Location &&
+                   Locale == other.Locale;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(DiscordId, Location, Locale);
+        }
+
+        public static bool operator ==(User left, User right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(User left, User right)
+        {
+            return !(left == right);
         }
     }
 }
