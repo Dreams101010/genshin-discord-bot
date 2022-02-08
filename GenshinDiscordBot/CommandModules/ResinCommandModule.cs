@@ -8,6 +8,7 @@ using GenshinDiscordBotDomainLayer.CommandFacades;
 using GenshinDiscordBotUI.Helpers;
 using Autofac;
 using Serilog;
+using GenshinDiscordBotUI.ResponseGenerators;
 
 namespace GenshinDiscordBotUI.CommandModules
 {
@@ -16,14 +17,18 @@ namespace GenshinDiscordBotUI.CommandModules
         public ILifetimeScope Scope { get; }
         public UserHelper UserHelper { get; }
         public ILogger Logger { get; }
+        public ResinResponseGenerator ResinResponseGenerator { get; }
 
         public ResinCommandModule(ILifetimeScope scope, 
             UserHelper userHelper, 
-            ILogger logger) : base()
+            ILogger logger, 
+			ResinResponseGenerator resinResponseGenerator) : base()
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             UserHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            ResinResponseGenerator = resinResponseGenerator 
+				?? throw new ArgumentNullException(nameof(resinResponseGenerator));
         }
 
 		[Command("getResin")]
@@ -38,21 +43,20 @@ namespace GenshinDiscordBotUI.CommandModules
 				if (result.HasValue)
 				{
 					var resinInfo = result.Value;
-					await ReplyAsync($"Your resin count is {resinInfo.CurrentCount}. " +
-						$"Time to full resin is {resinInfo.TimeToFullResin} " +
-						$"({resinInfo.CompletionTime} UTC)");
+					string response = ResinResponseGenerator.GetGetResinSuccessResponse(resinInfo);
+					await ReplyAsync(response);
 				}
 				else
 				{
-					await ReplyAsync($"Could not get resin count for you. Perhaps resin has not been set?");
+					string errorMessage = ResinResponseGenerator.GetGetResinErrorMessage();
+					await ReplyAsync(errorMessage);
 				}
 			}
 			catch (Exception e)
 			{
 				Logger.Error($"An error has occured while handling a command: {e}");
-				await ReplyAsync($"Something went wrong. " +
-					$"Please contact the developer. " +
-					$"The time of the event: {DateTime.Now.ToUniversalTime()}");
+				string errorMessage = ResinResponseGenerator.GetGeneralErrorMessage();
+				await ReplyAsync(errorMessage);
 			}
 		}
 
@@ -61,7 +65,8 @@ namespace GenshinDiscordBotUI.CommandModules
 		{
 			if (newValue > 160 || newValue < 0)
 			{
-				await ReplyAsync("Invalid resin value");
+				string errorMessage = ResinResponseGenerator.GetSetResinErrorMessage();
+				await ReplyAsync(errorMessage);
 				return;
 			}
 			try
@@ -70,14 +75,14 @@ namespace GenshinDiscordBotUI.CommandModules
 				var resinFacade = scope.Resolve<ResinFacade>();
 				var id = Context.Message.Author.Id;
 				var result = await resinFacade.SetResinForUser(id, newValue);
-				await ReplyAsync($"Resin has been set.");
+				string response = ResinResponseGenerator.GetSetResinSuccessMessage();
+				await ReplyAsync(response);
 			}
 			catch (Exception e)
 			{
 				Logger.Error($"An error has occured while handling a command: {e}");
-				await ReplyAsync($"Something went wrong. " +
-					$"Please contact the developer. " +
-					$"The time of the event: {DateTime.Now.ToUniversalTime()}");
+				string errorMessage = ResinResponseGenerator.GetGeneralErrorMessage();
+				await ReplyAsync(errorMessage);
 			}
 		}
 	}

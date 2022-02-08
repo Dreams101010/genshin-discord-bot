@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using GenshinDiscordBotDomainLayer.CommandFacades;
 using GenshinDiscordBotUI.Helpers;
+using GenshinDiscordBotUI.ResponseGenerators;
 using Autofac;
 using Serilog;
 
@@ -16,12 +17,18 @@ namespace GenshinDiscordBotUI.CommandModules
         public ILifetimeScope Scope { get; }
         public UserHelper UserHelper { get; }
         public ILogger Logger { get; }
+        public UserResponseGenerator ResponseGenerator { get; }
 
-        public UserCommandModule(ILifetimeScope scope, UserHelper userHelper, ILogger logger) : base()
+        public UserCommandModule(ILifetimeScope scope, 
+			UserHelper userHelper, 
+			ILogger logger,
+			UserResponseGenerator responseGenerator) : base()
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             UserHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            ResponseGenerator = responseGenerator 
+				?? throw new ArgumentNullException(nameof(responseGenerator));
         }
 
 		[Command("settings_list")]
@@ -33,23 +40,21 @@ namespace GenshinDiscordBotUI.CommandModules
 				var userFacade = scope.Resolve<UserFacade>();
 				var id = Context.Message.Author.Id;
 				var user = await userFacade.ReadUserAndCreateIfNotExistsAsync(id);
-				await ReplyAsync($"Locale: {user.Locale}, Location: {user.Location}");
+				string response = ResponseGenerator.GetUserSettingsList(user);
+				await ReplyAsync(response);
 			}
 			catch
             {
-				await ReplyAsync(@$"Something went wrong. 
-								Please contact the developer. 
-								The time of the event: {DateTime.Now.ToUniversalTime()}");
+				string errorMessage = ResponseGenerator.GetGeneralErrorMessage();
+				await ReplyAsync(errorMessage);
 			}
 		}
 
 		[Command("set_locale")]
 		public async Task ListLocales()
 		{
-			await ReplyAsync(
-				"Possible locales are: \n" +
-				"ruRU \n" +
-				"enGB \n");
+			string response = ResponseGenerator.GetListOfPossibleLocales();
+			await ReplyAsync(response);
 		}
 
 		[Command("set_locale")]
@@ -61,33 +66,30 @@ namespace GenshinDiscordBotUI.CommandModules
 				var userFacade = scope.Resolve<UserFacade>();
 				if (!UserHelper.IsLocale(localeToSet))
                 {
-					await ReplyAsync("Incorrect locale setting. Correct settings are ruRU and enGB");
+					string errorMessage = ResponseGenerator.GetLocaleErrorMessage();
+					await ReplyAsync();
 					return;
                 }
 
 				var id = Context.Message.Author.Id;
 				var locale = UserHelper.GetLocaleFromString(localeToSet);
 				await userFacade.SetUserLocaleAsync(id, locale);
-				await ReplyAsync("Locale has been set.");
+				string response = ResponseGenerator.GetLocaleSuccessMessage();
+				await ReplyAsync(response);
 			}
 			catch (Exception e)
 			{
 				Logger.Error($"An error has occured while handling a command: {e}");
-				await ReplyAsync($"Something went wrong. " +
-					$"Please contact the developer. " +
-					$"The time of the event: {DateTime.Now.ToUniversalTime()}");
+				string errorMessage = ResponseGenerator.GetGeneralErrorMessage();
+				await ReplyAsync(errorMessage);
 			}
 		}
 
 		[Command("set_location")]
 		public async Task ListLocations()
         {
-			await ReplyAsync(
-				"Possible locations are: \n" +
-				"\"Not specified\" \n" +
-				"\"Moscow, Russia\" \n" +
-				"\"Saint Petersburg, Russia\" \n" +
-				"\"London, Great Britain\"");
+			string response = ResponseGenerator.GetListOfPossibleLocations();
+			await ReplyAsync(response);
 		}
 
 		[Command("set_location")]
@@ -99,25 +101,21 @@ namespace GenshinDiscordBotUI.CommandModules
 				var userFacade = scope.Resolve<UserFacade>();
 				if (!UserHelper.IsLocation(newLocation))
 				{
-					await ReplyAsync(
-						"Incorrect location setting. Correct settings are: \n" +
-						"Not specified \n" +
-						"Moscow, Russia \n" +
-						"Saint Petersburg, Russia \n" +
-						"London, Great Britain");
+					string errorMessage = ResponseGenerator.GetLocationErrorMessage();
+					await ReplyAsync(errorMessage);
 					return;
 				}
 
 				var id = Context.Message.Author.Id;
 				await userFacade.SetUserLocationAsync(id, newLocation);
-				await ReplyAsync("Location has been set.");
+				string response = ResponseGenerator.GetLocationSuccessMessage();
+				await ReplyAsync(response);
 			}
 			catch (Exception e)
 			{
 				Logger.Error($"An error has occured while handling a command: {e}");
-				await ReplyAsync($"Something went wrong. " +
-					$"Please contact the developer. " +
-					$"The time of the event: {DateTime.Now.ToUniversalTime()}");
+				string errorMessage = ResponseGenerator.GetGeneralErrorMessage();
+				await ReplyAsync(errorMessage);
 			}
 		}
 	}
