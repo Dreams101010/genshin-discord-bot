@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
-using GenshinDiscordBotDomainLayer.DatabaseFacades;
+using GenshinDiscordBotDomainLayer.CommandFacades;
 using GenshinDiscordBotUI.Helpers;
 using Autofac;
 using Serilog;
@@ -27,7 +27,6 @@ namespace GenshinDiscordBotUI.CommandModules
 		[Command("settings_list")]
 		public async Task ListSettingsAsync()
 		{
-			Console.WriteLine("In ListSettings");
 			try
             {
 				using var scope = Scope.BeginLifetimeScope();

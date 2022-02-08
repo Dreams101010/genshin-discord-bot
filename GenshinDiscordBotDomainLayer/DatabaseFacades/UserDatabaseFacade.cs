@@ -10,11 +10,11 @@ using GenshinDiscordBotDomainLayer.Parameters.Query;
 
 namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {
-    public class UserFacade
+    public class UserDatabaseFacade
     {
         ICommand<AddOrUpdateUserCommandParam, bool> AddOrUpdateUserCommand { get; set; }
         IQuery<GetUserByDiscordIdQueryParam, User?> GetUserByDiscordIdQuery { get; set; }
-        public UserFacade(
+        public UserDatabaseFacade(
             ICommand<AddOrUpdateUserCommandParam, bool> addOrUpdateUserCommand,
             IQuery<GetUserByDiscordIdQueryParam, User?> getUserByIdQuery)
         {

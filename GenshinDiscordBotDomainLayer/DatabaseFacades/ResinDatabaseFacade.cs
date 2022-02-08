@@ -11,14 +11,14 @@ using GenshinDiscordBotDomainLayer.ResultModels;
 
 namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {
-    public class ResinFacade
+    public class ResinDatabaseFacade
     {
         const int MAX_RESIN = 160;
         const int TIME_PER_ONE_RESIN_IN_MINUTES = 8;
         ICommand<AddOrUpdateResinInfoCommandParam, bool> AddOrUpdateResinInfoCommand { get; }
         IQuery<GetResinInfoByDiscordIdQueryParam, ResinTrackingInfo?> GetResinInfoByDiscordIdQuery { get; }
 
-        public ResinFacade(
+        public ResinDatabaseFacade(
             ICommand<AddOrUpdateResinInfoCommandParam, bool> addOrUpdateResinInfoCommand,
             IQuery<GetResinInfoByDiscordIdQueryParam, ResinTrackingInfo?> getResinInfoByDiscordIdQuery)
         {
@@ -31,7 +31,6 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
         // TODO : rewrite this, inject DateTime provider and business logic class
         public async Task<bool> SetResinForUser(ulong discordId, int resinCount)
         {
-            Console.WriteLine(DateTime.Now.ToUniversalTime());
             var param = new AddOrUpdateResinInfoCommandParam()
             {
                 ResinInfo = new ResinTrackingInfo()
