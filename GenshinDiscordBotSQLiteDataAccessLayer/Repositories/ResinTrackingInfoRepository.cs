@@ -28,7 +28,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                             init_time = @StartTime,
                             resin_count = @StartCount WHERE user_discord_id = @UserDiscordId;";
             int affectedByInsert = await conn.ExecuteAsync(insertSql, resinTrackingInfo);
-            if (affectedByInsert != 0)
+            if (affectedByInsert == 0)
             {
                 int affectedByUpdate = await conn.ExecuteAsync(updateSql, resinTrackingInfo);
                 if (affectedByUpdate == 0)
@@ -45,10 +45,14 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             var selectSql = @"SELECT 
                     user_discord_id UserDiscordId, init_time StartTime, resin_count StartCount 
                     FROM resin_tracking WHERE UserDiscordId = @UserDiscordId;";
-            ResinTrackingInfoDataModel? user 
+            ResinTrackingInfoDataModel resinTrackingInfo
                 = await conn.QueryFirstOrDefaultAsync<ResinTrackingInfoDataModel>(
-                selectSql, new { UserDiscordID = id });
-            return user;
+                selectSql, new { UserDiscordId = id });
+            if (resinTrackingInfo.Equals(default(ResinTrackingInfoDataModel)))
+            {
+                return null;
+            }
+            return resinTrackingInfo;
         }
     }
 }
