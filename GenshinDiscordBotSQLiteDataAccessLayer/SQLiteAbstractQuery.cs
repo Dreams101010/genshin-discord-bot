@@ -24,7 +24,20 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
         public async Task<TResult> QueryAsync(TParam param, bool retry = true)
         {
             Logger.Information($"In query with param of type {typeof(TParam)}");
-            return await RetryDecoratorAsync(param, retry);
+            return await ErrorHandlingDecoratorAsync(param, retry);
+        }
+
+        private async Task<TResult> ErrorHandlingDecoratorAsync(TParam param, bool retry)
+        {
+            try
+            {
+                return await RetryDecoratorAsync(param, retry);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while executing query: {e}");
+                throw;
+            }
         }
 
         private async Task<TResult> RetryDecoratorAsync(TParam param, bool retry)
@@ -38,7 +51,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
                     {
                         var conn = ConnectionProvider.GetConnection();
                         await conn.OpenAsync();
-                        var res = await ErrorHandlingDecoratorAsync(param);
+                        var res = await PayloadAsync(param);
                         await conn.CloseAsync();
                         return res;
                     }
@@ -58,20 +71,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
             }
             else
             {
-                return await ErrorHandlingDecoratorAsync(param);
-            }
-        }
-
-        private async Task<TResult> ErrorHandlingDecoratorAsync(TParam param)
-        {
-            try
-            {
                 return await PayloadAsync(param);
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"An error has occured while executing query: {e}");
-                throw;
             }
         }
 
