@@ -10,7 +10,8 @@ using Serilog;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Commands
 {
-    public class AddOrUpdateResinInfoCommand : SQLiteAbstractCommand<AddOrUpdateResinInfoCommandParam, bool>
+    public class AddOrUpdateResinInfoCommand 
+        : SQLiteAbstractCommand<AddOrUpdateResinInfoCommandParam, bool>
     {
         private ResinTrackingInfoRepository ResinRepository { get; }
         public AddOrUpdateResinInfoCommand(
@@ -25,7 +26,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Commands
 
         protected override async Task<bool> PayloadAsync(AddOrUpdateResinInfoCommandParam param)
         {
-            var resinInfoDataModel = new ResinTrackingInfoDataModel(param.ResinTrackingInfo);
+            var resinInfoDataModel = new ResinTrackingInfoDataModel(param.ResinInfo);
             await ResinRepository.AddOrUpdateResinCountAsync(resinInfoDataModel);
             return true;
         }
