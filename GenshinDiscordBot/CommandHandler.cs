@@ -7,6 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using System.Reflection;
+using Autofac;
 using GenshinDiscordBotUI.CommandModules;
 
 namespace GenshinDiscordBotUI
@@ -19,7 +20,9 @@ namespace GenshinDiscordBotUI
         // during CommandModule class construction)
         public IServiceProvider ServiceProvider { get; }
 
-        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider provider)
+        public CommandHandler(DiscordSocketClient client,
+            CommandService commands,
+            IServiceProvider provider)
         {
             Commands = commands ?? throw new ArgumentNullException(nameof(commands));
             Client = client ?? throw new ArgumentNullException(nameof(client));
