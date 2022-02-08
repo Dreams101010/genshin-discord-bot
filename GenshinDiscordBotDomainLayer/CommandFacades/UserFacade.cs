@@ -5,35 +5,73 @@ using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.DatabaseFacades;
 using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotDomainLayer.ErrorHandlers;
 
 namespace GenshinDiscordBotDomainLayer.CommandFacades
 {
     public class UserFacade
     {
         private UserDatabaseFacade UserDatabaseFacade { get; }
-        public UserFacade(UserDatabaseFacade userDatabaseFacade)
+        public FacadeErrorHandler ErrorHandler { get; }
+
+        public UserFacade(
+            UserDatabaseFacade userDatabaseFacade, 
+            FacadeErrorHandler errorHandler)
         {
             UserDatabaseFacade = userDatabaseFacade ?? throw new ArgumentNullException(nameof(userDatabaseFacade));
+            ErrorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
         }
 
         public async Task<User> ReadUserAndCreateIfNotExistsAsync(ulong discordId)
         {
-            return await UserDatabaseFacade.ReadUserAndCreateIfNotExistsAsync(discordId);
+            try
+            {
+                return await UserDatabaseFacade.ReadUserAndCreateIfNotExistsAsync(discordId);
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.LogException(e);
+                throw;
+            }
         }
 
         public async Task CreateUserIfNotExistsAsync(ulong discordId)
         {
-            await UserDatabaseFacade.CreateUserIfNotExistsAsync(discordId);
+            try
+            {
+                await UserDatabaseFacade.CreateUserIfNotExistsAsync(discordId);
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.LogException(e);
+                throw;
+            }
         }
 
         public async Task SetUserLocaleAsync(ulong discordId, UserLocale newLocale)
         {
-            await UserDatabaseFacade.SetUserLocaleAsync(discordId, newLocale);
+            try
+            {
+                await UserDatabaseFacade.SetUserLocaleAsync(discordId, newLocale);
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.LogException(e);
+                throw;
+            }
         }
 
         public async Task SetUserLocationAsync(ulong discordId, string newLocation)
         {
-            await UserDatabaseFacade.SetUserLocationAsync(discordId, newLocation);
+            try
+            {
+                await UserDatabaseFacade.SetUserLocationAsync(discordId, newLocation);
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.LogException(e);
+                throw;
+            }
         }
     }
 }

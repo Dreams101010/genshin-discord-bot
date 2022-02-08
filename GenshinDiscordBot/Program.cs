@@ -20,6 +20,7 @@ using GenshinDiscordBotDomainLayer.CommandFacades;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using GenshinDiscordBotDomainLayer.Providers;
+using GenshinDiscordBotDomainLayer.ErrorHandlers;
 using GenshinDiscordBotUI.Helpers;
 
 namespace GenshinDiscordBotUI
@@ -96,6 +97,8 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<ResinCommandArgumentValidator>().SingleInstance();
             // Helpers
             builder.RegisterType<UserHelper>().InstancePerLifetimeScope();
+            // Error handlers
+            builder.RegisterType<FacadeErrorHandler>().SingleInstance();
             // Providers
             builder.RegisterType<DateTimeNowProvider>()
                 .As<IDateTimeProvider>().SingleInstance();
