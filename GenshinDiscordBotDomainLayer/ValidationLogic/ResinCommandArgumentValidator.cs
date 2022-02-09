@@ -9,12 +9,12 @@ namespace GenshinDiscordBotDomainLayer.ValidationLogic
 {
     public class ResinCommandArgumentValidator
     {
+        private ResinDataProvider DataProvider { get; }
+
         public ResinCommandArgumentValidator(ResinDataProvider dataProvider)
         {
             DataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
         }
-
-        public ResinDataProvider DataProvider { get; }
 
         public bool SetResinCount_ResinCountValid(int count)
         {

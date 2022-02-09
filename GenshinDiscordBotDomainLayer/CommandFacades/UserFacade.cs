@@ -12,7 +12,7 @@ namespace GenshinDiscordBotDomainLayer.CommandFacades
     public class UserFacade
     {
         private UserDatabaseFacade UserDatabaseFacade { get; }
-        public FacadeErrorHandler ErrorHandler { get; }
+        private FacadeErrorHandler ErrorHandler { get; }
 
         public UserFacade(
             UserDatabaseFacade userDatabaseFacade, 

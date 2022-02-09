@@ -14,7 +14,7 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
 {
     public class ResinBusinessLogic
     {
-        public ResinDataProvider DataProvider { get; }
+        private ResinDataProvider DataProvider { get; }
         private IDateTimeProvider DateTimeProvider { get; }
 
         public ResinBusinessLogic(ResinDataProvider dataProvider, IDateTimeProvider dateTimeProvider)

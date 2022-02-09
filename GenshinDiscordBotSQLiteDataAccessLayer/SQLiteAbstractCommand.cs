@@ -12,8 +12,8 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 {
     public abstract class SQLiteAbstractCommand<TParam, TResult> : ICommand<TParam, TResult>
     {
-        SQLiteConnectionProvider ConnectionProvider { get; }
-        ILogger Logger { get; set; }
+        private SQLiteConnectionProvider ConnectionProvider { get; }
+        private ILogger Logger { get; }
 
         public SQLiteAbstractCommand(SQLiteConnectionProvider connectionProvider, 
             ILogger loggger)

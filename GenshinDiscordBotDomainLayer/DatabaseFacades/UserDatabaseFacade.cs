@@ -12,8 +12,8 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {
     public class UserDatabaseFacade
     {
-        ICommand<AddOrUpdateUserCommandParam, bool> AddOrUpdateUserCommand { get; set; }
-        IQuery<GetUserByDiscordIdQueryParam, User?> GetUserByDiscordIdQuery { get; set; }
+        private ICommand<AddOrUpdateUserCommandParam, bool> AddOrUpdateUserCommand { get; }
+        private IQuery<GetUserByDiscordIdQueryParam, User?> GetUserByDiscordIdQuery { get; }
         public UserDatabaseFacade(
             ICommand<AddOrUpdateUserCommandParam, bool> addOrUpdateUserCommand,
             IQuery<GetUserByDiscordIdQueryParam, User?> getUserByIdQuery)

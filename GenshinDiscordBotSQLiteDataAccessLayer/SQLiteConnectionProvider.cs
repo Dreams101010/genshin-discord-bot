@@ -13,7 +13,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
     {
         private bool disposedValue;
 
-        private IConfigurationRoot Configuration { get; set; }
+        private IConfigurationRoot Configuration { get; }
         private SqliteConnection Connection { get; set; } = null;
 
         public SQLiteConnectionProvider(IConfigurationRoot configRoot)

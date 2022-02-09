@@ -14,7 +14,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Queries
     public class GetUserByDiscordIdQuery
         : SQLiteAbstractQuery<GetUserByDiscordIdQueryParam, User?>
     {
-        public UserRepository UserRepository { get; }
+        private UserRepository UserRepository { get; }
         public GetUserByDiscordIdQuery(
             SQLiteConnectionProvider connectionProvider,
             ILogger logger,

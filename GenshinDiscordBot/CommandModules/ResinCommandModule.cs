@@ -15,10 +15,10 @@ namespace GenshinDiscordBotUI.CommandModules
 {
     public class ResinCommandModule : ModuleBase<SocketCommandContext>
     {
-        public ILifetimeScope Scope { get; }
-        public UserHelper UserHelper { get; }
-        public ILogger Logger { get; }
-        public ResinResponseGenerator ResinResponseGenerator { get; }
+		private ILifetimeScope Scope { get; }
+		private UserHelper UserHelper { get; }
+		private ILogger Logger { get; }
+		private ResinResponseGenerator ResinResponseGenerator { get; }
 
         public ResinCommandModule(ILifetimeScope scope, 
             UserHelper userHelper, 

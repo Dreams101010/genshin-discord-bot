@@ -10,7 +10,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 {
     public class ResinTrackingInfoRepository
     {
-        SQLiteConnectionProvider ConnectionProvider { get; set; }
+        private SQLiteConnectionProvider ConnectionProvider { get; }
 
         public ResinTrackingInfoRepository(SQLiteConnectionProvider connectionProvider)
         {

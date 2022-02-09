@@ -11,7 +11,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 {
     public class UserRepository
     {
-        SQLiteConnectionProvider ConnectionProvider { get; set; }
+        private SQLiteConnectionProvider ConnectionProvider { get; }
 
         public UserRepository(SQLiteConnectionProvider connectionProvider)
         {

@@ -12,8 +12,8 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 {
     public class DatabaseInitializer
     {
-        ILogger Logger { get; set; }
-        SQLiteConnectionProvider ConnectionProvider { get; set; }
+        private ILogger Logger { get; }
+        private SQLiteConnectionProvider ConnectionProvider { get; }
         public DatabaseInitializer(ILogger logger,
             SQLiteConnectionProvider dbConnectionProvider)
         {

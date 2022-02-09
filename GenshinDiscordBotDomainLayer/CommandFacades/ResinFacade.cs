@@ -13,11 +13,11 @@ namespace GenshinDiscordBotDomainLayer.CommandFacades
 {
     public class ResinFacade
     {
-        public UserDatabaseFacade UserDatabaseFacade { get; }
-        public ResinDatabaseFacade ResinDatabaseFacade { get; }
-        public ResinBusinessLogic ResinBusinessLogic { get; }
-        public ResinCommandArgumentValidator ResinValidator { get; }
-        public FacadeErrorHandler ErrorHandler { get; }
+        private UserDatabaseFacade UserDatabaseFacade { get; }
+        private ResinDatabaseFacade ResinDatabaseFacade { get; }
+        private ResinBusinessLogic ResinBusinessLogic { get; }
+        private ResinCommandArgumentValidator ResinValidator { get; }
+        private FacadeErrorHandler ErrorHandler { get; }
 
         public ResinFacade(
             UserDatabaseFacade userDatabaseFacade,

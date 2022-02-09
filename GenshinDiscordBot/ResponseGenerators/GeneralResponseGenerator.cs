@@ -9,7 +9,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 {
     public class GeneralResponseGenerator
     {
-        public IDateTimeProvider DateTimeProvider { get; }
+        private IDateTimeProvider DateTimeProvider { get; }
         public GeneralResponseGenerator(IDateTimeProvider dateTimeProvider)
         {
             DateTimeProvider = dateTimeProvider

@@ -14,7 +14,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Queries
     public class GetResinInfoByDiscordIdQuery
         : SQLiteAbstractQuery<GetResinInfoByDiscordIdQueryParam, ResinTrackingInfo?>
     {
-        public ResinTrackingInfoRepository ResinRepository { get; }
+        private ResinTrackingInfoRepository ResinRepository { get; }
         public GetResinInfoByDiscordIdQuery(
             SQLiteConnectionProvider connectionProvider,
             ILogger logger,

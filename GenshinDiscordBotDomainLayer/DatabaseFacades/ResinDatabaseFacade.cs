@@ -13,8 +13,10 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {
     public class ResinDatabaseFacade
     {
-        ICommand<AddOrUpdateResinInfoCommandParam, bool> AddOrUpdateResinInfoCommand { get; }
-        IQuery<GetResinInfoByDiscordIdQueryParam, ResinTrackingInfo?> GetResinInfoByDiscordIdQuery { get; }
+        private ICommand<AddOrUpdateResinInfoCommandParam, bool> 
+            AddOrUpdateResinInfoCommand { get; }
+        private IQuery<GetResinInfoByDiscordIdQueryParam, ResinTrackingInfo?> 
+            GetResinInfoByDiscordIdQuery { get; }
 
         public ResinDatabaseFacade(
             ICommand<AddOrUpdateResinInfoCommandParam, bool> addOrUpdateResinInfoCommand,
