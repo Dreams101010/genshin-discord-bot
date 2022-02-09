@@ -62,11 +62,12 @@ namespace GenshinDiscordBotUI.CommandExecutors
 
 		public async Task<string> SetResin(ulong userDiscordId, int newValue)
 		{
-			if (newValue > 160 || newValue < 0)
-			{
-				string errorMessage = ResinResponseGenerator.GetSetResinErrorMessage();
-				return errorMessage;
-			}
+			string validationErrorMessage = ResinResponseGenerator
+				.GetSetResinValidationErrorMessage(newValue);
+			if (validationErrorMessage != null)
+            {
+				return validationErrorMessage;
+            }
 			try
 			{
 				var id = userDiscordId;
