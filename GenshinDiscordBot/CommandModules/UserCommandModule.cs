@@ -12,7 +12,6 @@ namespace GenshinDiscordBotUI.CommandModules
     public class UserCommandModule : ModuleBase<SocketCommandContext>
     {
 		private ILifetimeScope Scope { get; }
-		private UserCommandExecutor UserCommandExecutor { get; }
 
         public UserCommandModule(
 			ILifetimeScope scope) : base()

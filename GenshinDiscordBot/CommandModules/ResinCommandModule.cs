@@ -15,20 +15,10 @@ namespace GenshinDiscordBotUI.CommandModules
     public class ResinCommandModule : ModuleBase<SocketCommandContext>
     {
 		private ILifetimeScope Scope { get; }
-		private UserHelper UserHelper { get; }
-		private ILogger Logger { get; }
-		private ResinResponseGenerator ResinResponseGenerator { get; }
 
-        public ResinCommandModule(ILifetimeScope scope, 
-            UserHelper userHelper, 
-            ILogger logger, 
-			ResinResponseGenerator resinResponseGenerator) : base()
+        public ResinCommandModule(ILifetimeScope scope) : base()
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
-            UserHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            ResinResponseGenerator = resinResponseGenerator 
-				?? throw new ArgumentNullException(nameof(resinResponseGenerator));
         }
 
 		[Command("getResin")]
