@@ -4,12 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
-using GenshinDiscordBotDomainLayer.CommandFacades;
-using GenshinDiscordBotUI.Helpers;
-using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotUI.CommandExecutors;
 using Autofac;
-using Serilog;
 
 namespace GenshinDiscordBotUI.CommandModules
 {

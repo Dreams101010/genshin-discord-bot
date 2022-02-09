@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotSQLiteDataAccessLayer.DataModels;
 using Dapper;
-using Microsoft.Data.Sqlite;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 {

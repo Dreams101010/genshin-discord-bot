@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
-using GenshinDiscordBotDomainLayer.CommandFacades;
 using GenshinDiscordBotUI.Helpers;
 using Autofac;
 using Serilog;

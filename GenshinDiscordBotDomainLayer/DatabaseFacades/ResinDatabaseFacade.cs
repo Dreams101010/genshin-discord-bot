@@ -7,7 +7,6 @@ using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.Parameters.Command;
 using GenshinDiscordBotDomainLayer.Parameters.Query;
-using GenshinDiscordBotDomainLayer.ResultModels;
 
 namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {

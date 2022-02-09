@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
-using GenshinDiscordBotDomainLayer.Parameters.Command;
-using GenshinDiscordBotDomainLayer.Parameters.Query;
 using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.DataProviders;
 

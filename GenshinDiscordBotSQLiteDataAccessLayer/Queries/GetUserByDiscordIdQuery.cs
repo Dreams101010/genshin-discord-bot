@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
-using GenshinDiscordBotSQLiteDataAccessLayer.DataModels;
 using GenshinDiscordBotDomainLayer.Parameters.Query;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using Serilog;
