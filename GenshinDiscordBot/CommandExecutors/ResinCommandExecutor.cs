@@ -13,17 +13,21 @@ namespace GenshinDiscordBotUI.CommandExecutors
     public class ResinCommandExecutor
     {
         private ILogger Logger { get; }
+        private GeneralResponseGenerator GeneralResponseGenerator { get; }
         private ResinResponseGenerator ResinResponseGenerator { get; }
         private UserFacade UserFacade { get; }
 		private ResinFacade ResinFacade { get; }
 
         public ResinCommandExecutor(
 			ILogger logger, 
+			GeneralResponseGenerator generalResponseGenerator,
 			ResinResponseGenerator resinResponseGenerator,
 			UserFacade userFacade,
 			ResinFacade resinFacade)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            GeneralResponseGenerator = generalResponseGenerator 
+				?? throw new ArgumentNullException(nameof(generalResponseGenerator));
             ResinResponseGenerator = resinResponseGenerator 
 				?? throw new ArgumentNullException(nameof(resinResponseGenerator));
             UserFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));
@@ -51,7 +55,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			catch (Exception e)
 			{
 				Logger.Error($"An error has occured while handling a command: {e}");
-				string errorMessage = ResinResponseGenerator.GetGeneralErrorMessage();
+				string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
 				return errorMessage;
 			}
 		}
@@ -73,7 +77,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			catch (Exception e)
 			{
 				Logger.Error($"An error has occured while handling a command: {e}");
-				string errorMessage = ResinResponseGenerator.GetGeneralErrorMessage();
+				string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
 				return errorMessage;
 			}
 		}

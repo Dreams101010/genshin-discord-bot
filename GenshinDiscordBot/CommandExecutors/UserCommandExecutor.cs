@@ -17,20 +17,23 @@ namespace GenshinDiscordBotUI.CommandExecutors
         private ILogger Logger { get; }
         private UserFacade UserFacade { get; }
         private UserHelper UserHelper { get; }
-        private UserResponseGenerator ResponseGenerator { get; }
+        private GeneralResponseGenerator GeneralResponseGenerator { get; }
+        private UserResponseGenerator UserResponseGenerator { get; }
 
         public UserCommandExecutor(
             ILogger logger,
             UserFacade userFacade,
             UserHelper userHelper,
-            UserResponseGenerator responseGenerator) : base()
+            GeneralResponseGenerator generalResponseGenerator,
+            UserResponseGenerator userResponseGenerator) : base()
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             UserFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));
             UserHelper = userHelper 
                 ?? throw new ArgumentNullException(nameof(userHelper));
-            ResponseGenerator = responseGenerator 
-                ?? throw new ArgumentNullException(nameof(responseGenerator));
+            GeneralResponseGenerator = generalResponseGenerator ?? throw new ArgumentNullException(nameof(generalResponseGenerator));
+            UserResponseGenerator = userResponseGenerator 
+                ?? throw new ArgumentNullException(nameof(userResponseGenerator));
         }
 
         public async Task<string> ListSettingsAsync(ulong userDiscordId)
@@ -39,20 +42,20 @@ namespace GenshinDiscordBotUI.CommandExecutors
             {
                 var id = userDiscordId;
                 var user = await UserFacade.ReadUserAndCreateIfNotExistsAsync(id);
-                string response = ResponseGenerator.GetUserSettingsList(user);
+                string response = UserResponseGenerator.GetUserSettingsList(user);
                 return response;
             }
             catch (Exception e)
             {
                 Logger.Error($"An error has occured while handling a command: {e}");
-                string errorMessage = ResponseGenerator.GetGeneralErrorMessage();
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
                 return errorMessage;
             }
         }
 
         public async Task<string> ListLocales()
         {
-            string response = ResponseGenerator.GetListOfPossibleLocales();
+            string response = UserResponseGenerator.GetListOfPossibleLocales();
             return response;
         }
 
@@ -62,27 +65,27 @@ namespace GenshinDiscordBotUI.CommandExecutors
             {
                 if (!UserHelper.IsLocale(localeToSet))
                 {
-                    string errorMessage = ResponseGenerator.GetLocaleErrorMessage();
+                    string errorMessage = UserResponseGenerator.GetLocaleErrorMessage();
                     return errorMessage;
                 }
 
                 var id = userDiscordId;
                 var locale = UserHelper.GetLocaleFromString(localeToSet);
                 await UserFacade.SetUserLocaleAsync(id, locale);
-                string response = ResponseGenerator.GetLocaleSuccessMessage();
+                string response = UserResponseGenerator.GetLocaleSuccessMessage();
                 return response;
             }
             catch (Exception e)
             {
                 Logger.Error($"An error has occured while handling a command: {e}");
-                string errorMessage = ResponseGenerator.GetGeneralErrorMessage();
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
                 return errorMessage;
             }
         }
 
         public async Task<string> ListLocations()
         {
-            string response = ResponseGenerator.GetListOfPossibleLocations();
+            string response = UserResponseGenerator.GetListOfPossibleLocations();
             return response;
         }
 
@@ -92,19 +95,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             {
                 if (!UserHelper.IsLocation(newLocation))
                 {
-                    string errorMessage = ResponseGenerator.GetLocationErrorMessage();
+                    string errorMessage = UserResponseGenerator.GetLocationErrorMessage();
                     return errorMessage;
                 }
 
                 var id = userDiscordId;
                 await UserFacade.SetUserLocationAsync(id, newLocation);
-                string response = ResponseGenerator.GetLocationSuccessMessage();
+                string response = UserResponseGenerator.GetLocationSuccessMessage();
                 return response;
             }
             catch (Exception e)
             {
                 Logger.Error($"An error has occured while handling a command: {e}");
-                string errorMessage = ResponseGenerator.GetGeneralErrorMessage();
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
                 return errorMessage;
             }
         }

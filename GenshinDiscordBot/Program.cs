@@ -108,6 +108,7 @@ namespace GenshinDiscordBotUI
             // Data Providers
             builder.RegisterType<ResinDataProvider>().SingleInstance();
             // Response generators
+            builder.RegisterType<GeneralResponseGenerator>().SingleInstance();
             builder.RegisterType<UserResponseGenerator>().SingleInstance();
             builder.RegisterType<ResinResponseGenerator>().SingleInstance();
             // Command executors

@@ -22,14 +22,6 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return string.Format("Locale: {0}, Location: {1}", user.Locale, user.Location);
         }
 
-        public string GetGeneralErrorMessage()
-        {
-            var nowUtc = DateTimeProvider.GetDateTime().ToUniversalTime();
-            return string.Format(@"Something went wrong. 
-								Please contact the developer. 
-								The time of the event: {0}", nowUtc);
-        }
-
         public string GetListOfPossibleLocales()
         {
             return "Possible locales are: \n" +

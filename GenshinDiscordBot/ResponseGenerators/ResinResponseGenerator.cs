@@ -18,14 +18,6 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
-        public string GetGeneralErrorMessage()
-        {
-            var nowUtc = DateTimeProvider.GetDateTime().ToUniversalTime();
-            return string.Format(@"Something went wrong. 
-								Please contact the developer. 
-								The time of the event: {0}", nowUtc);
-        }
-
         public string GetGetResinSuccessResponse(ResinInfoResultModel resultModel)
         {
             string format = "Your resin count is {0}. " +
