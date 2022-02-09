@@ -24,6 +24,7 @@ using GenshinDiscordBotDomainLayer.ErrorHandlers;
 using GenshinDiscordBotDomainLayer.DataProviders;
 using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotUI.Helpers;
+using GenshinDiscordBotUI.CommandExecutors;
 
 namespace GenshinDiscordBotUI
 {
@@ -109,6 +110,8 @@ namespace GenshinDiscordBotUI
             // Response generators
             builder.RegisterType<UserResponseGenerator>().SingleInstance();
             builder.RegisterType<ResinResponseGenerator>().SingleInstance();
+            // Command executors
+            builder.RegisterType<UserCommandExecutor>().InstancePerLifetimeScope();
             return builder.Build();
         }
 
