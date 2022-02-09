@@ -112,6 +112,7 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<ResinResponseGenerator>().SingleInstance();
             // Command executors
             builder.RegisterType<UserCommandExecutor>().InstancePerLifetimeScope();
+            builder.RegisterType<ResinCommandExecutor>().InstancePerLifetimeScope();
             return builder.Build();
         }
 
