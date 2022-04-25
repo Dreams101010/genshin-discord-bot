@@ -22,10 +22,9 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
         {
             var conn = ConnectionProvider.GetConnection();
             var insertSql = @"INSERT OR IGNORE INTO users 
-                        (discord_user_id, user_location, user_locale) 
-                        VALUES (@DiscordId, @Location, @Locale)";
-            var updateSql = @"UPDATE users SET user_location = @Location,
-                              user_locale = @Locale
+                        (discord_user_id, user_locale) 
+                        VALUES (@DiscordId, @Locale)";
+            var updateSql = @"UPDATE users SET user_locale = @Locale
                             WHERE discord_user_id = @DiscordId";
             int affectedByInsert = await conn.ExecuteAsync(insertSql, user);
             if (affectedByInsert == 0)
@@ -43,7 +42,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
         {
             var conn = ConnectionProvider.GetConnection();
             var selectSql = @"SELECT 
-                discord_user_id DiscordId, user_locale Locale, user_location Location 
+                discord_user_id DiscordId, user_locale Locale
                 FROM users WHERE discord_user_id = @DiscordId";
             UserDataModel user = await conn.QueryFirstOrDefaultAsync<UserDataModel>(
                 selectSql, new { DiscordId = id });

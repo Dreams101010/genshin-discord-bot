@@ -51,7 +51,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> ListLocales()
+        public string ListLocales()
         {
             string response = UserResponseGenerator.GetListOfPossibleLocales();
             return response;
@@ -71,35 +71,6 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 var locale = UserHelper.GetLocaleFromString(localeToSet);
                 await UserFacade.SetUserLocaleAsync(id, locale);
                 string response = UserResponseGenerator.GetLocaleSuccessMessage();
-                return response;
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"An error has occured while handling a command: {e}");
-                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
-                return errorMessage;
-            }
-        }
-
-        public async Task<string> ListLocations()
-        {
-            string response = UserResponseGenerator.GetListOfPossibleLocations();
-            return response;
-        }
-
-        public async Task<string> SetLocationAsync(ulong userDiscordId, string newLocation)
-        {
-            try
-            {
-                if (!UserHelper.IsLocation(newLocation))
-                {
-                    string errorMessage = UserResponseGenerator.GetLocationErrorMessage();
-                    return errorMessage;
-                }
-
-                var id = userDiscordId;
-                await UserFacade.SetUserLocationAsync(id, newLocation);
-                string response = UserResponseGenerator.GetLocationSuccessMessage();
                 return response;
             }
             catch (Exception e)

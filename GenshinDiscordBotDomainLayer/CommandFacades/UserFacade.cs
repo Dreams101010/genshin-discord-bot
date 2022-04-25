@@ -60,18 +60,5 @@ namespace GenshinDiscordBotDomainLayer.CommandFacades
                 throw;
             }
         }
-
-        public async Task SetUserLocationAsync(ulong discordId, string newLocation)
-        {
-            try
-            {
-                await UserDatabaseFacade.SetUserLocationAsync(discordId, newLocation);
-            }
-            catch (Exception e)
-            {
-                ErrorHandler.LogException(e);
-                throw;
-            }
-        }
     }
 }

@@ -19,7 +19,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 
         public string GetUserSettingsList(User user)
         {
-            return string.Format("Locale: {0}, Location: {1}", user.Locale, user.Location);
+            return string.Format("Locale: {0}", user.Locale);
         }
 
         public string GetListOfPossibleLocales()
@@ -27,15 +27,6 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return "Possible locales are: \n" +
                 "ruRU \n" +
                 "enGB \n";
-        }
-
-        public string GetListOfPossibleLocations()
-        {
-            return "Possible locations are: \n" +
-                "\"Not specified\" \n" +
-                "\"Moscow, Russia\" \n" +
-                "\"Saint Petersburg, Russia\" \n" +
-                "\"London, Great Britain\"";
         }
 
         public string GetLocaleErrorMessage()
@@ -46,20 +37,6 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         public string GetLocaleSuccessMessage()
         {
             return "Locale has been set.";
-        }
-
-        public string GetLocationErrorMessage()
-        {
-            return "Incorrect location setting. Correct settings are: \n" +
-                        "Not specified \n" +
-                        "Moscow, Russia \n" +
-                        "Saint Petersburg, Russia \n" +
-                        "London, Great Britain";
-        }
-
-        public string GetLocationSuccessMessage()
-        {
-            return "Location has been set.";
         }
     }
 }

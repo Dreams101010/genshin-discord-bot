@@ -20,8 +20,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         {
             var nowUtc = DateTimeProvider.GetDateTime().ToUniversalTime();
             return string.Format(@"Something went wrong. 
-								Please contact the developer. 
-								The time of the event: {0}", nowUtc);
+Please contact the developer. 
+The time of the event: {0}", nowUtc);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace GenshinDiscordBotUI
             builder.Register(c => BuildConfigurationRoot()).InstancePerLifetimeScope();
             // Discord.NET
             builder.RegisterType<Bot>();
-            builder.RegisterType<DiscordSocketClient>().InstancePerLifetimeScope();
+            builder.RegisterType<DiscordSocketClient>().SingleInstance();
             builder.Register(c => new CommandService()).InstancePerLifetimeScope();
             builder.RegisterType<CommandHandler>().InstancePerLifetimeScope();
             // Logger

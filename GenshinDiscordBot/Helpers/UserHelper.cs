@@ -28,17 +28,5 @@ namespace GenshinDiscordBotUI.Helpers
 				_ => throw new ArgumentException("Invalid locale value")
 			};
 		}
-
-		public bool IsLocation(string str)
-        {
-			string[] valid = { "Not specified",
-				"Moscow, Russia", "Saint Petersburg, Russia",
-				"London, Great Britain" };
-			if (valid.Contains(str))
-            {
-				return true;
-            }
-			return false;
-        }
 	}
 }

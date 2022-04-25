@@ -12,7 +12,6 @@ namespace GenshinDiscordBotUI.CommandModules
     public class UserCommandModule : ModuleBase<SocketCommandContext>
     {
 		private ILifetimeScope Scope { get; }
-
         public UserCommandModule(
 			ILifetimeScope scope) : base()
         {
@@ -34,7 +33,7 @@ namespace GenshinDiscordBotUI.CommandModules
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
-            string response = await userCommandExecutor.ListLocales();
+            string response = userCommandExecutor.ListLocales();
             await ReplyAsync(response);
 		}
 
@@ -45,25 +44,6 @@ namespace GenshinDiscordBotUI.CommandModules
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var id = Context.Message.Author.Id;
 			string response = await userCommandExecutor.SetLocaleAsync(id, localeToSet);
-			await ReplyAsync(response);
-		}
-
-		[Command("set_location")]
-		public async Task ListLocations()
-        {
-			using var scope = Scope.BeginLifetimeScope();
-			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
-			string response = await userCommandExecutor.ListLocations();
-			await ReplyAsync(response);
-		}
-
-		[Command("set_location")]
-		public async Task SetLocationAsync(string newLocation)
-        {
-			using var scope = Scope.BeginLifetimeScope();
-			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
-			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.SetLocationAsync(id, newLocation);
 			await ReplyAsync(response);
 		}
 	}

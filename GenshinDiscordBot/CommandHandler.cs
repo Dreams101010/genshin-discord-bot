@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord.Commands;
 using System.Reflection;
+using Autofac;
 
 namespace GenshinDiscordBotUI
 {
@@ -13,17 +14,20 @@ namespace GenshinDiscordBotUI
     {
         private DiscordSocketClient Client { get; }
         private CommandService Commands { get; }
-        // To provide to AddModulesAsync and ExecuteAsync (needed to resolve dependencies
+        // To provide to AddModulesAsync (needed to resolve dependencies
         // during CommandModule class construction)
         public IServiceProvider ServiceProvider { get; }
+        public ILifetimeScope Scope { get; }
 
         public CommandHandler(DiscordSocketClient client,
             CommandService commands,
-            IServiceProvider provider)
+            IServiceProvider provider,
+            ILifetimeScope scope)
         {
             Commands = commands ?? throw new ArgumentNullException(nameof(commands));
             Client = client ?? throw new ArgumentNullException(nameof(client));
             ServiceProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+            Scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
         public async Task InstallCommandsAsync()
@@ -35,6 +39,11 @@ namespace GenshinDiscordBotUI
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
         {
+            // Create scope for handling this command
+            using var localScope = Scope.BeginLifetimeScope();
+            // Resolve IServiceProvider to provide to ExecuteAsync
+            var scopedServices = localScope.Resolve<IServiceProvider>();
+
             // Don't process the command if it was a system message
             if (messageParam is not SocketUserMessage message) return;
 
@@ -55,7 +64,7 @@ namespace GenshinDiscordBotUI
             await Commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
-                services: ServiceProvider);
+                services: scopedServices);
         }
     }
 }

@@ -91,13 +91,6 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
             await AddOrUpdateUserAsync(user);
         }
 
-        public async Task SetUserLocationAsync(ulong discordId, string newLocation)
-        {
-            var user = await ReadUserAndCreateIfNotExistsAsync(discordId);
-            user.Location = newLocation;
-            await AddOrUpdateUserAsync(user);
-        }
-
         private async Task CreateDefaultUserWithIdAsync(ulong discordId)
         {
             User newUser = User.GetDefaultUser();
