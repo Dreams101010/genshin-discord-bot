@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GenshinDiscordBotDomainLayer.CommandFacades;
+using GenshinDiscordBotDomainLayer.Services;
 using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.ResponseGenerators;
 using Serilog;
@@ -13,20 +13,20 @@ namespace GenshinDiscordBotUI.CommandExecutors
     public class UserCommandExecutor
     {
         private ILogger Logger { get; }
-        private UserFacade UserFacade { get; }
+        private UserService UserService { get; }
         private UserHelper UserHelper { get; }
         private GeneralResponseGenerator GeneralResponseGenerator { get; }
         private UserResponseGenerator UserResponseGenerator { get; }
 
         public UserCommandExecutor(
             ILogger logger,
-            UserFacade userFacade,
+            UserService userService,
             UserHelper userHelper,
             GeneralResponseGenerator generalResponseGenerator,
             UserResponseGenerator userResponseGenerator) : base()
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            UserFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));
+            UserService = userService ?? throw new ArgumentNullException(nameof(userService));
             UserHelper = userHelper 
                 ?? throw new ArgumentNullException(nameof(userHelper));
             GeneralResponseGenerator = generalResponseGenerator ?? throw new ArgumentNullException(nameof(generalResponseGenerator));
@@ -39,7 +39,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
             try
             {
                 var id = userDiscordId;
-                var user = await UserFacade.ReadUserAndCreateIfNotExistsAsync(id);
+                var user = await UserService.ReadUserAndCreateIfNotExistsAsync(id);
                 string response = UserResponseGenerator.GetUserSettingsList(user);
                 return response;
             }
@@ -69,7 +69,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 
                 var id = userDiscordId;
                 var locale = UserHelper.GetLocaleFromString(localeToSet);
-                await UserFacade.SetUserLocaleAsync(id, locale);
+                await UserService.SetUserLocaleAsync(id, locale);
                 string response = UserResponseGenerator.GetLocaleSuccessMessage();
                 return response;
             }

@@ -9,9 +9,9 @@ using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using GenshinDiscordBotDomainLayer.ErrorHandlers;
 
-namespace GenshinDiscordBotDomainLayer.CommandFacades
+namespace GenshinDiscordBotDomainLayer.Services
 {
-    public class ResinFacade
+    public class ResinService
     {
         private UserDatabaseFacade UserDatabaseFacade { get; }
         private ResinDatabaseFacade ResinDatabaseFacade { get; }
@@ -19,7 +19,7 @@ namespace GenshinDiscordBotDomainLayer.CommandFacades
         private ResinCommandArgumentValidator ResinValidator { get; }
         private FacadeErrorHandler ErrorHandler { get; }
 
-        public ResinFacade(
+        public ResinService(
             UserDatabaseFacade userDatabaseFacade,
             ResinDatabaseFacade resinDatabaseFacade,
             ResinBusinessLogic resinBusinessLogic,

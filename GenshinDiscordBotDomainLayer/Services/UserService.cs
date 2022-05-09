@@ -7,14 +7,14 @@ using GenshinDiscordBotDomainLayer.DatabaseFacades;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ErrorHandlers;
 
-namespace GenshinDiscordBotDomainLayer.CommandFacades
+namespace GenshinDiscordBotDomainLayer.Services
 {
-    public class UserFacade
+    public class UserService
     {
         private UserDatabaseFacade UserDatabaseFacade { get; }
         private FacadeErrorHandler ErrorHandler { get; }
 
-        public UserFacade(
+        public UserService(
             UserDatabaseFacade userDatabaseFacade, 
             FacadeErrorHandler errorHandler)
         {

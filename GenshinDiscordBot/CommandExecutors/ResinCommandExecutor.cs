@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GenshinDiscordBotDomainLayer.CommandFacades;
+using GenshinDiscordBotDomainLayer.Services;
 using GenshinDiscordBotUI.ResponseGenerators;
 using Serilog;
 
@@ -14,23 +14,23 @@ namespace GenshinDiscordBotUI.CommandExecutors
         private ILogger Logger { get; }
         private GeneralResponseGenerator GeneralResponseGenerator { get; }
         private ResinResponseGenerator ResinResponseGenerator { get; }
-        private UserFacade UserFacade { get; }
-		private ResinFacade ResinFacade { get; }
+        private UserService UserService { get; }
+		private ResinService ResinService { get; }
 
         public ResinCommandExecutor(
 			ILogger logger, 
 			GeneralResponseGenerator generalResponseGenerator,
 			ResinResponseGenerator resinResponseGenerator,
-			UserFacade userFacade,
-			ResinFacade resinFacade)
+			UserService userService,
+			ResinService resinService)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             GeneralResponseGenerator = generalResponseGenerator 
 				?? throw new ArgumentNullException(nameof(generalResponseGenerator));
             ResinResponseGenerator = resinResponseGenerator 
 				?? throw new ArgumentNullException(nameof(resinResponseGenerator));
-            UserFacade = userFacade ?? throw new ArgumentNullException(nameof(userFacade));
-            ResinFacade = resinFacade ?? throw new ArgumentNullException(nameof(resinFacade));
+            UserService = userService ?? throw new ArgumentNullException(nameof(userService));
+            ResinService = resinService ?? throw new ArgumentNullException(nameof(resinService));
         }
 
 		public async Task<string> GetResin(ulong userDiscordId)
@@ -38,7 +38,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			try
 			{
 				var id = userDiscordId;
-				var result = await ResinFacade.GetResinForUser(id);
+				var result = await ResinService.GetResinForUser(id);
 				if (result.HasValue)
 				{
 					var resinInfo = result.Value;
@@ -70,7 +70,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			try
 			{
 				var id = userDiscordId;
-				var result = await ResinFacade.SetResinForUser(id, newValue);
+				var result = await ResinService.SetResinForUser(id, newValue);
 				string response = ResinResponseGenerator.GetSetResinSuccessMessage();
 				return response;
 			}

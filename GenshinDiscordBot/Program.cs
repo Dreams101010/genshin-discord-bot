@@ -16,7 +16,7 @@ using GenshinDiscordBotDomainLayer.Parameters.Query;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DatabaseFacades;
-using GenshinDiscordBotDomainLayer.CommandFacades;
+using GenshinDiscordBotDomainLayer.Services;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using GenshinDiscordBotDomainLayer.Providers;
@@ -88,9 +88,9 @@ namespace GenshinDiscordBotUI
             // Repositories
             builder.RegisterType<UserRepository>().InstancePerLifetimeScope();
             builder.RegisterType<ResinTrackingInfoRepository>().InstancePerLifetimeScope();
-            // Command Facades
-            builder.RegisterType<UserFacade>().InstancePerLifetimeScope();
-            builder.RegisterType<ResinFacade>().InstancePerLifetimeScope();
+            // Services
+            builder.RegisterType<UserService>().InstancePerLifetimeScope();
+            builder.RegisterType<ResinService>().InstancePerLifetimeScope();
             // Database Facades
             builder.RegisterType<UserDatabaseFacade>().InstancePerLifetimeScope();
             builder.RegisterType<ResinDatabaseFacade>().InstancePerLifetimeScope();
