@@ -24,7 +24,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.ListSettingsAsync(id);
+			string response = userCommandExecutor.ListSettingsAsync(id);
 			await ReplyAsync(response);
 		}
 
@@ -43,7 +43,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.SetLocaleAsync(id, localeToSet);
+			string response = userCommandExecutor.SetLocaleAsync(id, localeToSet);
 			await ReplyAsync(response);
 		}
 	}

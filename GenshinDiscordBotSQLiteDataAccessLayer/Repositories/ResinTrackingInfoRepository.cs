@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotSQLiteDataAccessLayer.DataModels;
+using GenshinDiscordBotDomainLayer.Interfaces;
+using GenshinDiscordBotDomainLayer.DomainModels;
 using Dapper;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 {
-    public class ResinTrackingInfoRepository
+    public class ResinTrackingInfoRepository : IResinTrackingInfoRepository
     {
         private SQLiteConnectionProvider ConnectionProvider { get; }
 
@@ -18,7 +20,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                 ?? throw new ArgumentNullException(nameof(connectionProvider));
         }
 
-        public async Task AddOrUpdateResinCountAsync(ResinTrackingInfoDataModel resinTrackingInfo)
+        public void AddOrUpdateResinCount(ResinTrackingInfo resinTrackingInfo)
         {
             var conn = ConnectionProvider.GetConnection();
             var insertSql = @"INSERT OR IGNORE INTO resin_tracking 
@@ -27,10 +29,11 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             var updateSql = @"UPDATE resin_tracking SET 
                             init_time = @StartTime,
                             resin_count = @StartCount WHERE user_discord_id = @UserDiscordId;";
-            int affectedByInsert = await conn.ExecuteAsync(insertSql, resinTrackingInfo);
+            var resinTrackingInfoDataModel = new ResinTrackingInfoDataModel(resinTrackingInfo);
+            int affectedByInsert = conn.Execute(insertSql, resinTrackingInfoDataModel);
             if (affectedByInsert == 0)
             {
-                int affectedByUpdate = await conn.ExecuteAsync(updateSql, resinTrackingInfo);
+                int affectedByUpdate = conn.Execute(updateSql, resinTrackingInfoDataModel);
                 if (affectedByUpdate == 0)
                 {
                     // TODO: create specific exceptions
@@ -39,20 +42,20 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             }
         }
 
-        public async Task<ResinTrackingInfoDataModel?> GetResinTrackingInfoByDiscordIdAsync(ulong id)
+        public ResinTrackingInfo? GetResinTrackingInfoByDiscordId(ulong id)
         {
             var conn = ConnectionProvider.GetConnection();
             var selectSql = @"SELECT 
                     user_discord_id UserDiscordId, init_time StartTime, resin_count StartCount 
                     FROM resin_tracking WHERE UserDiscordId = @UserDiscordId;";
             ResinTrackingInfoDataModel resinTrackingInfo
-                = await conn.QueryFirstOrDefaultAsync<ResinTrackingInfoDataModel>(
+                = conn.QueryFirstOrDefault<ResinTrackingInfoDataModel>(
                 selectSql, new { UserDiscordId = id });
             if (resinTrackingInfo.Equals(default(ResinTrackingInfoDataModel)))
             {
                 return null;
             }
-            return resinTrackingInfo;
+            return resinTrackingInfo.ToResinTrackingInfo();
         }
     }
 }

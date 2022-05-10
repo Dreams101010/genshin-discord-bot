@@ -12,26 +12,16 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
 {
     public class UserDatabaseFacade
     {
-        private ICommand<AddOrUpdateUserCommandParam, bool> AddOrUpdateUserCommand { get; }
-        private IQuery<GetUserByDiscordIdQueryParam, User?> GetUserByDiscordIdQuery { get; }
-        public UserDatabaseFacade(
-            ICommand<AddOrUpdateUserCommandParam, bool> addOrUpdateUserCommand,
-            IQuery<GetUserByDiscordIdQueryParam, User?> getUserByIdQuery)
+        IUserRepository UserRepository { get; }
+        public UserDatabaseFacade(IUserRepository userRepository)
         {
-            AddOrUpdateUserCommand = addOrUpdateUserCommand 
-                ?? throw new ArgumentNullException(nameof(addOrUpdateUserCommand));
-            GetUserByDiscordIdQuery = getUserByIdQuery 
-                ?? throw new ArgumentNullException(nameof(getUserByIdQuery));
+            UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
-        public async Task<User> ReadUserAndCreateIfNotExistsAsync(ulong discordId)
+        public User ReadUserAndCreateIfNotExists(ulong discordId)
         {
             // try get user
-            var param = new GetUserByDiscordIdQueryParam
-            {
-                DiscordId = discordId
-            };
-            User? nullableUser = await GetUserByDiscordIdQuery.QueryAsync(param, true);
+            User? nullableUser = UserRepository.GetUserByDiscordId(discordId);
             bool hasUser = nullableUser.HasValue;
             if (hasUser)
             {
@@ -40,8 +30,8 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
             else
             {
                 // if we don't have user create it
-                await CreateDefaultUserWithIdAsync(discordId);
-                nullableUser = await GetUserByDiscordIdQuery.QueryAsync(param, true);
+                CreateDefaultUserWithId(discordId);
+                nullableUser = UserRepository.GetUserByDiscordId(discordId);
                 hasUser = nullableUser.HasValue;
                 if (hasUser)
                 {
@@ -54,14 +44,10 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
             }
         }
 
-        public async Task CreateUserIfNotExistsAsync(ulong discordId)
+        public void CreateUserIfNotExists(ulong discordId)
         {
             // try get user
-            var param = new GetUserByDiscordIdQueryParam
-            {
-                DiscordId = discordId
-            };
-            User? nullableUser = await GetUserByDiscordIdQuery.QueryAsync(param, true);
+            User? nullableUser = UserRepository.GetUserByDiscordId(discordId);
             bool hasUser = nullableUser.HasValue;
             if (hasUser)
             {
@@ -70,8 +56,8 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
             else
             {
                 // if we don't have user create it
-                await CreateDefaultUserWithIdAsync(discordId);
-                nullableUser = await GetUserByDiscordIdQuery.QueryAsync(param, true);
+                CreateDefaultUserWithId(discordId);
+                nullableUser = UserRepository.GetUserByDiscordId(discordId);
                 hasUser = nullableUser.HasValue;
                 if (hasUser)
                 {
@@ -84,27 +70,27 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
             }
         }
 
-        public async Task SetUserLocaleAsync(ulong discordId, UserLocale newLocale)
+        public void SetUserLocale(ulong discordId, UserLocale newLocale)
         {
-            var user = await ReadUserAndCreateIfNotExistsAsync(discordId);
+            var user = ReadUserAndCreateIfNotExists(discordId);
             user.Locale = newLocale;
-            await AddOrUpdateUserAsync(user);
+            AddOrUpdateUser(user);
         }
 
-        private async Task CreateDefaultUserWithIdAsync(ulong discordId)
+        private void CreateDefaultUserWithId(ulong discordId)
         {
             User newUser = User.GetDefaultUser();
             newUser.DiscordId = discordId;
-            await AddOrUpdateUserAsync(newUser);
+            AddOrUpdateUser(newUser);
         }
 
-        private async Task AddOrUpdateUserAsync(User user)
+        private void AddOrUpdateUser(User user)
         {
             var param = new AddOrUpdateUserCommandParam
             {
                 User = user
             };
-            await AddOrUpdateUserCommand.ExecuteAsync(param);
+            UserRepository.InsertOrUpdateUser(user);
         }
     }
 }

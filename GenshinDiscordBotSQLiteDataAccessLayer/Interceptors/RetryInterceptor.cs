@@ -18,6 +18,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Interceptors
                 try
                 {
                     invocation.Proceed();
+                    break;
                 }
                 catch
                 {

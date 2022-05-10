@@ -38,13 +38,13 @@ namespace GenshinDiscordBotDomainLayer.Services
                 ?? throw new ArgumentNullException(nameof(errorHandler));
         }
 
-        public async Task<bool> SetResinForUser(ulong discordId, int resinCount)
+        public virtual bool SetResinForUser(ulong discordId, int resinCount)
         {
             try
             {
                 ResinValidator.SetResinCount_Validate(resinCount);
-                await UserDatabaseFacade.CreateUserIfNotExistsAsync(discordId);
-                await ResinDatabaseFacade.SetResinForUser(discordId, resinCount);
+                UserDatabaseFacade.CreateUserIfNotExists(discordId);
+                ResinDatabaseFacade.SetResinForUser(discordId, resinCount);
                 return true;
             }
             catch (Exception e)
@@ -54,12 +54,12 @@ namespace GenshinDiscordBotDomainLayer.Services
             }
         }
 
-        public async Task<ResinInfoResultModel?> GetResinForUser(ulong discordId)
+        public virtual ResinInfoResultModel? GetResinForUser(ulong discordId)
         {
             try
             {
-                var user = await UserDatabaseFacade.ReadUserAndCreateIfNotExistsAsync(discordId);
-                var nullableResinInfo = await ResinDatabaseFacade.GetResinForUser(discordId);
+                var user = UserDatabaseFacade.ReadUserAndCreateIfNotExists(discordId);
+                var nullableResinInfo = ResinDatabaseFacade.GetResinForUser(discordId);
                 if (nullableResinInfo == null)
                 {
                     return null;

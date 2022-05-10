@@ -22,11 +22,11 @@ namespace GenshinDiscordBotDomainLayer.Services
             ErrorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
         }
 
-        public async Task<User> ReadUserAndCreateIfNotExistsAsync(ulong discordId)
+        public virtual User ReadUserAndCreateIfNotExists(ulong discordId)
         {
             try
             {
-                return await UserDatabaseFacade.ReadUserAndCreateIfNotExistsAsync(discordId);
+                return UserDatabaseFacade.ReadUserAndCreateIfNotExists(discordId);
             }
             catch (Exception e)
             {
@@ -35,11 +35,11 @@ namespace GenshinDiscordBotDomainLayer.Services
             }
         }
 
-        public async Task CreateUserIfNotExistsAsync(ulong discordId)
+        public virtual void CreateUserIfNotExistsAsync(ulong discordId)
         {
             try
             {
-                await UserDatabaseFacade.CreateUserIfNotExistsAsync(discordId);
+                UserDatabaseFacade.CreateUserIfNotExists(discordId);
             }
             catch (Exception e)
             {
@@ -48,11 +48,11 @@ namespace GenshinDiscordBotDomainLayer.Services
             }
         }
 
-        public async Task SetUserLocaleAsync(ulong discordId, UserLocale newLocale)
+        public virtual void SetUserLocale(ulong discordId, UserLocale newLocale)
         {
             try
             {
-                await UserDatabaseFacade.SetUserLocaleAsync(discordId, newLocale);
+                UserDatabaseFacade.SetUserLocale(discordId, newLocale);
             }
             catch (Exception e)
             {

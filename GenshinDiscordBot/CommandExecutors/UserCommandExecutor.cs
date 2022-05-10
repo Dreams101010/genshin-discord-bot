@@ -34,12 +34,12 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 ?? throw new ArgumentNullException(nameof(userResponseGenerator));
         }
 
-        public async Task<string> ListSettingsAsync(ulong userDiscordId)
+        public string ListSettingsAsync(ulong userDiscordId)
         {
             try
             {
                 var id = userDiscordId;
-                var user = await UserService.ReadUserAndCreateIfNotExistsAsync(id);
+                var user = UserService.ReadUserAndCreateIfNotExists(id);
                 string response = UserResponseGenerator.GetUserSettingsList(user);
                 return response;
             }
@@ -57,7 +57,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
             return response;
         }
 
-        public async Task<string> SetLocaleAsync(ulong userDiscordId, string localeToSet)
+        public string SetLocaleAsync(ulong userDiscordId, string localeToSet)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 
                 var id = userDiscordId;
                 var locale = UserHelper.GetLocaleFromString(localeToSet);
-                await UserService.SetUserLocaleAsync(id, locale);
+                UserService.SetUserLocale(id, locale);
                 string response = UserResponseGenerator.GetLocaleSuccessMessage();
                 return response;
             }

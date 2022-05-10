@@ -9,11 +9,7 @@ using Autofac.Extensions.DependencyInjection;
 using Serilog;
 using GenshinDiscordBotSQLiteDataAccessLayer;
 using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
-using GenshinDiscordBotSQLiteDataAccessLayer.Commands;
-using GenshinDiscordBotSQLiteDataAccessLayer.Queries;
-using GenshinDiscordBotDomainLayer.Parameters.Command;
-using GenshinDiscordBotDomainLayer.Parameters.Query;
-using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotSQLiteDataAccessLayer.Interceptors;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DatabaseFacades;
 using GenshinDiscordBotDomainLayer.Services;
@@ -25,6 +21,8 @@ using GenshinDiscordBotDomainLayer.DataProviders;
 using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.CommandExecutors;
+using Castle.DynamicProxy;
+using Autofac.Extras.DynamicProxy;
 
 namespace GenshinDiscordBotUI
 {
@@ -69,28 +67,26 @@ namespace GenshinDiscordBotUI
             // DAL
             builder.RegisterType<SQLiteConnectionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
-            // User Commands
-            builder.RegisterType<AddOrUpdateUserCommand>()
-                .As(typeof(ICommand<AddOrUpdateUserCommandParam, bool>))
-                .InstancePerLifetimeScope();
-            // User Queries
-            builder.RegisterType<GetUserByDiscordIdQuery>()
-                .As(typeof(IQuery<GetUserByDiscordIdQueryParam, User?>))
-                .InstancePerLifetimeScope();
-            // Resin Commands
-            builder.RegisterType<AddOrUpdateResinInfoCommand>()
-                .As(typeof(ICommand<AddOrUpdateResinInfoCommandParam, bool>))
-                .InstancePerLifetimeScope();
-            // Resin Queries
-            builder.RegisterType<GetResinInfoByDiscordIdQuery>()
-                .As(typeof(IQuery<GetResinInfoByDiscordIdQueryParam, ResinTrackingInfo?>))
-                .InstancePerLifetimeScope();
+            // Interceptors
+            builder.RegisterType<ErrorHandlingInterceptor>().As<ErrorHandlingInterceptor>();
+            builder.RegisterType<RetryInterceptor>().As<RetryInterceptor>();
+            builder.RegisterType<TransactionInterceptor>().As<TransactionInterceptor>();
             // Repositories
-            builder.RegisterType<UserRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<ResinTrackingInfoRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<UserRepository>().As<IUserRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<ResinTrackingInfoRepository>().As<IResinTrackingInfoRepository>()
+                .InstancePerLifetimeScope();
             // Services
-            builder.RegisterType<UserService>().InstancePerLifetimeScope();
-            builder.RegisterType<ResinService>().InstancePerLifetimeScope();
+            builder.RegisterType<UserService>().InstancePerLifetimeScope()
+                .EnableClassInterceptors()
+                .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                .InterceptedBy(typeof(RetryInterceptor))
+                .InterceptedBy(typeof(TransactionInterceptor));
+            builder.RegisterType<ResinService>().InstancePerLifetimeScope()
+                .EnableClassInterceptors()
+                .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                .InterceptedBy(typeof(RetryInterceptor))
+                .InterceptedBy(typeof(TransactionInterceptor));
             // Database Facades
             builder.RegisterType<UserDatabaseFacade>().InstancePerLifetimeScope();
             builder.RegisterType<ResinDatabaseFacade>().InstancePerLifetimeScope();
