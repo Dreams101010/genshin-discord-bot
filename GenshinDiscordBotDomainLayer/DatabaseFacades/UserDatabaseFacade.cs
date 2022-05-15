@@ -25,7 +25,7 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
             bool hasUser = nullableUser.HasValue;
             if (hasUser)
             {
-                return nullableUser.Value;
+                return nullableUser.GetValueOrDefault();
             }
             else
             {
@@ -35,7 +35,7 @@ namespace GenshinDiscordBotDomainLayer.DatabaseFacades
                 hasUser = nullableUser.HasValue;
                 if (hasUser)
                 {
-                    return nullableUser.Value;
+                    return nullableUser.GetValueOrDefault();
                 }
                 else
                 {

@@ -21,7 +21,6 @@ using GenshinDiscordBotDomainLayer.DataProviders;
 using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.CommandExecutors;
-using Castle.DynamicProxy;
 using Autofac.Extras.DynamicProxy;
 
 namespace GenshinDiscordBotUI
@@ -43,7 +42,7 @@ namespace GenshinDiscordBotUI
     class Program
     {
         // Logger for logging unhandled exceptions
-        static ILogger Logger { get; set; } = null; 
+        static ILogger? Logger { get; set; } = null; 
         static IContainer CompositionRoot()
         {
             var builder = new ContainerBuilder();
@@ -139,7 +138,7 @@ namespace GenshinDiscordBotUI
             }
             catch (Exception e)
             {
-                Logger.Error($"Unhandled exception in Main : {e}");
+                Logger?.Error($"Unhandled exception in Main : {e}");
             }
         }
     }

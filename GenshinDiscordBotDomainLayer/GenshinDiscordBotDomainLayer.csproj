@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+	<Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,5 +10,5 @@
     <PackageReference Include="Castle.Core" Version="4.4.1" />
     <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
-
+	
 </Project>
