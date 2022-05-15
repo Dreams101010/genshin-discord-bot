@@ -9,7 +9,6 @@ using Autofac.Extensions.DependencyInjection;
 using Serilog;
 using GenshinDiscordBotSQLiteDataAccessLayer;
 using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
-using GenshinDiscordBotSQLiteDataAccessLayer.Interceptors;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DatabaseFacades;
 using GenshinDiscordBotDomainLayer.Services;
@@ -67,9 +66,6 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<SQLiteConnectionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
             // Interceptors
-            builder.RegisterType<ErrorHandlingInterceptor>().As<ErrorHandlingInterceptor>();
-            builder.RegisterType<RetryInterceptor>().As<RetryInterceptor>();
-            builder.RegisterType<TransactionInterceptor>().As<TransactionInterceptor>();
             // Repositories
             builder.RegisterType<UserRepository>().As<IUserRepository>()
                 .InstancePerLifetimeScope();
@@ -77,15 +73,9 @@ namespace GenshinDiscordBotUI
                 .InstancePerLifetimeScope();
             // Services
             builder.RegisterType<UserService>().InstancePerLifetimeScope()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorHandlingInterceptor))
-                .InterceptedBy(typeof(RetryInterceptor))
-                .InterceptedBy(typeof(TransactionInterceptor));
+                .EnableClassInterceptors();
             builder.RegisterType<ResinService>().InstancePerLifetimeScope()
-                .EnableClassInterceptors()
-                .InterceptedBy(typeof(ErrorHandlingInterceptor))
-                .InterceptedBy(typeof(RetryInterceptor))
-                .InterceptedBy(typeof(TransactionInterceptor));
+                .EnableClassInterceptors();
             // Database Facades
             builder.RegisterType<UserDatabaseFacade>().InstancePerLifetimeScope();
             builder.RegisterType<ResinDatabaseFacade>().InstancePerLifetimeScope();
