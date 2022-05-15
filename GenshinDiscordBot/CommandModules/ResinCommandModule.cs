@@ -22,22 +22,22 @@ namespace GenshinDiscordBotUI.CommandModules
         }
 
 		[Command("getResin")]
-		public async Task GetResin()
+		public async Task GetResinAsync()
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var resinCommandExecutor = scope.Resolve<ResinCommandExecutor>();
 			var id = Context.Message.Author.Id;
-			string response = resinCommandExecutor.GetResin(id);
+			string response = await resinCommandExecutor.GetResinAsync(id);
 			await ReplyAsync(response);
 		}
 
 		[Command("setResin")]
-		public async Task SetResin(int newValue)
+		public async Task SetResinAsync(int newValue)
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var resinCommandExecutor = scope.Resolve<ResinCommandExecutor>();
 			var id = Context.Message.Author.Id;
-			string response = resinCommandExecutor.SetResin(id, newValue);
+			string response = await resinCommandExecutor.SetResinAsync(id, newValue);
 			await ReplyAsync(response);
 		}
 	}

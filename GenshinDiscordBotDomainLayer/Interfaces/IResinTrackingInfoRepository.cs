@@ -9,7 +9,7 @@ namespace GenshinDiscordBotDomainLayer.Interfaces
 {
     public interface IResinTrackingInfoRepository
     {
-        public void AddOrUpdateResinCount(ResinTrackingInfo resinTrackingInfo);
-        public ResinTrackingInfo? GetResinTrackingInfoByDiscordId(ulong id);
+        public Task AddOrUpdateResinCountAsync(ResinTrackingInfo resinTrackingInfo);
+        public Task<ResinTrackingInfo?> GetResinTrackingInfoByDiscordIdAsync(ulong id);
     }
 }

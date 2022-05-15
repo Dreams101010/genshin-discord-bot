@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GenshinDiscordBotDomainLayer.DatabaseFacades;
+using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
@@ -13,23 +13,22 @@ namespace GenshinDiscordBotDomainLayer.Services
 {
     public class ResinService
     {
-        private UserDatabaseFacade UserDatabaseFacade { get; }
-        private ResinDatabaseFacade ResinDatabaseFacade { get; }
+        private IUserDatabaseInteractionHandler UserDatabaseInteractionHandler { get; }
+        private IResinDatabaseInteractionHandler ResinDatabaseInteractionHandler { get; }
         private ResinBusinessLogic ResinBusinessLogic { get; }
         private ResinCommandArgumentValidator ResinValidator { get; }
         private FacadeErrorHandler ErrorHandler { get; }
 
-        public ResinService(
-            UserDatabaseFacade userDatabaseFacade,
-            ResinDatabaseFacade resinDatabaseFacade,
+        public ResinService(IUserDatabaseInteractionHandler userDatabaseInteractionHandler,
+            IResinDatabaseInteractionHandler resinDatabaseInteractionHandler,
             ResinBusinessLogic resinBusinessLogic,
             ResinCommandArgumentValidator resinValidator,
             FacadeErrorHandler errorHandler)
         {
-            UserDatabaseFacade = userDatabaseFacade 
-                ?? throw new ArgumentNullException(nameof(userDatabaseFacade));
-            ResinDatabaseFacade = resinDatabaseFacade 
-                ?? throw new ArgumentNullException(nameof(resinDatabaseFacade));
+            UserDatabaseInteractionHandler = userDatabaseInteractionHandler 
+                ?? throw new ArgumentNullException(nameof(userDatabaseInteractionHandler));
+            ResinDatabaseInteractionHandler = resinDatabaseInteractionHandler 
+                ?? throw new ArgumentNullException(nameof(resinDatabaseInteractionHandler));
             ResinBusinessLogic = resinBusinessLogic 
                 ?? throw new ArgumentNullException(nameof(resinBusinessLogic));
             ResinValidator = resinValidator 
@@ -38,13 +37,13 @@ namespace GenshinDiscordBotDomainLayer.Services
                 ?? throw new ArgumentNullException(nameof(errorHandler));
         }
 
-        public virtual bool SetResinForUser(ulong discordId, int resinCount)
+        public async virtual Task<bool> SetResinForUserAsync(ulong discordId, int resinCount)
         {
             try
             {
                 ResinValidator.SetResinCount_Validate(resinCount);
-                UserDatabaseFacade.CreateUserIfNotExists(discordId);
-                ResinDatabaseFacade.SetResinForUser(discordId, resinCount);
+                await UserDatabaseInteractionHandler.CreateUserIfNotExistsAsync(discordId);
+                await ResinDatabaseInteractionHandler.SetResinForUserAsync(discordId, resinCount);
                 return true;
             }
             catch (Exception e)
@@ -54,12 +53,12 @@ namespace GenshinDiscordBotDomainLayer.Services
             }
         }
 
-        public virtual ResinInfoResultModel? GetResinForUser(ulong discordId)
+        public async virtual Task<ResinInfoResultModel?> GetResinForUserAsync(ulong discordId)
         {
             try
             {
-                var user = UserDatabaseFacade.ReadUserAndCreateIfNotExists(discordId);
-                var nullableResinInfo = ResinDatabaseFacade.GetResinForUser(discordId);
+                var user = await UserDatabaseInteractionHandler.ReadUserAndCreateIfNotExistsAsync(discordId);
+                var nullableResinInfo = await ResinDatabaseInteractionHandler.GetResinForUserAsync(discordId);
                 if (nullableResinInfo == null)
                 {
                     return null;

@@ -9,7 +9,7 @@ namespace GenshinDiscordBotDomainLayer.Interfaces
 {
     public interface IUserRepository
     {
-        public void InsertOrUpdateUser(User user);
-        public User? GetUserByDiscordId(ulong id);
+        public Task InsertOrUpdateUserAsync(User user);
+        public Task<User?> GetUserByDiscordIdAsync(ulong id);
     }
 }

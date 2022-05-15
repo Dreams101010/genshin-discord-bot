@@ -33,12 +33,12 @@ namespace GenshinDiscordBotUI.CommandExecutors
             ResinService = resinService ?? throw new ArgumentNullException(nameof(resinService));
         }
 
-		public string GetResin(ulong userDiscordId)
+		public async Task<string> GetResinAsync(ulong userDiscordId)
 		{
 			try
 			{
 				var id = userDiscordId;
-				var result = ResinService.GetResinForUser(id);
+				var result = await ResinService.GetResinForUserAsync(id);
 				if (result.HasValue)
 				{
 					var resinInfo = result.Value;
@@ -59,7 +59,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			}
 		}
 
-		public string SetResin(ulong userDiscordId, int newValue)
+		public async Task<string> SetResinAsync(ulong userDiscordId, int newValue)
 		{
 			string validationErrorMessage = ResinResponseGenerator
 				.GetSetResinValidationErrorMessage(newValue);
@@ -70,7 +70,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			try
 			{
 				var id = userDiscordId;
-				var result = ResinService.SetResinForUser(id, newValue);
+				var result = await ResinService.SetResinForUserAsync(id, newValue);
 				string response = ResinResponseGenerator.GetSetResinSuccessMessage();
 				return response;
 			}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GenshinDiscordBotDomainLayer.DatabaseFacades;
+using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ErrorHandlers;
 
@@ -11,22 +11,23 @@ namespace GenshinDiscordBotDomainLayer.Services
 {
     public class UserService
     {
-        private UserDatabaseFacade UserDatabaseFacade { get; }
+        private IUserDatabaseInteractionHandler UserDatabaseInteractionHandler { get; }
         private FacadeErrorHandler ErrorHandler { get; }
 
         public UserService(
-            UserDatabaseFacade userDatabaseFacade, 
+            IUserDatabaseInteractionHandler userDatabaseInteractionHandler,
             FacadeErrorHandler errorHandler)
         {
-            UserDatabaseFacade = userDatabaseFacade ?? throw new ArgumentNullException(nameof(userDatabaseFacade));
+            UserDatabaseInteractionHandler = userDatabaseInteractionHandler 
+                ?? throw new ArgumentNullException(nameof(userDatabaseInteractionHandler));
             ErrorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
         }
 
-        public virtual User ReadUserAndCreateIfNotExists(ulong discordId)
+        public virtual async Task<User> ReadUserAndCreateIfNotExistsAsync(ulong discordId)
         {
             try
             {
-                return UserDatabaseFacade.ReadUserAndCreateIfNotExists(discordId);
+                return await UserDatabaseInteractionHandler.ReadUserAndCreateIfNotExistsAsync(discordId);
             }
             catch (Exception e)
             {
@@ -35,11 +36,11 @@ namespace GenshinDiscordBotDomainLayer.Services
             }
         }
 
-        public virtual void CreateUserIfNotExistsAsync(ulong discordId)
+        public virtual async Task CreateUserIfNotExistsAsync(ulong discordId)
         {
             try
             {
-                UserDatabaseFacade.CreateUserIfNotExists(discordId);
+                await UserDatabaseInteractionHandler.CreateUserIfNotExistsAsync(discordId);
             }
             catch (Exception e)
             {
@@ -48,11 +49,11 @@ namespace GenshinDiscordBotDomainLayer.Services
             }
         }
 
-        public virtual void SetUserLocale(ulong discordId, UserLocale newLocale)
+        public virtual async Task SetUserLocale(ulong discordId, UserLocale newLocale)
         {
             try
             {
-                UserDatabaseFacade.SetUserLocale(discordId, newLocale);
+                await UserDatabaseInteractionHandler.SetUserLocaleAsync(discordId, newLocale);
             }
             catch (Exception e)
             {

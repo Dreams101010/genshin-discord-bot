@@ -9,8 +9,9 @@ using Autofac.Extensions.DependencyInjection;
 using Serilog;
 using GenshinDiscordBotSQLiteDataAccessLayer;
 using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
+using GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.Interfaces;
-using GenshinDiscordBotDomainLayer.DatabaseFacades;
+using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.Services;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
@@ -21,6 +22,7 @@ using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.CommandExecutors;
 using Autofac.Extras.DynamicProxy;
+using Microsoft.Data.Sqlite;
 
 namespace GenshinDiscordBotUI
 {
@@ -44,6 +46,8 @@ namespace GenshinDiscordBotUI
         static ILogger? Logger { get; set; } = null; 
         static IContainer CompositionRoot()
         {
+            var sqliteConnectionString = BuildConfigurationRoot().GetConnectionString("Sqlite");
+            Console.WriteLine(sqliteConnectionString);
             var builder = new ContainerBuilder();
             // Microsoft.Extensions.DependencyInjection support
             builder.Populate(new ServiceCollection());
@@ -62,8 +66,9 @@ namespace GenshinDiscordBotUI
                 .WriteTo.Console()
                 .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day)
                 .CreateLogger()).SingleInstance();
+            // Database connection
+            builder.Register((c) => new SqliteConnection(sqliteConnectionString)).AsSelf().InstancePerLifetimeScope();
             // DAL
-            builder.RegisterType<SQLiteConnectionProvider>().InstancePerLifetimeScope();
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
             // Interceptors
             // Repositories
@@ -76,9 +81,13 @@ namespace GenshinDiscordBotUI
                 .EnableClassInterceptors();
             builder.RegisterType<ResinService>().InstancePerLifetimeScope()
                 .EnableClassInterceptors();
-            // Database Facades
-            builder.RegisterType<UserDatabaseFacade>().InstancePerLifetimeScope();
-            builder.RegisterType<ResinDatabaseFacade>().InstancePerLifetimeScope();
+            // Database Interaction Handlers
+            builder.RegisterType<UserSqliteDatabaseInteractionHandler>()
+                .As<IUserDatabaseInteractionHandler>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<ResinSqliteDatabaseInteractionHandler>()
+                .As<IResinDatabaseInteractionHandler>()
+                .InstancePerLifetimeScope();
             // Business Logic
             builder.RegisterType<ResinBusinessLogic>().SingleInstance();
             // Validation Logic

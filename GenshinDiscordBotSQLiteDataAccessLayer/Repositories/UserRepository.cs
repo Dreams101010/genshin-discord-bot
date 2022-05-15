@@ -7,32 +7,31 @@ using GenshinDiscordBotSQLiteDataAccessLayer.DataModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using Dapper;
+using Microsoft.Data.Sqlite;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private SQLiteConnectionProvider ConnectionProvider { get; }
+        private SqliteConnection Connection { get; }
 
-        public UserRepository(SQLiteConnectionProvider connectionProvider)
+        public UserRepository(SqliteConnection connection)
         {
-            ConnectionProvider = connectionProvider 
-                ?? throw new ArgumentNullException(nameof(connectionProvider));
+            Connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
 
-        public void InsertOrUpdateUser(User user)
+        public async Task InsertOrUpdateUserAsync(User user)
         {
-            var conn = ConnectionProvider.GetConnection();
             var insertSql = @"INSERT OR IGNORE INTO users 
                         (discord_user_id, user_locale) 
                         VALUES (@DiscordId, @Locale)";
             var updateSql = @"UPDATE users SET user_locale = @Locale
                             WHERE discord_user_id = @DiscordId";
             var userDataModel = new UserDataModel(user);
-            int affectedByInsert = conn.Execute(insertSql, userDataModel);
+            int affectedByInsert = await Connection.ExecuteAsync(insertSql, userDataModel);
             if (affectedByInsert == 0)
             {
-                int affectedByUpdate = conn.Execute(updateSql, userDataModel);
+                int affectedByUpdate = await Connection.ExecuteAsync(updateSql, userDataModel);
                 if (affectedByUpdate == 0)
                 {
                     // TODO: create specific exceptions
@@ -41,13 +40,12 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             }
         }
 
-        public User? GetUserByDiscordId(ulong id)
+        public async Task<User?> GetUserByDiscordIdAsync(ulong id)
         {
-            var conn = ConnectionProvider.GetConnection();
             var selectSql = @"SELECT 
                 discord_user_id DiscordId, user_locale Locale
                 FROM users WHERE discord_user_id = @DiscordId";
-            UserDataModel user = conn.QueryFirstOrDefault<UserDataModel>(
+            UserDataModel user = await Connection.QueryFirstOrDefaultAsync<UserDataModel>(
                 selectSql, new { DiscordId = id });
             if (user.Equals(default(UserDataModel)))
             {

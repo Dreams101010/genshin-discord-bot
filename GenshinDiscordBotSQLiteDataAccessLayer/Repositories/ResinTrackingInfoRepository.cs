@@ -7,22 +7,21 @@ using GenshinDiscordBotSQLiteDataAccessLayer.DataModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using Dapper;
+using Microsoft.Data.Sqlite;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 {
     public class ResinTrackingInfoRepository : IResinTrackingInfoRepository
     {
-        private SQLiteConnectionProvider ConnectionProvider { get; }
+        public SqliteConnection Connection { get; }
 
-        public ResinTrackingInfoRepository(SQLiteConnectionProvider connectionProvider)
+        public ResinTrackingInfoRepository(SqliteConnection connection)
         {
-            ConnectionProvider = connectionProvider
-                ?? throw new ArgumentNullException(nameof(connectionProvider));
+            Connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
 
-        public void AddOrUpdateResinCount(ResinTrackingInfo resinTrackingInfo)
+        public async Task AddOrUpdateResinCountAsync(ResinTrackingInfo resinTrackingInfo)
         {
-            var conn = ConnectionProvider.GetConnection();
             var insertSql = @"INSERT OR IGNORE INTO resin_tracking 
                         (user_discord_id, init_time, resin_count) 
                         VALUES (@UserDiscordId, @StartTime, @StartCount)";
@@ -30,10 +29,10 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                             init_time = @StartTime,
                             resin_count = @StartCount WHERE user_discord_id = @UserDiscordId;";
             var resinTrackingInfoDataModel = new ResinTrackingInfoDataModel(resinTrackingInfo);
-            int affectedByInsert = conn.Execute(insertSql, resinTrackingInfoDataModel);
+            int affectedByInsert = await Connection.ExecuteAsync(insertSql, resinTrackingInfoDataModel);
             if (affectedByInsert == 0)
             {
-                int affectedByUpdate = conn.Execute(updateSql, resinTrackingInfoDataModel);
+                int affectedByUpdate = await Connection.ExecuteAsync(updateSql, resinTrackingInfoDataModel);
                 if (affectedByUpdate == 0)
                 {
                     // TODO: create specific exceptions
@@ -42,14 +41,13 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             }
         }
 
-        public ResinTrackingInfo? GetResinTrackingInfoByDiscordId(ulong id)
+        public async Task<ResinTrackingInfo?> GetResinTrackingInfoByDiscordIdAsync(ulong id)
         {
-            var conn = ConnectionProvider.GetConnection();
             var selectSql = @"SELECT 
                     user_discord_id UserDiscordId, init_time StartTime, resin_count StartCount 
                     FROM resin_tracking WHERE UserDiscordId = @UserDiscordId;";
             ResinTrackingInfoDataModel resinTrackingInfo
-                = conn.QueryFirstOrDefault<ResinTrackingInfoDataModel>(
+                = await Connection.QueryFirstOrDefaultAsync<ResinTrackingInfoDataModel>(
                 selectSql, new { UserDiscordId = id });
             if (resinTrackingInfo.Equals(default(ResinTrackingInfoDataModel)))
             {

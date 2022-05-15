@@ -24,12 +24,12 @@ namespace GenshinDiscordBotUI.CommandModules
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var id = Context.Message.Author.Id;
-			string response = userCommandExecutor.ListSettingsAsync(id);
+			string response = await userCommandExecutor.ListSettingsAsync(id);
 			await ReplyAsync(response);
 		}
 
 		[Command("set_locale")]
-		public async Task ListLocales()
+		public async Task ListLocalesAsync()
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
@@ -43,7 +43,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var id = Context.Message.Author.Id;
-			string response = userCommandExecutor.SetLocaleAsync(id, localeToSet);
+			string response = await userCommandExecutor.SetLocaleAsync(id, localeToSet);
 			await ReplyAsync(response);
 		}
 	}
