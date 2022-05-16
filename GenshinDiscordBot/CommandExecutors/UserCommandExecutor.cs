@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GenshinDiscordBotDomainLayer.Services;
+using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.ResponseGenerators;
 using Serilog;
@@ -13,14 +13,14 @@ namespace GenshinDiscordBotUI.CommandExecutors
     public class UserCommandExecutor
     {
         private ILogger Logger { get; }
-        private UserService UserService { get; }
+        private IUserService UserService { get; }
         private UserHelper UserHelper { get; }
         private GeneralResponseGenerator GeneralResponseGenerator { get; }
         private UserResponseGenerator UserResponseGenerator { get; }
 
         public UserCommandExecutor(
             ILogger logger,
-            UserService userService,
+            IUserService userService,
             UserHelper userHelper,
             GeneralResponseGenerator generalResponseGenerator,
             UserResponseGenerator userResponseGenerator) : base()

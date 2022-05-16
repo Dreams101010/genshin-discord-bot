@@ -10,7 +10,9 @@ using Serilog;
 using GenshinDiscordBotSQLiteDataAccessLayer;
 using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
 using GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers;
+using GenshinDiscordBotDomainLayer.Interceptors;
 using GenshinDiscordBotDomainLayer.Interfaces;
+using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.Services;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
@@ -71,23 +73,40 @@ namespace GenshinDiscordBotUI
             // DAL
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
             // Interceptors
+            builder.RegisterType<RetryInterceptor>().AsSelf().SingleInstance();
+            builder.RegisterType<LoggingInterceptor>().AsSelf().SingleInstance();
+            builder.RegisterType<ErrorHandlingInterceptor>().AsSelf().SingleInstance();
             // Repositories
             builder.RegisterType<UserRepository>().As<IUserRepository>()
                 .InstancePerLifetimeScope();
             builder.RegisterType<ResinTrackingInfoRepository>().As<IResinTrackingInfoRepository>()
                 .InstancePerLifetimeScope();
             // Services
-            builder.RegisterType<UserService>().InstancePerLifetimeScope()
-                .EnableClassInterceptors();
-            builder.RegisterType<ResinService>().InstancePerLifetimeScope()
-                .EnableClassInterceptors();
+            builder.RegisterType<UserService>()
+                .As<IUserService>()
+                .InstancePerLifetimeScope()
+                .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                .EnableInterfaceInterceptors();
+            builder.RegisterType<ResinService>()
+                .As<IResinService>()
+                .InstancePerLifetimeScope()
+                .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                .EnableInterfaceInterceptors();
             // Database Interaction Handlers
             builder.RegisterType<UserSqliteDatabaseInteractionHandler>()
                 .As<IUserDatabaseInteractionHandler>()
-                .InstancePerLifetimeScope();
+                .InstancePerLifetimeScope()
+                .InterceptedBy(typeof(LoggingInterceptor))
+                .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                .InterceptedBy(typeof(RetryInterceptor))
+                .EnableInterfaceInterceptors();
             builder.RegisterType<ResinSqliteDatabaseInteractionHandler>()
                 .As<IResinDatabaseInteractionHandler>()
-                .InstancePerLifetimeScope();
+                .InstancePerLifetimeScope()
+                .InterceptedBy(typeof(LoggingInterceptor))
+                .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                .InterceptedBy(typeof(RetryInterceptor))
+                .EnableInterfaceInterceptors();
             // Business Logic
             builder.RegisterType<ResinBusinessLogic>().SingleInstance();
             // Validation Logic
@@ -95,7 +114,7 @@ namespace GenshinDiscordBotUI
             // Helpers
             builder.RegisterType<UserHelper>().InstancePerLifetimeScope();
             // Error handlers
-            builder.RegisterType<FacadeErrorHandler>().SingleInstance();
+            builder.RegisterType<LoggingErrorHandler>().AsSelf().SingleInstance();
             // Providers
             builder.RegisterType<DateTimeNowProvider>()
                 .As<IDateTimeProvider>().SingleInstance();
@@ -120,7 +139,7 @@ namespace GenshinDiscordBotUI
             return root;
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             try
             {
@@ -132,7 +151,7 @@ namespace GenshinDiscordBotUI
                     databaseInitializer.InitializeDb();
                 }
                 var app = container.Resolve<Application>();
-                app.StartApplication();
+                await app.StartApplication();
                 Console.ReadLine();
             }
             catch (Exception e)

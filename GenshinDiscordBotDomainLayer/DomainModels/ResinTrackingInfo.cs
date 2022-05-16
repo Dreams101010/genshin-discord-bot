@@ -12,7 +12,7 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
         public DateTime StartTime { get; set; }
         public int StartCount { get; set; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is ResinTrackingInfo info && Equals(info);
         }

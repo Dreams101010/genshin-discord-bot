@@ -24,7 +24,7 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
             };
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is User user && Equals(user);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GenshinDiscordBotDomainLayer.Services;
+using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotUI.ResponseGenerators;
 using Serilog;
 
@@ -14,15 +14,15 @@ namespace GenshinDiscordBotUI.CommandExecutors
         private ILogger Logger { get; }
         private GeneralResponseGenerator GeneralResponseGenerator { get; }
         private ResinResponseGenerator ResinResponseGenerator { get; }
-        private UserService UserService { get; }
-		private ResinService ResinService { get; }
+        private IUserService UserService { get; }
+		private IResinService ResinService { get; }
 
         public ResinCommandExecutor(
 			ILogger logger, 
 			GeneralResponseGenerator generalResponseGenerator,
 			ResinResponseGenerator resinResponseGenerator,
-			UserService userService,
-			ResinService resinService)
+			IUserService userService,
+			IResinService resinService)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             GeneralResponseGenerator = generalResponseGenerator 
