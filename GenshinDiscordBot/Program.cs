@@ -25,6 +25,9 @@ using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.CommandExecutors;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.Data.Sqlite;
+using System.Reflection;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace GenshinDiscordBotUI
 {
@@ -48,8 +51,8 @@ namespace GenshinDiscordBotUI
         static ILogger? Logger { get; set; } = null; 
         static IContainer CompositionRoot()
         {
+            var assemblies = GetProjectAssemblies();
             var sqliteConnectionString = BuildConfigurationRoot().GetConnectionString("Sqlite");
-            Console.WriteLine(sqliteConnectionString);
             var builder = new ContainerBuilder();
             // Microsoft.Extensions.DependencyInjection support
             builder.Populate(new ServiceCollection());
@@ -72,61 +75,60 @@ namespace GenshinDiscordBotUI
             builder.Register((c) => new SqliteConnection(sqliteConnectionString)).AsSelf().InstancePerLifetimeScope();
             // DAL
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
-            // Interceptors
-            builder.RegisterType<RetryInterceptor>().AsSelf().SingleInstance();
-            builder.RegisterType<LoggingInterceptor>().AsSelf().SingleInstance();
-            builder.RegisterType<ErrorHandlingInterceptor>().AsSelf().SingleInstance();
-            // Repositories
-            builder.RegisterType<UserRepository>().As<IUserRepository>()
-                .InstancePerLifetimeScope();
-            builder.RegisterType<ResinTrackingInfoRepository>().As<IResinTrackingInfoRepository>()
-                .InstancePerLifetimeScope();
-            // Services
-            builder.RegisterType<UserService>()
-                .As<IUserService>()
-                .InstancePerLifetimeScope()
-                .InterceptedBy(typeof(ErrorHandlingInterceptor))
-                .EnableInterfaceInterceptors();
-            builder.RegisterType<ResinService>()
-                .As<IResinService>()
-                .InstancePerLifetimeScope()
-                .InterceptedBy(typeof(ErrorHandlingInterceptor))
-                .EnableInterfaceInterceptors();
-            // Database Interaction Handlers
-            builder.RegisterType<UserSqliteDatabaseInteractionHandler>()
-                .As<IUserDatabaseInteractionHandler>()
-                .InstancePerLifetimeScope()
-                .InterceptedBy(typeof(LoggingInterceptor))
-                .InterceptedBy(typeof(ErrorHandlingInterceptor))
-                .InterceptedBy(typeof(RetryInterceptor))
-                .EnableInterfaceInterceptors();
-            builder.RegisterType<ResinSqliteDatabaseInteractionHandler>()
-                .As<IResinDatabaseInteractionHandler>()
-                .InstancePerLifetimeScope()
-                .InterceptedBy(typeof(LoggingInterceptor))
-                .InterceptedBy(typeof(ErrorHandlingInterceptor))
-                .InterceptedBy(typeof(RetryInterceptor))
-                .EnableInterfaceInterceptors();
             // Business Logic
             builder.RegisterType<ResinBusinessLogic>().SingleInstance();
             // Validation Logic
             builder.RegisterType<ResinCommandArgumentValidator>().SingleInstance();
             // Helpers
             builder.RegisterType<UserHelper>().InstancePerLifetimeScope();
-            // Error handlers
-            builder.RegisterType<LoggingErrorHandler>().AsSelf().SingleInstance();
             // Providers
             builder.RegisterType<DateTimeNowProvider>()
                 .As<IDateTimeProvider>().SingleInstance();
-            // Data Providers
-            builder.RegisterType<ResinDataProvider>().SingleInstance();
-            // Response generators
-            builder.RegisterType<GeneralResponseGenerator>().SingleInstance();
-            builder.RegisterType<UserResponseGenerator>().SingleInstance();
-            builder.RegisterType<ResinResponseGenerator>().SingleInstance();
-            // Command executors
-            builder.RegisterType<UserCommandExecutor>().InstancePerLifetimeScope();
-            builder.RegisterType<ResinCommandExecutor>().InstancePerLifetimeScope();
+
+            foreach (var assembly in assemblies)
+            {
+                // Interceptors
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("Interceptor"))
+                    .SingleInstance();
+                // Repositories
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("Repository"))
+                    .AsImplementedInterfaces()
+                    .InstancePerLifetimeScope();
+                // Response generators
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("ResponseGenerator"))
+                    .SingleInstance();
+                // Command executors
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("CommandExecutor"))
+                    .InstancePerLifetimeScope();
+                // Data Providers
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("DataProvider"))
+                    .SingleInstance();
+                // Error handlers
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("ErrorHandler"))
+                    .SingleInstance();
+                // Services
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("Service"))
+                    .AsImplementedInterfaces()
+                    .InstancePerLifetimeScope()
+                    .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                    .EnableInterfaceInterceptors();
+                // Database Interaction Handlers
+                builder.RegisterAssemblyTypes(assembly)
+                    .Where((t) => t.Name.EndsWith("SqliteDatabaseInteractionHandler"))
+                    .AsImplementedInterfaces()
+                    .InstancePerLifetimeScope()
+                    .InterceptedBy(typeof(LoggingInterceptor))
+                    .InterceptedBy(typeof(ErrorHandlingInterceptor))
+                    .InterceptedBy(typeof(RetryInterceptor))
+                    .EnableInterfaceInterceptors();
+            }
             return builder.Build();
         }
 
@@ -137,6 +139,20 @@ namespace GenshinDiscordBotUI
                 .AddJsonFile("appsettings.json", false, true);
             IConfigurationRoot root = builder.Build();
             return root;
+        }
+
+        static IEnumerable<Assembly> GetProjectAssemblies()
+        {
+            Assembly thisAssembly = typeof(Program).Assembly;
+            var assemblyNames = thisAssembly.GetReferencedAssemblies()
+                .Where((a) => a.Name.StartsWith("GenshinDiscordBot"));
+            List<Assembly> result = new List<Assembly>();
+            foreach (var i in assemblyNames)
+            {
+                result.Add(Assembly.Load(i));
+            }
+            result.Add(thisAssembly);
+            return result;
         }
 
         static async Task Main(string[] args)
