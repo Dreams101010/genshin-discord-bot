@@ -161,12 +161,10 @@ namespace GenshinDiscordBotUI
             {
                 var container = CompositionRoot();
                 Logger = container.Resolve<ILogger>();
-                using (var scope = container.BeginLifetimeScope())
-                {
-                    var databaseInitializer = scope.Resolve<DatabaseInitializer>();
-                    databaseInitializer.InitializeDb();
-                }
-                var app = container.Resolve<Application>();
+                using var scope = container.BeginLifetimeScope();
+                var databaseInitializer = scope.Resolve<DatabaseInitializer>();
+                databaseInitializer.InitializeDb();
+                var app = scope.Resolve<Application>();
                 await app.StartApplication();
                 Console.ReadLine();
             }
