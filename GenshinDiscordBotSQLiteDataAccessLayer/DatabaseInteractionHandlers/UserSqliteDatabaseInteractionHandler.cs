@@ -89,7 +89,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
 
         private async Task SetUserLocaleFuncAsync(ulong discordId, UserLocale newLocale)
         {
-            var user = await ReadUserAndCreateIfNotExistsAsync(discordId);
+            var user = await ReadUserAndCreateIfNotExistsFuncAsync(discordId);
             user.Locale = newLocale;
             await AddOrUpdateUserAsync(user);
         }
