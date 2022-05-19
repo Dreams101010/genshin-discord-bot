@@ -14,5 +14,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers
         public Task<User> ReadUserAndCreateIfNotExistsAsync(ulong discordId);
         public Task CreateUserIfNotExistsAsync(ulong discordId);
         public Task SetUserLocaleAsync(ulong discordId, UserLocale newLocale);
+        public Task SetRemindersStateAsync(ulong discordId, bool state);
     }
 }

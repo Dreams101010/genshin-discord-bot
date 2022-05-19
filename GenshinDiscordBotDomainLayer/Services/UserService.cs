@@ -34,5 +34,10 @@ namespace GenshinDiscordBotDomainLayer.Services
         {
             await UserDatabaseInteractionHandler.SetUserLocaleAsync(discordId, newLocale);
         }
+
+        public async Task SetRemindersStateAsync(ulong discordId, bool state)
+        {
+            await UserDatabaseInteractionHandler.SetRemindersStateAsync(discordId, state);
+        }
     }
 }

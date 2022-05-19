@@ -46,5 +46,25 @@ namespace GenshinDiscordBotUI.CommandModules
 			string response = await userCommandExecutor.SetLocaleAsync(id, localeToSet);
 			await ReplyAsync(response);
 		}
+
+		[Command("remindersOn")]
+		public async Task EnableRemindersAsync()
+        {
+			using var scope = Scope.BeginLifetimeScope();
+			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var id = Context.Message.Author.Id;
+			string response = await userCommandExecutor.EnableRemindersAsync(id);
+			await ReplyAsync(response);
+		}
+
+		[Command("remindersOff")]
+		public async Task DisableRemindersAsync()
+		{
+			using var scope = Scope.BeginLifetimeScope();
+			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var id = Context.Message.Author.Id;
+			string response = await userCommandExecutor.DisableRemindersAsync(id);
+			await ReplyAsync(response);
+		}
 	}
 }

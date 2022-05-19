@@ -14,6 +14,7 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
     {
         public ulong DiscordId { get; set; }
         public UserLocale Locale { get; set; }
+        public bool RemindersOptIn { get; set; }
 
         public static User GetDefaultUser()
         {
@@ -21,6 +22,7 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
             {
                 DiscordId = 0,
                 Locale = UserLocale.enGB,
+                RemindersOptIn = true,
             };
         }
 

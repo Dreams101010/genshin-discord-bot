@@ -28,6 +28,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
                 (
 	                discord_user_id numeric(20),
 	                user_locale text NOT NULL,
+	                reminders_opt_in boolean NOT NULL DEFAULT false,
 	                CONSTRAINT users_discord_user_id_pkey PRIMARY KEY (discord_user_id),
 	                CONSTRAINT user_locale_valid CHECK (user_locale IN ('ru-RU', 'en-GB'))
                 );

@@ -23,9 +23,10 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
         public async Task InsertOrUpdateUserAsync(User user)
         {
             var insertSql = @"INSERT OR IGNORE INTO users 
-                        (discord_user_id, user_locale) 
-                        VALUES (@DiscordId, @Locale)";
-            var updateSql = @"UPDATE users SET user_locale = @Locale
+                        (discord_user_id, user_locale, reminders_opt_in) 
+                        VALUES (@DiscordId, @Locale, @RemindersOptIn)";
+            var updateSql = @"UPDATE users SET user_locale = @Locale, 
+                                               reminders_opt_in = @RemindersOptIn
                             WHERE discord_user_id = @DiscordId";
             var userDataModel = new UserDataModel(user);
             int affectedByInsert = await Connection.ExecuteAsync(insertSql, userDataModel);
@@ -43,7 +44,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
         public async Task<User?> GetUserByDiscordIdAsync(ulong id)
         {
             var selectSql = @"SELECT 
-                discord_user_id DiscordId, user_locale Locale
+                discord_user_id DiscordId, user_locale Locale, reminders_opt_in RemindersOptIn 
                 FROM users WHERE discord_user_id = @DiscordId";
             UserDataModel user = await Connection.QueryFirstOrDefaultAsync<UserDataModel>(
                 selectSql, new { DiscordId = id });

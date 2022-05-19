@@ -19,7 +19,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 
         public string GetUserSettingsList(User user)
         {
-            return string.Format("Locale: {0}", user.Locale);
+            return string.Format("Locale: {0}, Reminders state: {1}", user.Locale, user.RemindersOptIn);
         }
 
         public string GetListOfPossibleLocales()
@@ -37,6 +37,16 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         public string GetLocaleSuccessMessage()
         {
             return "Locale has been set.";
+        }
+
+        public string GetEnableRemindersSuccessMessage()
+        {
+            return "Reminders have been enabled.";
+        }
+
+        public string GetDisableRemindersSuccessMessage()
+        {
+            return "Reminders have been disabled.";
         }
     }
 }

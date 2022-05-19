@@ -94,6 +94,19 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
             await AddOrUpdateUserAsync(user);
         }
 
+        public async Task SetRemindersStateAsync(ulong discordId, bool state)
+        {
+            await ExecuteInTransactionAsync(
+                async () => await SetRemindersStateFuncAsync(discordId, state));
+        }
+
+        private async Task SetRemindersStateFuncAsync(ulong discordId, bool state)
+        {
+            var user = await ReadUserAndCreateIfNotExistsFuncAsync(discordId);
+            user.RemindersOptIn = state;
+            await AddOrUpdateUserAsync(user);
+        }
+
         private async Task CreateDefaultUserWithIdAsync(ulong discordId)
         {
             User newUser = User.GetDefaultUser();
