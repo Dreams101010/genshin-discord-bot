@@ -38,5 +38,15 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
         {
             return hours * 60 * 60;
         }
+
+        public DateTime GetUtcTimeFromUnixSeconds(ulong unixSeconds)
+        {
+            return DateTime.UnixEpoch.AddSeconds(unixSeconds);
+        }
+
+        public DateTime GetLocalTimeFromUnixSeconds(ulong unixSeconds)
+        {
+            return GetUtcTimeFromUnixSeconds(unixSeconds).ToLocalTime();
+        }
     }
 }
