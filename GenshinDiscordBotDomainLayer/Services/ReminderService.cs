@@ -57,6 +57,33 @@ namespace GenshinDiscordBotDomainLayer.Services
             return await ReminderDatabaseInteractionHandler.RemoveRemindersForUserAsync(reminderInfo);
         }
 
+        public async Task UpdateOrCreateCheckInReminderAsync(DiscordMessageContext messageContext)
+        {
+            var message = await ReminderMessageBusinessLogic.GetCheckInReminderMessage(messageContext.UserDiscordId);
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Check-in reminder",
+                Message = message,
+                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
+                ReminderTime = DateTimeBusinessLogic.GetReminderTimeAsUnixSeconds(new TimeSpan(24, 0, 0)),
+                Recurrent = true,
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
+        public async Task<bool> RemoveCheckInRemindersForUserAsync(DiscordMessageContext messageContext)
+        {
+            ReminderRemoveModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                CategoryName = "Check-in reminder",
+            };
+            return await ReminderDatabaseInteractionHandler.RemoveRemindersForUserAsync(reminderInfo);
+        }
+
         public async Task<List<Reminder>> GetExpiredRemindersAsync(ulong timeInSeconds)
         {
             var reminders = await ReminderDatabaseInteractionHandler

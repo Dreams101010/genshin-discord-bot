@@ -44,6 +44,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 var expiredReminders = await reminderService.GetExpiredRemindersAsync(currentTime);
                 foreach (var reminder in expiredReminders)
                 {
+                    Console.WriteLine(currentTime - reminder.ReminderTime);
                     if (currentTime - reminder.ReminderTime < 300)
                     {
                         await SendReminderAsync(reminder);

@@ -63,5 +63,42 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 return errorMessage;
             }
         }
+
+        public async Task<string> UpdateOrCreateCheckInReminderAsync(DiscordMessageContext messageContext)
+        {
+            try
+            {
+                await ReminderService.UpdateOrCreateCheckInReminderAsync(messageContext);
+                return ReminderResponseGenerator.GetCheckInReminderSetupSuccessMessage();
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> RemoveCheckInRemindersForUserAsync(DiscordMessageContext messageContext)
+        {
+            try
+            {
+                var result = await ReminderService.RemoveCheckInRemindersForUserAsync(messageContext);
+                if (result)
+                {
+                    return ReminderResponseGenerator.GetCheckInReminderCancelSuccessMessage();
+                }
+                else
+                {
+                    return ReminderResponseGenerator.GetCheckInReminderCancelNotFoundMessage();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
     }
 }
