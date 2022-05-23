@@ -40,17 +40,25 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                 @Message, @Recurrent);
             ";
             int affectedByUpdate = await Connection.ExecuteAsync(updateSql, reminderInfo);
-            Console.WriteLine(affectedByUpdate);
             if (affectedByUpdate == 0)
             {
-                Console.WriteLine("insert");
                 int affectedByInsert = await Connection.ExecuteAsync(insertSql, reminderInfo);
                 if (affectedByInsert == 0)
                 {
                     throw new Exception("Database error while updating rows: affected mismatch");
                 }
-                Console.WriteLine(affectedByInsert);
             }
+        }
+
+        public async Task<bool> RemoveRemindersForUserAsync(ReminderRemoveModel reminderInfo)
+        {
+            string removeSql = @"
+                DELETE FROM reminders 
+                WHERE user_discord_id = @UserDiscordId
+                AND category_id = (SELECT id FROM reminder_categories WHERE name = @CategoryName);
+            ";
+            int affectedCount = await Connection.ExecuteAsync(removeSql, reminderInfo);
+            return affectedCount > 0;
         }
     }
 }

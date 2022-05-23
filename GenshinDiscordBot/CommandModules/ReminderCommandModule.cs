@@ -35,5 +35,21 @@ namespace GenshinDiscordBotUI.CommandModules
                 .UpdateOrCreateArtifactReminderAsync(context);
             await ReplyAsync(response);
         }
+
+        [Command("remindArtifactsCancel")]
+        public async Task CancelArtifactRemindersForUser()
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .RemoveArtifactRemindersForUserAsync(context);
+            await ReplyAsync(response);
+        }
     }
 }

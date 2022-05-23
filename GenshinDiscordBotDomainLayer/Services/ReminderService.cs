@@ -45,5 +45,15 @@ namespace GenshinDiscordBotDomainLayer.Services
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
         }
+
+        public async Task<bool> RemoveArtifactRemindersForUserAsync(DiscordMessageContext messageContext)
+        {
+            ReminderRemoveModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                CategoryName = "Artifact reminder",
+            };
+            return await ReminderDatabaseInteractionHandler.RemoveRemindersForUserAsync(reminderInfo);
+        }
     }
 }

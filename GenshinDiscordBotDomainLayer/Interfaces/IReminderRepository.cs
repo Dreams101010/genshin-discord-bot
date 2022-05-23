@@ -10,5 +10,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces
     public interface IReminderRepository
     {
         public Task UpdateOrInsertReminderAsync(ReminderInsertModel reminderInfo);
+        public Task<bool> RemoveRemindersForUserAsync(ReminderRemoveModel reminderInfo);
     }
 }

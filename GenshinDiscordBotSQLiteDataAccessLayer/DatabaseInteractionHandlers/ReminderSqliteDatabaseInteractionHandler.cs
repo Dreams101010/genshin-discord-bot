@@ -29,5 +29,15 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
         {
             await ReminderRepository.UpdateOrInsertReminderAsync(reminderInfo);
         }
+
+        public async Task<bool> RemoveRemindersForUserAsync(ReminderRemoveModel reminderInfo)
+        {
+            return await ExecuteInTransactionAsync(async () => await RemoveRemindersForUserFuncAsync(reminderInfo));
+        }
+
+        private async Task<bool> RemoveRemindersForUserFuncAsync(ReminderRemoveModel reminderInfo)
+        {
+            return await ReminderRepository.RemoveRemindersForUserAsync(reminderInfo);
+        }
     }
 }

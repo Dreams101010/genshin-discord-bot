@@ -22,8 +22,6 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             var utcNow = now.ToUniversalTime();
             var utcNowWithoutMilliseconds = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second);
             var diff = utcNowWithoutMilliseconds - DateTime.UnixEpoch;
-            Console.WriteLine(diff.TotalSeconds);
-            Console.WriteLine(Convert.ToUInt64(diff.TotalSeconds));
             return Convert.ToUInt64(diff.TotalSeconds);
         }
 

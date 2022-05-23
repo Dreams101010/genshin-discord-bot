@@ -41,5 +41,27 @@ namespace GenshinDiscordBotUI.CommandExecutors
 				return errorMessage;
 			}
 		}
+
+        public async Task<string> RemoveArtifactRemindersForUserAsync(DiscordMessageContext messageContext)
+        {
+            try
+            {
+                var result = await ReminderService.RemoveArtifactRemindersForUserAsync(messageContext);
+                if (result)
+                {
+                    return ReminderResponseGenerator.GetArtifactReminderCancelSuccessMessage();
+                }
+                else
+                {
+                    return ReminderResponseGenerator.GetArtifactReminderCancelNotFoundMessage();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
     }
 }

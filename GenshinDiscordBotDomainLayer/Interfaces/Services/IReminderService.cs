@@ -10,5 +10,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.Services
     public interface IReminderService
     {
         public Task UpdateOrCreateArtifactReminderAsync(DiscordMessageContext messageContext);
+        public Task<bool> RemoveArtifactRemindersForUserAsync(DiscordMessageContext messageContext);
     }
 }
