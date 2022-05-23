@@ -40,7 +40,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 CategoryName = "Artifact reminder",
                 Message = message,
                 Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
-                ReminderTime = DateTimeBusinessLogic.GetCurrentUtcTimeAsUnixSeconds(),
+                ReminderTime = DateTimeBusinessLogic.GetReminderTimeAsUnixSeconds(new TimeSpan(24, 0, 0)),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);

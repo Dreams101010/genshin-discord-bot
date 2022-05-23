@@ -16,6 +16,15 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             DateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
+        public ulong GetReminderTimeAsUnixSeconds(TimeSpan duration)
+        {
+            TimeSpan durationWithoutMilliseconds = 
+                new(duration.Days, duration.Hours, duration.Minutes, duration.Seconds, 0);
+            ulong durationInSeconds = Convert.ToUInt64(duration.TotalSeconds);
+            ulong currentTimeAsUnixSeconds = GetCurrentUtcTimeAsUnixSeconds();
+            return currentTimeAsUnixSeconds + durationInSeconds;
+        }
+
         public ulong GetCurrentUtcTimeAsUnixSeconds()
         {
             var now = DateTimeProvider.GetDateTime();
