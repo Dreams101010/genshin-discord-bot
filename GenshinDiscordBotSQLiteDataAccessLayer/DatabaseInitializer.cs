@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Serilog;
+using Dapper;
+using GenshinDiscordBotDomainLayer.BusinessLogic;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer
 {
@@ -12,12 +14,15 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
     {
         private ILogger Logger { get; }
         private SqliteConnection Connection { get; }
+        private DateTimeBusinessLogic DateTimeBusinessLogic { get; }
 
         public DatabaseInitializer(ILogger logger,
-            SqliteConnection connection)
+            SqliteConnection connection,
+            DateTimeBusinessLogic dateTimeBusinessLogic)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             Connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            DateTimeBusinessLogic = dateTimeBusinessLogic ?? throw new ArgumentNullException(nameof(dateTimeBusinessLogic));
         }
 
         void InitializeTableStructure()
@@ -86,6 +91,17 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 	                CONSTRAINT rolls_since_five_star_valid CHECK (rolls_since_five_star >= 0 AND rolls_since_five_star <= 200)
                 );";
             command.ExecuteNonQuery();
+            // Fast-forward delayed reminders
+            var fastForwardSql = @"
+                UPDATE reminders 
+                SET reminder_time = reminder_time + round(((@CurrentTime - reminder_time) / interval) - 0.5)  * interval 
+                WHERE reminder_time + interval < @CurrentTime AND recurrent = true
+            ";
+            Connection.Execute(fastForwardSql, new 
+                { 
+                    CurrentTime = DateTimeBusinessLogic.GetCurrentUtcTimeAsUnixSeconds()
+                }
+            );
             Connection.Close();
         }
 
