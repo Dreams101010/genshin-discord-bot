@@ -77,6 +77,8 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<DatabaseInitializer>().SingleInstance();
             // Business Logic
             builder.RegisterType<ResinBusinessLogic>().SingleInstance();
+            builder.RegisterType<ReminderMessageBusinessLogic>().SingleInstance();
+            builder.RegisterType<DateTimeBusinessLogic>().SingleInstance();
             // Validation Logic
             builder.RegisterType<ResinCommandArgumentValidator>().SingleInstance();
             // Helpers

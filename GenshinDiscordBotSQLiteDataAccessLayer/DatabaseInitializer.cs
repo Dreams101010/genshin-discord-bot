@@ -44,20 +44,33 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 	                CONSTRAINT resin_count_valid CHECK (resin_count >= 0 AND resin_count <= 160)
                 );";
             command.ExecuteNonQuery();
-            command.CommandText = @"CREATE TABLE IF NOT EXISTS reminders
+            command.CommandText = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='reminder_categories';";
+            long count = (long)command.ExecuteScalar();
+            if (count == 0)
+            {
+                command.CommandText = @"CREATE TABLE IF NOT EXISTS reminder_categories
                 (
-	                id text,
+	                id integer PRIMARY KEY,
+	                name text UNIQUE NOT NULL
+                );";
+                command.ExecuteNonQuery();
+                command.CommandText = @"INSERT INTO reminder_categories (name) VALUES ('Artifact reminder')";
+                command.ExecuteNonQuery();
+            }
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS reminders 
+                (
+	                id integer PRIMARY KEY,
 	                guild_id numeric(20) NOT NULL,
 	                channel_id numeric(20) NOT NULL, 
 	                user_discord_id numeric(20) NOT NULL,
-	                init_time text NOT NULL,
-	                duration text NOT NULL,
-	                description text NOT NULL,
+	                interval numeric(20) NOT NULL,
+	                reminder_time numeric(20) NOT NULL,
+	                category_id integer NOT NULL, 
+	                message text NOT NULL,
 	                recurrent boolean NOT NULL,
-	                cancelled boolean NOT NULL,
-	                UNIQUE (user_discord_id, description),
-	                PRIMARY KEY(id),
- 	                FOREIGN KEY (user_discord_id) REFERENCES users(discord_user_id)
+	                UNIQUE (user_discord_id, message),
+ 	                FOREIGN KEY (user_discord_id) REFERENCES users(discord_user_id),
+	                FOREIGN KEY (category_id) REFERENCES reminder_categories(id)
                 );";
             command.ExecuteNonQuery();
             command.CommandText = @"CREATE TABLE IF NOT EXISTS pity_tracking 
