@@ -8,6 +8,7 @@ using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using GenshinDiscordBotDomainLayer.DomainModels;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 {
@@ -59,6 +60,39 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             ";
             int affectedCount = await Connection.ExecuteAsync(removeSql, reminderInfo);
             return affectedCount > 0;
+        }
+
+        public async Task<List<Reminder>> GetRemindersPastTimeAsync(ulong timeInSeconds)
+        {
+            string sql = @"
+                SELECT users.discord_user_id UserDiscordId, user_locale UserLocale, 
+                reminders_opt_in RemindersOptInFlag, guild_id GuildId, channel_id ChannelId, 
+                interval Interval, reminder_time ReminderTime, name CategoryName, 
+                message Message, recurrent RecurrentFlag
+                FROM users 
+                INNER JOIN reminders ON users.discord_user_id = reminders.user_discord_id 
+                INNER JOIN reminder_categories ON reminders.category_id = reminder_categories.id
+                WHERE reminder_time < @Time AND reminders_opt_in = true;
+                ";
+            return (await Connection.QueryAsync<ReminderDataModel>
+                (sql, new { Time = timeInSeconds })).Select((x => x.ToReminderDomain())).ToList();
+        }
+
+        public async Task UpdateExpiredRecurrentRemindersAsync(ulong currentTimeInSeconds)
+        {
+            string sql = @"
+                UPDATE reminders SET reminder_time = reminder_time + interval 
+                WHERE reminder_time < @CurrentTime AND recurrent = true;
+            ";
+            await Connection.ExecuteAsync(sql, new { CurrentTime = currentTimeInSeconds });
+        }
+
+        public async Task RemoveExpiredNonRecurrentRemindersAsync(ulong currentTimeInSeconds)
+        {
+            string sql = @"
+                DELETE FROM reminders WHERE reminder_time < @CurrentTime AND recurrent = false;
+            ";
+            await Connection.ExecuteAsync(sql, new { CurrentTime = currentTimeInSeconds });
         }
     }
 }

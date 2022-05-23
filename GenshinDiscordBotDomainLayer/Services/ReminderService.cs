@@ -8,6 +8,7 @@ using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
+using GenshinDiscordBotDomainLayer.DomainModels;
 
 namespace GenshinDiscordBotDomainLayer.Services
 {
@@ -54,6 +55,23 @@ namespace GenshinDiscordBotDomainLayer.Services
                 CategoryName = "Artifact reminder",
             };
             return await ReminderDatabaseInteractionHandler.RemoveRemindersForUserAsync(reminderInfo);
+        }
+
+        public async Task<List<Reminder>> GetExpiredRemindersAsync(ulong timeInSeconds)
+        {
+            var reminders = await ReminderDatabaseInteractionHandler
+                .GetRemindersPastTimeAsync(timeInSeconds);
+            return reminders;
+        }
+
+        public async Task UpdateExpiredRecurrentRemindersAsync(ulong timeInSeconds)
+        {
+            await ReminderDatabaseInteractionHandler.UpdateExpiredRecurrentRemindersAsync(timeInSeconds);
+        }
+
+        public async Task RemoveExpiredNonRecurrentRemindersAsync(ulong timeInSeconds)
+        {
+            await ReminderDatabaseInteractionHandler.RemoveExpiredNonRecurrentRemindersAsync(timeInSeconds);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Discord.WebSocket;
@@ -40,9 +41,9 @@ namespace GenshinDiscordBotUI
             Bot = bot ?? throw new ArgumentNullException(nameof(bot));
         }
 
-        public async Task StartApplication()
+        public async Task StartApplication(CancellationToken token)
         {
-            await Bot.StartBot();
+            await Bot.StartBot(token);
         }
     }
     class Program
@@ -65,6 +66,8 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<DiscordSocketClient>().SingleInstance();
             builder.Register(c => new CommandService()).InstancePerLifetimeScope();
             builder.RegisterType<CommandHandler>().InstancePerLifetimeScope();
+            // Bot helpers
+            builder.RegisterType<BotMessageSender>().As<IBotMessageSender>().SingleInstance();
             // Logger
             builder.Register<ILogger>(
                 c => new LoggerConfiguration()
@@ -167,7 +170,9 @@ namespace GenshinDiscordBotUI
                 var databaseInitializer = scope.Resolve<DatabaseInitializer>();
                 databaseInitializer.InitializeDb();
                 var app = scope.Resolve<Application>();
-                await app.StartApplication();
+                CancellationTokenSource cancellationTokenSource = new();
+                CancellationToken token = cancellationTokenSource.Token;
+                await app.StartApplication(token);
                 Console.ReadLine();
             }
             catch (Exception e)

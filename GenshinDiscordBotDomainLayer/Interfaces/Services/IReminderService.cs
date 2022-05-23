@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
 
 namespace GenshinDiscordBotDomainLayer.Interfaces.Services
@@ -11,5 +12,9 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.Services
     {
         public Task UpdateOrCreateArtifactReminderAsync(DiscordMessageContext messageContext);
         public Task<bool> RemoveArtifactRemindersForUserAsync(DiscordMessageContext messageContext);
+        public Task<List<Reminder>> GetExpiredRemindersAsync(ulong timeInSeconds);
+        public Task UpdateExpiredRecurrentRemindersAsync(ulong timeInSeconds);
+        public Task RemoveExpiredNonRecurrentRemindersAsync(ulong currentTimeInSeconds);
+
     }
 }

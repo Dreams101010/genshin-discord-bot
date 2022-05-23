@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
@@ -10,7 +11,8 @@ using Microsoft.Data.Sqlite;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
 {
-    public class ReminderSqliteDatabaseInteractionHandler : SqliteDatabaseInteractionHandler, IReminderDatabaseInteractionHandler
+    public class ReminderSqliteDatabaseInteractionHandler 
+        : SqliteDatabaseInteractionHandler, IReminderDatabaseInteractionHandler
     {
         private IReminderRepository ReminderRepository { get; }
 
@@ -38,6 +40,36 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
         private async Task<bool> RemoveRemindersForUserFuncAsync(ReminderRemoveModel reminderInfo)
         {
             return await ReminderRepository.RemoveRemindersForUserAsync(reminderInfo);
+        }
+
+        public async Task<List<Reminder>> GetRemindersPastTimeAsync(ulong time)
+        {
+            return await ExecuteInTransactionAsync(async () => await GetRemindersPastTimeFuncAsync(time));
+        }
+
+        private async Task<List<Reminder>> GetRemindersPastTimeFuncAsync(ulong time)
+        {
+            return await ReminderRepository.GetRemindersPastTimeAsync(time);
+        }
+
+        public async Task UpdateExpiredRecurrentRemindersAsync(ulong timeInSeconds)
+        {
+            await ExecuteInTransactionAsync(async () => await UpdateExpiredRecurrentRemindersFuncAsync(timeInSeconds));
+        }
+
+        private async Task UpdateExpiredRecurrentRemindersFuncAsync(ulong timeInSeconds)
+        {
+            await ReminderRepository.UpdateExpiredRecurrentRemindersAsync(timeInSeconds);
+        }
+
+        public async Task RemoveExpiredNonRecurrentRemindersAsync(ulong currentTimeInSeconds)
+        {
+            await ExecuteInTransactionAsync(async () => await RemoveExpiredNonRecurrentRemindersFuncAsync(currentTimeInSeconds));
+        }
+
+        public async Task RemoveExpiredNonRecurrentRemindersFuncAsync(ulong currentTimeInSeconds)
+        {
+            await ReminderRepository.RemoveExpiredNonRecurrentRemindersAsync(currentTimeInSeconds);
         }
     }
 }
