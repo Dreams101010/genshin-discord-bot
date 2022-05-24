@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
+using GenshinDiscordBotDomainLayer.Helpers;
 using GenshinDiscordBotUI.ResponseGenerators;
 using Serilog;
 
@@ -16,17 +17,20 @@ namespace GenshinDiscordBotUI.CommandExecutors
         private ILogger Logger { get; }
         private GeneralResponseGenerator GeneralResponseGenerator { get; set; }
         private ReminderResponseGenerator ReminderResponseGenerator { get; set; }
+        public ReminderConversionHelper ReminderConversionHelper { get; }
         private IUserService UserService { get; set; }
 
         public ReminderCommandExecutor(IReminderService reminderService, ILogger logger, 
             GeneralResponseGenerator generalResponseGenerator,
             ReminderResponseGenerator reminderResponseGenerator,
+            ReminderConversionHelper reminderConversionHelper,
             IUserService userService)
         {
             ReminderService = reminderService ?? throw new ArgumentNullException(nameof(reminderService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             GeneralResponseGenerator = generalResponseGenerator ?? throw new ArgumentNullException(nameof(generalResponseGenerator));
             ReminderResponseGenerator = reminderResponseGenerator ?? throw new ArgumentNullException(nameof(reminderResponseGenerator));
+            ReminderConversionHelper = reminderConversionHelper ?? throw new ArgumentNullException(nameof(reminderConversionHelper));
             UserService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
@@ -103,6 +107,25 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 {
                     return ReminderResponseGenerator.GetCheckInReminderCancelNotFoundMessage(userLocale);
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> GetRemindersForUserAsync(ulong userDiscordId)
+        {
+            try
+            {
+                var id = userDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var reminderList = await ReminderService.GetRemindersForUserAsync(id);
+                var reminderResultModelList = ReminderConversionHelper.GetReminderResultModelList(reminderList);
+                var result = ReminderResponseGenerator.GetReminderListString(userLocale, reminderResultModelList);
+                return result;
             }
             catch (Exception e)
             {

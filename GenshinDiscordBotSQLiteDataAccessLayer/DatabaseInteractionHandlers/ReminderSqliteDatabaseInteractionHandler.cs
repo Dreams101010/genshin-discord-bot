@@ -11,7 +11,7 @@ using Microsoft.Data.Sqlite;
 
 namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
 {
-    public class ReminderSqliteDatabaseInteractionHandler 
+    public class ReminderSqliteDatabaseInteractionHandler
         : SqliteDatabaseInteractionHandler, IReminderDatabaseInteractionHandler
     {
         private IReminderRepository ReminderRepository { get; }
@@ -70,6 +70,16 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
         public async Task RemoveExpiredNonRecurrentRemindersFuncAsync(ulong currentTimeInSeconds)
         {
             await ReminderRepository.RemoveExpiredNonRecurrentRemindersAsync(currentTimeInSeconds);
+        }
+
+        public async Task<List<Reminder>> GetRemindersForUserAsync(ulong userDiscordId)
+        {
+            return await ExecuteInTransactionAsync(async () => await GetRemindersForUserFuncAsync(userDiscordId));
+        }
+
+        private async Task<List<Reminder>> GetRemindersForUserFuncAsync(ulong userDiscordId)
+        {
+            return await ReminderRepository.GetRemindersForUserAsync(userDiscordId);
         }
     }
 }

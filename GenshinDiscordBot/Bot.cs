@@ -40,7 +40,22 @@ namespace GenshinDiscordBotUI
             await CommandHandler.InstallCommandsAsync();
             await Client.LoginAsync(TokenType.Bot, Token);
             await Client.StartAsync();
-            await ReminderDispatcherService.DispatcherAsync(token);
+            _ = ReminderDispatcherService.DispatcherAsync(token);
+            await CancellationLoop(token);
+            await Client.LogoutAsync();
+            await Client.DisposeAsync();
+        }
+
+        private async Task CancellationLoop(CancellationToken token)
+        {
+            while (true)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+                await Task.Delay(5000, CancellationToken.None);
+            }
         }
 
         private Task Log(LogMessage msg)

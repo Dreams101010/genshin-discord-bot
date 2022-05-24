@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.Localization;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
@@ -80,6 +81,43 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
             return format;
+        }
+
+        internal string GetReminderListString(UserLocale locale, List<ReminderResultModel> reminderList)
+        {
+            StringBuilder builder = new StringBuilder();
+            if (reminderList.Count > 0)
+            {
+                string header = locale switch
+                {
+                    UserLocale.enGB => Localization.English["Reminder"]["ReminderListHeader"],
+                    UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderListHeader"],
+                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+                };
+                string entry = locale switch
+                {
+                    UserLocale.enGB => Localization.English["Reminder"]["ReminderListEntry"],
+                    UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderListEntry"],
+                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+                };
+                builder.AppendLine(header);
+                foreach (var reminder in reminderList)
+                {
+                    builder.AppendLine(string.Format(entry, reminder.CategoryName,
+                        reminder.SetupTime, reminder.Interval, reminder.ReminderTime));
+                }
+            }
+            else
+            {
+                string emptyMessage = locale switch
+                {
+                    UserLocale.enGB => Localization.English["Reminder"]["ReminderListEmpty"],
+                    UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderListEmpty"],
+                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+                };
+                builder.AppendLine(emptyMessage);
+            }
+            return builder.ToString();
         }
     }
 }

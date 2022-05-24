@@ -83,5 +83,17 @@ namespace GenshinDiscordBotUI.CommandModules
                 .RemoveCheckInRemindersForUserAsync(context);
             await ReplyAsync(response);
         }
+
+        [Command("listReminders")]
+        [Alias("reminders")]
+        public async Task PrintRemindersForUser()
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var id = Context.Message.Author.Id;
+            string response = await reminderCommandExecutor
+                .GetRemindersForUserAsync(id);
+            await ReplyAsync(response);
+        }
     }
 }

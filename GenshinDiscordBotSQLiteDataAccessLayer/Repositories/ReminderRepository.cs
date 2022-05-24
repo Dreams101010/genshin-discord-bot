@@ -94,5 +94,21 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             ";
             await Connection.ExecuteAsync(sql, new { CurrentTime = currentTimeInSeconds });
         }
+
+        public async Task<List<Reminder>> GetRemindersForUserAsync(ulong userDiscordId)
+        {
+            string sql = @"
+                SELECT users.discord_user_id UserDiscordId, user_locale UserLocale, 
+                reminders_opt_in RemindersOptInFlag, guild_id GuildId, channel_id ChannelId, 
+                interval Interval, reminder_time ReminderTime, name CategoryName, 
+                message Message, recurrent RecurrentFlag
+                FROM users 
+                INNER JOIN reminders ON users.discord_user_id = reminders.user_discord_id 
+                INNER JOIN reminder_categories ON reminders.category_id = reminder_categories.id
+                WHERE discord_user_id = @UserDiscordId;
+            ";
+            return (await Connection.QueryAsync<ReminderDataModel>
+                    (sql, new { UserDiscordId = userDiscordId })).Select((x => x.ToReminderDomain())).ToList();
+        }
     }
 }

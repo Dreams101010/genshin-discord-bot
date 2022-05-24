@@ -100,5 +100,10 @@ namespace GenshinDiscordBotDomainLayer.Services
         {
             await ReminderDatabaseInteractionHandler.RemoveExpiredNonRecurrentRemindersAsync(timeInSeconds);
         }
+
+        public async Task<List<Reminder>> GetRemindersForUserAsync(ulong userDiscordId)
+        {
+            return await ReminderDatabaseInteractionHandler.GetRemindersForUserAsync(userDiscordId);
+        }
     }
 }

@@ -17,6 +17,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.Services
         public Task<List<Reminder>> GetExpiredRemindersAsync(ulong timeInSeconds);
         public Task UpdateExpiredRecurrentRemindersAsync(ulong timeInSeconds);
         public Task RemoveExpiredNonRecurrentRemindersAsync(ulong currentTimeInSeconds);
-
+        public Task<List<Reminder>> GetRemindersForUserAsync(ulong userDiscordId);
     }
 }

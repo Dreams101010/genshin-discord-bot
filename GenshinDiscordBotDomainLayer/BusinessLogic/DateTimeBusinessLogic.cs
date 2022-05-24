@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.Interfaces;
+using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotDomainLayer.ResultModels;
 
 namespace GenshinDiscordBotDomainLayer.BusinessLogic
 {
