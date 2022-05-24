@@ -197,12 +197,22 @@ namespace GenshinDiscordBotUI
                 var app = scope.Resolve<Application>();
                 CancellationTokenSource cancellationTokenSource = new();
                 CancellationToken token = cancellationTokenSource.Token;
-                await app.StartApplication(token);
+                Logger?.Information("Application starting...");
+                var appTask = app.StartApplication(token);
+                Console.WriteLine("Bot will be online shortly. Press ENTER to shut the application down.");
                 Console.ReadLine();
+                Logger?.Information("Application shutting down...");
+                cancellationTokenSource.Cancel();
+                await appTask; // await app to finish shutting down properly
+                Logger?.Information("Application has shut down.");
+            }
+            catch (OperationCanceledException)
+            {
+                Logger?.Information("Application shutting down...");
             }
             catch (Exception e)
             {
-                Logger?.Error($"Unhandled exception in Main : {e}");
+                Logger?.Error("Unhandled exception in Main : {e}");
             }
         }
     }

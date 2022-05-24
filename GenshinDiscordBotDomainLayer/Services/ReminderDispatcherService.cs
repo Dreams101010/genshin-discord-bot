@@ -36,35 +36,39 @@ namespace GenshinDiscordBotDomainLayer.Services
 
         public async Task DispatcherAsync(CancellationToken cancellation)
         {
-            await Task.Delay(10000, cancellation); // initial delay
-            while (true)
+            try
             {
-                if (cancellation.IsCancellationRequested)
+                await Task.Delay(10000, cancellation); // initial delay
+                while (true)
                 {
-                    break;
-                }
-                var currentTime = DateTimeBusinessLogic.GetCurrentUtcTimeAsUnixSeconds();
-                using var scope = Scope.BeginLifetimeScope();
-                var reminderService = scope.Resolve<IReminderService>();
-                var expiredReminders = await reminderService.GetExpiredRemindersAsync(currentTime);
-                foreach (var reminder in expiredReminders)
-                {
-                    if (currentTime - reminder.ReminderTime < 300)
+                    if (cancellation.IsCancellationRequested)
                     {
-                        await SendReminderAsync(reminder);
+                        break;
                     }
-                    else
+                    var currentTime = DateTimeBusinessLogic.GetCurrentUtcTimeAsUnixSeconds();
+                    using var scope = Scope.BeginLifetimeScope();
+                    var reminderService = scope.Resolve<IReminderService>();
+                    var expiredReminders = await reminderService.GetExpiredRemindersAsync(currentTime);
+                    foreach (var reminder in expiredReminders)
                     {
-                        await SendDelayedReminderAsync(reminder);
+                        if (currentTime - reminder.ReminderTime < 300)
+                        {
+                            await SendReminderAsync(reminder);
+                        }
+                        else
+                        {
+                            await SendDelayedReminderAsync(reminder);
+                        }
                     }
+                    if (expiredReminders.Count > 0)
+                    {
+                        await reminderService.UpdateExpiredRecurrentRemindersAsync(currentTime);
+                        await reminderService.RemoveExpiredNonRecurrentRemindersAsync(currentTime);
+                    }
+                    await Task.Delay(120000, cancellation);
                 }
-                if (expiredReminders.Count > 0)
-                {
-                    await reminderService.UpdateExpiredRecurrentRemindersAsync(currentTime);
-                    await reminderService.RemoveExpiredNonRecurrentRemindersAsync(currentTime);
-                }
-                await Task.Delay(90000, cancellation);
             }
+            catch (OperationCanceledException) { }
         }
 
         private async Task SendReminderAsync(Reminder reminder)
