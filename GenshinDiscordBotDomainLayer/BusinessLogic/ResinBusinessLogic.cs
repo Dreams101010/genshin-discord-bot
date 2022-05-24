@@ -26,13 +26,11 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
         {
             var utcNow = DateTimeProvider.GetDateTime().ToUniversalTime();
             int currentCount = GetResinCount(resinInfo, utcNow);
-            TimeSpan timeToCompletion = GetTimeToFullResin(currentCount);
-            DateTime completionTime = GetCompletionTime(user, utcNow, timeToCompletion);
+            Dictionary<int, TimeToResin> completionTimes = GetCompletionTimes(currentCount, utcNow);
             var result = new ResinInfoResultModel
             {
                 CurrentCount = currentCount,
-                TimeToFullResin = timeToCompletion,
-                CompletionTime = completionTime,
+                CompletionTimes = completionTimes,
             };
             return result;
         }
@@ -52,25 +50,46 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
                 differenceInMinutesFromStartToNow / DataProvider.MinutesPerOneResin);
         }
 
-        private TimeSpan GetTimeToFullResin(int currentCount)
+        private TimeSpan GetTimeSpanToResinCount(int currentCount, int desiredCount)
         {
-            if (currentCount >= DataProvider.MaxResin) // is complete
+            if (desiredCount < 0 || desiredCount > DataProvider.MaxResin)
             {
-                return new TimeSpan(0, 0, 0);
+                throw new ArgumentOutOfRangeException(nameof(desiredCount));
+            }
+            if (currentCount >= DataProvider.MaxResin 
+                || desiredCount <= currentCount) // is complete
+            {
+                return TimeSpan.Zero;
             }
             else
             {
-                int resinCountDiff = DataProvider.MaxResin - currentCount;
+                int resinCountDiff = desiredCount - currentCount;
                 // must be a better way to initialize this
-                return new TimeSpan(0, DataProvider.MinutesPerOneResin, 0)
+                return TimeSpan.FromMinutes(DataProvider.MinutesPerOneResin)
                     .Multiply(resinCountDiff);
             }
         }
 
-        private DateTime GetCompletionTime(User user, DateTime baseDateTime, TimeSpan timeToCompletion)
+        private Dictionary<int, TimeToResin> GetCompletionTimes(int currentCount, 
+            DateTime currentTimeUtc)
         {
-            // TODO: convert utcNow to user timezone
-            return baseDateTime + timeToCompletion;
+            DateTime currentLocalTime = currentTimeUtc.ToLocalTime();
+            var result = new Dictionary<int, TimeToResin>();
+            for (int i = 0; i <= DataProvider.MaxResin; i += 20)
+            {
+                if (i <= currentCount)
+                {
+                    continue;
+                }
+                var timeSpanToIResin = GetTimeSpanToResinCount(currentCount, i);
+                var timeToResin = new TimeToResin
+                {
+                    TimeSpanToResin = timeSpanToIResin,
+                    TimeToResinUtc = currentLocalTime + timeSpanToIResin,
+                };
+                result.Add(i, timeToResin);
+            }
+            return result;
         }
     }
 }

@@ -26,12 +26,19 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 
         public string GetGetResinSuccessResponse(ResinInfoResultModel resultModel)
         {
-            string format = "Your resin count is {0}. " +
-                        "Time to full resin is {1} " +
-                        "({2} UTC)";
-            return string.Format(format, resultModel.CurrentCount, 
-                        resultModel.TimeToFullResin, 
-                        resultModel.CompletionTime);
+            string resinCountFormat = "Your resin count is {0}.";
+            string timeToResin = "Time to {0} resin: {1} ({2})";
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(string.Format(resinCountFormat, resultModel.CurrentCount));
+            var keys = resultModel.CompletionTimes.Keys.OrderBy(x => x);
+            foreach (var key in keys)
+            {
+                builder.AppendLine(string.Format(timeToResin,
+                    key,
+                    resultModel.CompletionTimes[key].TimeSpanToResin,
+                    resultModel.CompletionTimes[key].TimeToResinUtc));
+            }
+            return builder.ToString();
         }
 
         public string GetGetResinErrorMessage()
