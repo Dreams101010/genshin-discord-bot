@@ -38,16 +38,17 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			try
 			{
 				var id = userDiscordId;
+				var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
 				var result = await ResinService.GetResinForUserAsync(id);
 				if (result.HasValue)
 				{
 					var resinInfo = result.Value;
-					string response = ResinResponseGenerator.GetGetResinSuccessResponse(resinInfo);
+					string response = ResinResponseGenerator.GetGetResinSuccessResponse(userLocale, resinInfo);
 					return response;
 				}
 				else
 				{
-					string errorMessage = ResinResponseGenerator.GetGetResinErrorMessage();
+					string errorMessage = ResinResponseGenerator.GetGetResinErrorMessage(userLocale);
 					return errorMessage;
 				}
 			}
@@ -61,17 +62,18 @@ namespace GenshinDiscordBotUI.CommandExecutors
 
 		public async Task<string> SetResinAsync(ulong userDiscordId, int newValue)
 		{
+			var id = userDiscordId;
+			var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
 			string validationErrorMessage = ResinResponseGenerator
-				.GetSetResinValidationErrorMessage(newValue);
+				.GetSetResinValidationErrorMessage(userLocale, newValue);
 			if (validationErrorMessage != null)
             {
 				return validationErrorMessage;
             }
 			try
 			{
-				var id = userDiscordId;
 				var result = await ResinService.SetResinForUserAsync(id, newValue);
-				string response = ResinResponseGenerator.GetSetResinSuccessMessage();
+				string response = ResinResponseGenerator.GetSetResinSuccessMessage(userLocale);
 				return response;
 			}
 			catch (Exception e)

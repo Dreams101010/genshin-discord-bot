@@ -34,11 +34,13 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 ?? throw new ArgumentNullException(nameof(userResponseGenerator));
         }
 
-        public async Task<string> GetHelpMessageAsync()
+        public async Task<string> GetHelpMessageAsync(ulong userDiscordId)
         {
             try
             {
-                string response = GeneralResponseGenerator.GetHelpMessage();
+                var id = userDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                string response = GeneralResponseGenerator.GetHelpMessage(userLocale);
                 return response;
             }
             catch (Exception e)
@@ -66,9 +68,11 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public string ListLanguages()
+        public async Task<string> ListLanguagesAsync(ulong userDiscordId)
         {
-            string response = UserResponseGenerator.GetListOfPossibleLanguages();
+            var id = userDiscordId;
+            var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+            string response = UserResponseGenerator.GetListOfPossibleLanguages(userLocale);
             return response;
         }
 
@@ -76,16 +80,16 @@ namespace GenshinDiscordBotUI.CommandExecutors
         {
             try
             {
+                var id = userDiscordId;
+                var originalUserLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 if (!UserHelper.IsLocaleOrLanguage(localeToSet))
                 {
-                    string errorMessage = UserResponseGenerator.GetLanguageErrorMessage();
+                    string errorMessage = UserResponseGenerator.GetLanguageErrorMessage(originalUserLocale);
                     return errorMessage;
                 }
-
-                var id = userDiscordId;
-                var locale = UserHelper.GetLocaleFromString(localeToSet);
-                await UserService.SetUserLocale(id, locale);
-                string response = UserResponseGenerator.GetLanguageSuccessMessage();
+                var newLocale = UserHelper.GetLocaleFromString(localeToSet);
+                await UserService.SetUserLocale(id, newLocale);
+                string response = UserResponseGenerator.GetLanguageSuccessMessage(newLocale);
                 return response;
             }
             catch (Exception e)
@@ -101,8 +105,9 @@ namespace GenshinDiscordBotUI.CommandExecutors
             try
             {
                 var id = userDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 await UserService.SetRemindersStateAsync(id, state: true);
-                string response = UserResponseGenerator.GetEnableRemindersSuccessMessage();
+                string response = UserResponseGenerator.GetEnableRemindersSuccessMessage(userLocale);
                 return response;
             }
             catch (Exception e)
@@ -118,8 +123,9 @@ namespace GenshinDiscordBotUI.CommandExecutors
             try
             {
                 var id = userDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 await UserService.SetRemindersStateAsync(id, state: false);
-                string response = UserResponseGenerator.GetDisableRemindersSuccessMessage();
+                string response = UserResponseGenerator.GetDisableRemindersSuccessMessage(userLocale);
                 return response;
             }
             catch (Exception e)

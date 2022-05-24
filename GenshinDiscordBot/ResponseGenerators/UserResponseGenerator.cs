@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotUI.Helpers;
+using GenshinDiscordBotDomainLayer.Localization;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
@@ -13,47 +14,83 @@ namespace GenshinDiscordBotUI.ResponseGenerators
     {
         private IDateTimeProvider DateTimeProvider { get; }
         private UserHelper UserHelper { get; }
+        public Localization Localization { get; }
 
-        public UserResponseGenerator(IDateTimeProvider dateTimeProvider, UserHelper userHelper)
+        public UserResponseGenerator(IDateTimeProvider dateTimeProvider, UserHelper userHelper,
+            Localization localization)
         {
             DateTimeProvider = dateTimeProvider 
                 ?? throw new ArgumentNullException(nameof(dateTimeProvider));
             UserHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));
+            Localization = localization ?? throw new ArgumentNullException(nameof(localization));
         }
 
         public string GetUserSettingsList(User user)
         {
-            return string.Format(@"Language: {0} 
-Reminders: {1}", 
+            string format = user.Locale switch
+            {
+                UserLocale.enGB => Localization.English["User"]["UserSettings"],
+                UserLocale.ruRU => Localization.Russian["User"]["UserSettings"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return string.Format(format,
                 UserHelper.GetLanguageFromLocale(user.Locale), 
                 UserHelper.GetReminderStateAsString(user.RemindersOptIn));
         }
 
-        public string GetListOfPossibleLanguages()
+        public string GetListOfPossibleLanguages(UserLocale locale)
         {
-            return "Available languages are: \n" +
-                "ru \n" +
-                "en \n";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["User"]["AvailableLanguages"],
+                UserLocale.ruRU => Localization.Russian["User"]["AvailableLanguages"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        public string GetLanguageErrorMessage()
+        public string GetLanguageErrorMessage(UserLocale locale)
         {
-            return "Incorrect language setting. Correct settings are ru and en";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["User"]["LanguageErrorMessage"],
+                UserLocale.ruRU => Localization.Russian["User"]["LanguageErrorMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        public string GetLanguageSuccessMessage()
+        public string GetLanguageSuccessMessage(UserLocale locale)
         {
-            return "Language has been set.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["User"]["LanguageSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["User"]["LanguageSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        public string GetEnableRemindersSuccessMessage()
+        public string GetEnableRemindersSuccessMessage(UserLocale locale)
         {
-            return "Reminders have been enabled.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["User"]["EnableRemindersSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["User"]["EnableRemindersSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        public string GetDisableRemindersSuccessMessage()
+        public string GetDisableRemindersSuccessMessage(UserLocale locale)
         {
-            return "Reminders have been disabled.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["User"]["DisableRemindersSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["User"]["DisableRemindersSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
     }
 }

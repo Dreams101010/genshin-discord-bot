@@ -3,39 +3,83 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotDomainLayer.Localization;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
     public class ReminderResponseGenerator
     {
-        public string GetArtifactReminderSetupSuccessMessage()
+        public Localization Localization { get; }
+
+        public ReminderResponseGenerator(Localization localization)
         {
-            return "Okay! I will remind you about artifacts in 24 hours.";
+            Localization = localization ?? throw new ArgumentNullException(nameof(localization));
+        }
+        public string GetArtifactReminderSetupSuccessMessage(UserLocale locale)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderSetupSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderSetupSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        public string GetArtifactReminderCancelSuccessMessage()
+        public string GetArtifactReminderCancelSuccessMessage(UserLocale locale)
         {
-            return "The artifact reminder has been cancelled.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderCancelSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderCancelSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        public string GetArtifactReminderCancelNotFoundMessage()
+        public string GetArtifactReminderCancelNotFoundMessage(UserLocale locale)
         {
-            return "No artifact reminders were found for you.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderCancelNotFoundMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderCancelNotFoundMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        internal string GetCheckInReminderSetupSuccessMessage()
+        internal string GetCheckInReminderSetupSuccessMessage(UserLocale locale)
         {
-            return "Okay! I will remind you about daily check-in in 24 hours.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderSetupSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderSetupSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        internal string GetCheckInReminderCancelSuccessMessage()
+        internal string GetCheckInReminderCancelSuccessMessage(UserLocale locale)
         {
-            return "The daily check-in reminder has been cancelled.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderCancelSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderCancelSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
-        internal string GetCheckInReminderCancelNotFoundMessage()
+        internal string GetCheckInReminderCancelNotFoundMessage(UserLocale locale)
         {
-            return "No daily check-in reminders were found for you.";
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderCancelNotFoundMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderCancelNotFoundMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
     }
 }

@@ -9,6 +9,7 @@ using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
+using GenshinDiscordBotDomainLayer.Localization;
 
 namespace GenshinDiscordBotDomainLayer.Services
 {
@@ -17,16 +18,20 @@ namespace GenshinDiscordBotDomainLayer.Services
         public ILifetimeScope Scope { get; }
         public IBotMessageSender BotMessageSender { get; }
         public DateTimeBusinessLogic DateTimeBusinessLogic { get; }
+        public Localization.Localization Localization { get; }
 
         public ReminderDispatcherService(ILifetimeScope scope, 
             IBotMessageSender botMessageSender,
-            DateTimeBusinessLogic dateTimeBusinessLogic)
+            DateTimeBusinessLogic dateTimeBusinessLogic,
+            Localization.Localization localization)
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             BotMessageSender = botMessageSender 
                 ?? throw new ArgumentNullException(nameof(botMessageSender));
             DateTimeBusinessLogic = dateTimeBusinessLogic 
                 ?? throw new ArgumentNullException(nameof(dateTimeBusinessLogic));
+            Localization = localization 
+                ?? throw new ArgumentNullException(nameof(localization));
         }
 
         public async Task DispatcherAsync(CancellationToken cancellation)
@@ -44,7 +49,6 @@ namespace GenshinDiscordBotDomainLayer.Services
                 var expiredReminders = await reminderService.GetExpiredRemindersAsync(currentTime);
                 foreach (var reminder in expiredReminders)
                 {
-                    Console.WriteLine(currentTime - reminder.ReminderTime);
                     if (currentTime - reminder.ReminderTime < 300)
                     {
                         await SendReminderAsync(reminder);
@@ -91,10 +95,8 @@ namespace GenshinDiscordBotDomainLayer.Services
         {
             string message = locale switch
             {
-                UserLocale.enGB => @"Sorry, but I couldn't remind you in time. Perhaps it was because I was offline.
-Here's the initial reminder:",
-                UserLocale.ruRU => @"Прошу прощения, но я не смогла напомнить вам вовремя. Возможно это произошло потому что я была выключена.
-Вот изначальное упоминание:",
+                UserLocale.enGB => Localization.English["Reminder"]["ReminderSorryMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderSorryMessage"],
                 _ => throw new NotImplementedException("Invalid UserLocale enum state"),
             };
             return message;

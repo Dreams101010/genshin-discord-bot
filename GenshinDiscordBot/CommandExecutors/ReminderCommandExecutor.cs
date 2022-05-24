@@ -16,23 +16,28 @@ namespace GenshinDiscordBotUI.CommandExecutors
         private ILogger Logger { get; }
         private GeneralResponseGenerator GeneralResponseGenerator { get; set; }
         private ReminderResponseGenerator ReminderResponseGenerator { get; set; }
+        private IUserService UserService { get; set; }
 
         public ReminderCommandExecutor(IReminderService reminderService, ILogger logger, 
             GeneralResponseGenerator generalResponseGenerator,
-            ReminderResponseGenerator reminderResponseGenerator)
+            ReminderResponseGenerator reminderResponseGenerator,
+            IUserService userService)
         {
             ReminderService = reminderService ?? throw new ArgumentNullException(nameof(reminderService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             GeneralResponseGenerator = generalResponseGenerator ?? throw new ArgumentNullException(nameof(generalResponseGenerator));
             ReminderResponseGenerator = reminderResponseGenerator ?? throw new ArgumentNullException(nameof(reminderResponseGenerator));
+            UserService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         public async Task<string> UpdateOrCreateArtifactReminderAsync(DiscordMessageContext messageContext)
         {
 			try
 			{
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 await ReminderService.UpdateOrCreateArtifactReminderAsync(messageContext);
-                return ReminderResponseGenerator.GetArtifactReminderSetupSuccessMessage();
+                return ReminderResponseGenerator.GetArtifactReminderSetupSuccessMessage(userLocale);
 			}
 			catch (Exception e)
 			{
@@ -46,14 +51,16 @@ namespace GenshinDiscordBotUI.CommandExecutors
         {
             try
             {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 var result = await ReminderService.RemoveArtifactRemindersForUserAsync(messageContext);
                 if (result)
                 {
-                    return ReminderResponseGenerator.GetArtifactReminderCancelSuccessMessage();
+                    return ReminderResponseGenerator.GetArtifactReminderCancelSuccessMessage(userLocale);
                 }
                 else
                 {
-                    return ReminderResponseGenerator.GetArtifactReminderCancelNotFoundMessage();
+                    return ReminderResponseGenerator.GetArtifactReminderCancelNotFoundMessage(userLocale);
                 }
             }
             catch (Exception e)
@@ -68,8 +75,10 @@ namespace GenshinDiscordBotUI.CommandExecutors
         {
             try
             {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 await ReminderService.UpdateOrCreateCheckInReminderAsync(messageContext);
-                return ReminderResponseGenerator.GetCheckInReminderSetupSuccessMessage();
+                return ReminderResponseGenerator.GetCheckInReminderSetupSuccessMessage(userLocale);
             }
             catch (Exception e)
             {
@@ -83,14 +92,16 @@ namespace GenshinDiscordBotUI.CommandExecutors
         {
             try
             {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 var result = await ReminderService.RemoveCheckInRemindersForUserAsync(messageContext);
                 if (result)
                 {
-                    return ReminderResponseGenerator.GetCheckInReminderCancelSuccessMessage();
+                    return ReminderResponseGenerator.GetCheckInReminderCancelSuccessMessage(userLocale);
                 }
                 else
                 {
-                    return ReminderResponseGenerator.GetCheckInReminderCancelNotFoundMessage();
+                    return ReminderResponseGenerator.GetCheckInReminderCancelNotFoundMessage(userLocale);
                 }
             }
             catch (Exception e)

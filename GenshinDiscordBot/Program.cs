@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -16,6 +18,7 @@ using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.Services;
+using GenshinDiscordBotDomainLayer.Localization;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using GenshinDiscordBotDomainLayer.Providers;
@@ -52,6 +55,7 @@ namespace GenshinDiscordBotUI
         static ILogger? Logger { get; set; } = null; 
         static IContainer CompositionRoot()
         {
+            var localizationSource = ReadLocalizationSource();
             var assemblies = GetProjectAssemblies();
             var sqliteConnectionString = BuildConfigurationRoot().GetConnectionString("Sqlite");
             var builder = new ContainerBuilder();
@@ -59,6 +63,9 @@ namespace GenshinDiscordBotUI
             builder.Populate(new ServiceCollection());
             // Application
             builder.RegisterType<Application>();
+            // Localization
+            builder.Register((ctx) => localizationSource).SingleInstance();
+            builder.RegisterType<Localization>().SingleInstance();
             // Configuration
             builder.Register(c => BuildConfigurationRoot()).InstancePerLifetimeScope();
             // Discord.NET
@@ -158,6 +165,22 @@ namespace GenshinDiscordBotUI
             }
             result.Add(thisAssembly);
             return result;
+        }
+
+        static LocalizationSource ReadLocalizationSource()
+        {
+            using var streamReader = new StreamReader("localization.json");
+            var json = streamReader.ReadToEnd();
+            if (json == null)
+            {
+                throw new Exception("Couldn't read localization json from file");
+            }
+            LocalizationSource? localizationSource = JsonSerializer.Deserialize<LocalizationSource>(json);
+            if (localizationSource == null)
+            {
+                throw new Exception("Couldn't deserialize json from file");
+            }
+            return localizationSource;
         }
 
         static async Task Main(string[] args)
