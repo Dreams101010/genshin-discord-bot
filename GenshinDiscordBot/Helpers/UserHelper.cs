@@ -9,10 +9,10 @@ namespace GenshinDiscordBotUI.Helpers
 {
     public class UserHelper
     {
-		public bool IsLocale(string str)
+		public bool IsLocaleOrLanguage(string str)
 		{
 			str = str.ToLower();
-			if (str == "ruru" || str == "engb")
+			if (str == "ruru" || str == "engb" || str == "ru" || str == "en")
 			{
 				return true;
 			}
@@ -23,10 +23,32 @@ namespace GenshinDiscordBotUI.Helpers
 		{
 			return str.ToLower() switch
 			{
-				"ruru" => UserLocale.ruRU,
-				"engb" => UserLocale.enGB,
+				"ruru" or "ru" => UserLocale.ruRU,
+				"engb" or "en" => UserLocale.enGB,
 				_ => throw new ArgumentException("Invalid locale value")
 			};
 		}
+
+        public string GetLanguageFromLocale(UserLocale locale)
+		{
+			return locale switch
+			{
+				UserLocale.enGB => "en",
+				UserLocale.ruRU => "ru",
+				_ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+			};
+		}
+
+		public string GetReminderStateAsString(bool reminderState)
+        {
+			if (reminderState)
+            {
+				return "on";
+            }
+			else
+            {
+				return "off";
+            }
+        }
 	}
 }

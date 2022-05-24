@@ -36,7 +36,7 @@ namespace GenshinDiscordBotUI.CommandModules
             await ReplyAsync(response);
         }
 
-        [Command("remindArtifactsCancel")]
+        [Command("cancelRemindArtifacts")]
         public async Task CancelArtifactRemindersForUser()
         {
             using var scope = Scope.BeginLifetimeScope();
@@ -68,7 +68,7 @@ namespace GenshinDiscordBotUI.CommandModules
             await ReplyAsync(response);
         }
 
-        [Command("remindCheckInCancel")]
+        [Command("cancelRemindCheckIn")]
         public async Task CancelCheckInRemindersForUser()
         {
             using var scope = Scope.BeginLifetimeScope();

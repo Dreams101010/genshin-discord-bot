@@ -34,6 +34,21 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 ?? throw new ArgumentNullException(nameof(userResponseGenerator));
         }
 
+        public async Task<string> GetHelpMessageAsync()
+        {
+            try
+            {
+                string response = GeneralResponseGenerator.GetHelpMessage();
+                return response;
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
         public async Task<string> ListSettingsAsync(ulong userDiscordId)
         {
             try
@@ -51,26 +66,26 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public string ListLocales()
+        public string ListLanguages()
         {
-            string response = UserResponseGenerator.GetListOfPossibleLocales();
+            string response = UserResponseGenerator.GetListOfPossibleLanguages();
             return response;
         }
 
-        public async Task<string> SetLocaleAsync(ulong userDiscordId, string localeToSet)
+        public async Task<string> SetLanguageAsync(ulong userDiscordId, string localeToSet)
         {
             try
             {
-                if (!UserHelper.IsLocale(localeToSet))
+                if (!UserHelper.IsLocaleOrLanguage(localeToSet))
                 {
-                    string errorMessage = UserResponseGenerator.GetLocaleErrorMessage();
+                    string errorMessage = UserResponseGenerator.GetLanguageErrorMessage();
                     return errorMessage;
                 }
 
                 var id = userDiscordId;
                 var locale = UserHelper.GetLocaleFromString(localeToSet);
                 await UserService.SetUserLocale(id, locale);
-                string response = UserResponseGenerator.GetLocaleSuccessMessage();
+                string response = UserResponseGenerator.GetLanguageSuccessMessage();
                 return response;
             }
             catch (Exception e)

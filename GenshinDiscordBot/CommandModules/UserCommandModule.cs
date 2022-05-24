@@ -18,7 +18,16 @@ namespace GenshinDiscordBotUI.CommandModules
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
 
-		[Command("settings_list")]
+		[Command("help")]
+		public async Task PrintHelpMessage()
+        {
+			using var scope = Scope.BeginLifetimeScope();
+			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			string response = await userCommandExecutor.GetHelpMessageAsync();
+			await ReplyAsync(response);
+		}
+
+		[Command("printSettings")]
 		public async Task ListSettingsAsync()
 		{
 			using var scope = Scope.BeginLifetimeScope();
@@ -28,22 +37,22 @@ namespace GenshinDiscordBotUI.CommandModules
 			await ReplyAsync(response);
 		}
 
-		[Command("set_locale")]
+		[Command("setLanguage")]
 		public async Task ListLocalesAsync()
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
-            string response = userCommandExecutor.ListLocales();
+            string response = userCommandExecutor.ListLanguages();
             await ReplyAsync(response);
 		}
 
-		[Command("set_locale")]
+		[Command("setLanguage")]
 		public async Task SetLocaleAsync(string localeToSet)
         {
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.SetLocaleAsync(id, localeToSet);
+			string response = await userCommandExecutor.SetLanguageAsync(id, localeToSet);
 			await ReplyAsync(response);
 		}
 

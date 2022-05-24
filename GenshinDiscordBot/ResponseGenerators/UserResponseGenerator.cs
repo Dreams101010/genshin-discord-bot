@@ -5,38 +5,45 @@ using System.Text;
 using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
+using GenshinDiscordBotUI.Helpers;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
     public class UserResponseGenerator
     {
         private IDateTimeProvider DateTimeProvider { get; }
-        public UserResponseGenerator(IDateTimeProvider dateTimeProvider)
+        private UserHelper UserHelper { get; }
+
+        public UserResponseGenerator(IDateTimeProvider dateTimeProvider, UserHelper userHelper)
         {
             DateTimeProvider = dateTimeProvider 
                 ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+            UserHelper = userHelper ?? throw new ArgumentNullException(nameof(userHelper));
         }
 
         public string GetUserSettingsList(User user)
         {
-            return string.Format("Locale: {0}, Reminders state: {1}", user.Locale, user.RemindersOptIn);
+            return string.Format(@"Language: {0} 
+Reminders: {1}", 
+                UserHelper.GetLanguageFromLocale(user.Locale), 
+                UserHelper.GetReminderStateAsString(user.RemindersOptIn));
         }
 
-        public string GetListOfPossibleLocales()
+        public string GetListOfPossibleLanguages()
         {
-            return "Possible locales are: \n" +
-                "ruRU \n" +
-                "enGB \n";
+            return "Available languages are: \n" +
+                "ru \n" +
+                "en \n";
         }
 
-        public string GetLocaleErrorMessage()
+        public string GetLanguageErrorMessage()
         {
-            return "Incorrect locale setting. Correct settings are ruRU and enGB";
+            return "Incorrect language setting. Correct settings are ru and en";
         }
 
-        public string GetLocaleSuccessMessage()
+        public string GetLanguageSuccessMessage()
         {
-            return "Locale has been set.";
+            return "Language has been set.";
         }
 
         public string GetEnableRemindersSuccessMessage()
