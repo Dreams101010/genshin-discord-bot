@@ -40,7 +40,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 				var id = userDiscordId;
 				var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
 				var resinInfo = await ResinService.GetResinForUserAsync(id);
-				if (resinInfo.IsEmpty)
+				if (!resinInfo.IsEmpty)
 				{
 					string response = ResinResponseGenerator.GetGetResinSuccessResponse(userLocale, resinInfo);
 					return response;
