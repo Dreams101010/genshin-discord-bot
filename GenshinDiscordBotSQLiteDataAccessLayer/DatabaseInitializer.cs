@@ -50,7 +50,12 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
                 );";
             command.ExecuteNonQuery();
             command.CommandText = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='reminder_categories';";
-            long count = (long)command.ExecuteScalar();
+            long? nullableCount = (long?)command.ExecuteScalar();
+            if (!nullableCount.HasValue)
+            {
+                throw new Exception("Database query returned no results");
+            }
+            long count = nullableCount.Value;
             if (count == 0)
             {
                 command.CommandText = @"CREATE TABLE IF NOT EXISTS reminder_categories

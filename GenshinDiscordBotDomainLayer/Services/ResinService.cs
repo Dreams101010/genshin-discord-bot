@@ -7,6 +7,7 @@ using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
+using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 
 namespace GenshinDiscordBotDomainLayer.Services
@@ -41,15 +42,14 @@ namespace GenshinDiscordBotDomainLayer.Services
             return true;
         }
 
-        public async virtual Task<ResinInfoResultModel?> GetResinForUserAsync(ulong discordId)
+        public async virtual Task<ResinInfoResultModel> GetResinForUserAsync(ulong discordId)
         {
             var user = await UserDatabaseInteractionHandler.ReadUserAndCreateIfNotExistsAsync(discordId);
-            var nullableResinInfo = await ResinDatabaseInteractionHandler.GetResinForUserAsync(discordId);
-            if (nullableResinInfo == null)
+            var resinInfo = await ResinDatabaseInteractionHandler.GetResinForUserAsync(discordId);
+            if (resinInfo.IsEmpty)
             {
-                return null;
+                return ResinInfoResultModel.Empty;
             }
-            var resinInfo = nullableResinInfo.Value;
             var result = ResinBusinessLogic.GetResinResult(user, resinInfo);
             return result;
         }

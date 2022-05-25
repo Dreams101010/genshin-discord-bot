@@ -11,6 +11,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers
     {
         public Task<bool> SetResinForUserAsync(ulong discordId, int resinCount);
 
-        public Task<ResinTrackingInfo?> GetResinForUserAsync(ulong discordId);
+        public Task<ResinTrackingInfo> GetResinForUserAsync(ulong discordId);
     }
 }

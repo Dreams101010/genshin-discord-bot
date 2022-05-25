@@ -159,7 +159,7 @@ namespace GenshinDiscordBotUI
         {
             Assembly thisAssembly = typeof(Program).Assembly;
             var assemblyNames = thisAssembly.GetReferencedAssemblies()
-                .Where((a) => a.Name.StartsWith("GenshinDiscordBot"));
+                .Where((a) => a.Name?.StartsWith("GenshinDiscordBot") ?? false);
             List<Assembly> result = new List<Assembly>();
             foreach (var i in assemblyNames)
             {
@@ -210,7 +210,7 @@ namespace GenshinDiscordBotUI
             {
                 Logger?.Information("Application shutting down...");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Logger?.Error("Unhandled exception in Main : {e}");
             }

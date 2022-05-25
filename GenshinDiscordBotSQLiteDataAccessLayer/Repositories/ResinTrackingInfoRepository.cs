@@ -41,7 +41,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             }
         }
 
-        public async Task<ResinTrackingInfo?> GetResinTrackingInfoByDiscordIdAsync(ulong id)
+        public async Task<ResinTrackingInfo> GetResinTrackingInfoByDiscordIdAsync(ulong id)
         {
             var selectSql = @"SELECT 
                     user_discord_id UserDiscordId, init_time StartTime, resin_count StartCount 
@@ -51,7 +51,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                 selectSql, new { UserDiscordId = id });
             if (resinTrackingInfo.Equals(default(ResinTrackingInfoDataModel)))
             {
-                return null;
+                return ResinTrackingInfo.Empty;
             }
             return resinTrackingInfo.ToResinTrackingInfo();
         }

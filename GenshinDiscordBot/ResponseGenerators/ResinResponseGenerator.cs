@@ -81,7 +81,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 };
                 return format;
             }
-            return null;
+            return string.Empty;
         }
 
         public string GetSetResinSuccessMessage(UserLocale locale)

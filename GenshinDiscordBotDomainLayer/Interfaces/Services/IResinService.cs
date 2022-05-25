@@ -10,6 +10,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.Services
     public interface IResinService
     {
         public Task<bool> SetResinForUserAsync(ulong discordId, int resinCount);
-        public Task<ResinInfoResultModel?> GetResinForUserAsync(ulong discordId);
+        public Task<ResinInfoResultModel> GetResinForUserAsync(ulong discordId);
     }
 }

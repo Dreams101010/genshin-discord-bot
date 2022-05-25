@@ -41,21 +41,16 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
             return true;
         }
 
-        public async Task<ResinTrackingInfo?> GetResinForUserAsync(ulong discordId)
+        public async Task<ResinTrackingInfo> GetResinForUserAsync(ulong discordId)
         {
             return await ExecuteInTransactionAsync(
                 async () => await GetResinForUserFuncAsync(discordId)
             );
         }
 
-        private async Task<ResinTrackingInfo?> GetResinForUserFuncAsync(ulong discordId)
+        private async Task<ResinTrackingInfo> GetResinForUserFuncAsync(ulong discordId)
         {
-            var nullableResinInfo = await ResinRepository.GetResinTrackingInfoByDiscordIdAsync(discordId);
-            if (!nullableResinInfo.HasValue)
-            {
-                return null;
-            }
-            return nullableResinInfo.Value;
+            return await ResinRepository.GetResinTrackingInfoByDiscordIdAsync(discordId);
         }
     }
 }

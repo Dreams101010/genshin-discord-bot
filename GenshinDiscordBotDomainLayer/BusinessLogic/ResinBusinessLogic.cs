@@ -22,7 +22,7 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
                 ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
-        public ResinInfoResultModel? GetResinResult(User user, ResinTrackingInfo resinInfo)
+        public ResinInfoResultModel GetResinResult(User user, ResinTrackingInfo resinInfo)
         {
             var utcNow = DateTimeProvider.GetDateTime().ToUniversalTime();
             int currentCount = GetResinCount(resinInfo, utcNow);

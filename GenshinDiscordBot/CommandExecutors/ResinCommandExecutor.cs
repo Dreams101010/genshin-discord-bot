@@ -39,10 +39,9 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			{
 				var id = userDiscordId;
 				var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
-				var result = await ResinService.GetResinForUserAsync(id);
-				if (result.HasValue)
+				var resinInfo = await ResinService.GetResinForUserAsync(id);
+				if (resinInfo.IsEmpty)
 				{
-					var resinInfo = result.Value;
 					string response = ResinResponseGenerator.GetGetResinSuccessResponse(userLocale, resinInfo);
 					return response;
 				}
@@ -66,7 +65,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
 			string validationErrorMessage = ResinResponseGenerator
 				.GetSetResinValidationErrorMessage(userLocale, newValue);
-			if (validationErrorMessage != null)
+			if (validationErrorMessage != string.Empty)
             {
 				return validationErrorMessage;
             }
