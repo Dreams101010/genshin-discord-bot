@@ -64,7 +64,8 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 	                name text UNIQUE NOT NULL
                 );";
                 command.ExecuteNonQuery();
-                command.CommandText = @"INSERT INTO reminder_categories (name) VALUES ('Artifact reminder'),('Check-in reminder')";
+                command.CommandText = @"INSERT INTO reminder_categories (name) VALUES 
+                ('Artifact reminder'),('Check-in reminder'),('Serenitea pot plant harvest')";
                 command.ExecuteNonQuery();
             }
             command.CommandText = @"CREATE TABLE IF NOT EXISTS reminders 

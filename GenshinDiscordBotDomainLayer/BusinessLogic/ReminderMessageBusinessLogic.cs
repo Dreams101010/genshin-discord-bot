@@ -37,5 +37,16 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
                 _ => throw new NotImplementedException("Invalid enum state"),
             };
         }
+
+        public async Task<string> GetSereniteaPotPlantHarvestReminderMessage(ulong discordUserId)
+        {
+            var user = await UserService.ReadUserAndCreateIfNotExistsAsync(discordUserId);
+            return user.Locale switch
+            {
+                DomainModels.UserLocale.enGB => "Time to harvest in Serenitea Pot! :)",
+                DomainModels.UserLocale.ruRU => "Время собирать урожай в Чайнике безмятежности! :)",
+                _ => throw new NotImplementedException("Invalid enum state"),
+            };
+        }
     }
 }

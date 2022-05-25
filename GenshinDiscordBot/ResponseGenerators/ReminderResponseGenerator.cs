@@ -119,5 +119,38 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             }
             return builder.ToString();
         }
+
+        internal string GetSereniteaPotPlantHarvestSetupSuccessMessage(UserLocale locale)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
+        }
+
+        internal string GetSereniteaPotPlantHarvestCancelSuccessMessage(UserLocale locale)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestCancelSuccessMessage"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestCancelSuccessMessage"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
+        }
+
+        internal string GetSereniteaPotPlantHarvestCheckInReminderCancelNotFoundMessage(UserLocale locale)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["GetSereniteaPotPlantHarvestCheckInReminderCancelNotFound"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["GetSereniteaPotPlantHarvestCheckInReminderCancelNotFound"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
+        }
     }
 }

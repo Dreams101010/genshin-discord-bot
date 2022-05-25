@@ -84,6 +84,38 @@ namespace GenshinDiscordBotUI.CommandModules
             await ReplyAsync(response);
         }
 
+        [Command("remindTeapotPlantHarvest")]
+        public async Task UpdateOrCreateSereniteaPotPlantHarvestReminder()
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(context);
+            await ReplyAsync(response);
+        }
+
+        [Command("cancelRemindTeapotPlantHarvest")]
+        public async Task CancelSereniteaPotPlantHarvestRemindersForUser()
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .RemoveSereniteaPotPlantHarvestRemindersForUserAsync(context);
+            await ReplyAsync(response);
+        }
+
         [Command("listReminders")]
         [Alias("reminders")]
         public async Task PrintRemindersForUser()

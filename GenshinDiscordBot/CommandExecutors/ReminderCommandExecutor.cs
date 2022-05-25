@@ -116,6 +116,47 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
+        public async Task<string> UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(DiscordMessageContext messageContext)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                await ReminderService.UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(messageContext);
+                return ReminderResponseGenerator.GetSereniteaPotPlantHarvestSetupSuccessMessage(userLocale);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> RemoveSereniteaPotPlantHarvestRemindersForUserAsync(DiscordMessageContext messageContext)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var result = await ReminderService.RemoveSereniteaPotPlantHarvestRemindersForUserAsync(messageContext);
+                if (result)
+                {
+                    return ReminderResponseGenerator.GetSereniteaPotPlantHarvestCancelSuccessMessage(userLocale);
+                }
+                else
+                {
+                    return ReminderResponseGenerator.GetSereniteaPotPlantHarvestCheckInReminderCancelNotFoundMessage(userLocale);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
         public async Task<string> GetRemindersForUserAsync(ulong userDiscordId)
         {
             try
