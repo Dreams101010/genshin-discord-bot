@@ -85,6 +85,7 @@ namespace GenshinDiscordBotUI.CommandModules
         }
 
         [Command("remindTeapotPlantHarvest")]
+        [Alias("remindHarvest")]
         public async Task UpdateOrCreateSereniteaPotPlantHarvestReminder()
         {
             using var scope = Scope.BeginLifetimeScope();
@@ -101,6 +102,7 @@ namespace GenshinDiscordBotUI.CommandModules
         }
 
         [Command("cancelRemindTeapotPlantHarvest")]
+        [Alias("cancelRemindHarvest")]
         public async Task CancelSereniteaPotPlantHarvestRemindersForUser()
         {
             using var scope = Scope.BeginLifetimeScope();
