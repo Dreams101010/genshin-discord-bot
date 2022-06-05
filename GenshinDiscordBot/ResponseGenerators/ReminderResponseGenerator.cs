@@ -6,16 +6,20 @@ using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.Localization;
+using GenshinDiscordBotDomainLayer.ValidationLogic;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
     public class ReminderResponseGenerator
     {
         public Localization Localization { get; }
+        public ReminderArgumentValidator ReminderArgumentValidator { get; }
 
-        public ReminderResponseGenerator(Localization localization)
+        public ReminderResponseGenerator(Localization localization, 
+            ReminderArgumentValidator reminderArgumentValidator)
         {
             Localization = localization ?? throw new ArgumentNullException(nameof(localization));
+            ReminderArgumentValidator = reminderArgumentValidator ?? throw new ArgumentNullException(nameof(reminderArgumentValidator));
         }
         public string GetArtifactReminderSetupSuccessMessage(UserLocale locale)
         {
@@ -151,6 +155,35 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
             return format;
+        }
+
+        internal string GetSereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime(UserLocale locale, int days, int hours)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return string.Format(format, days, hours);
+        }
+
+        internal string GetUpdateOrCreateSereniteaPotPlantHarvestReminderValidationErrorMessage(UserLocale locale, int days, int hours)
+        {
+            // TODO: consider adding a non-throwing method to validation class and use it as
+            // a catch-all
+            if (!ReminderArgumentValidator
+                    .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync_TimeValid(days, hours))
+            {
+                string format = locale switch
+                {
+                    UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestTimeInvalid"],
+                    UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestTimeInvalid"],
+                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+                };
+                return format;
+            }
+            return string.Empty;
         }
     }
 }

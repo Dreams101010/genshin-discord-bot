@@ -133,6 +133,30 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
+        public async Task<string> UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(
+            DiscordMessageContext messageContext, int days, int hours)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                string validationErrorMessage = ReminderResponseGenerator
+                    .GetUpdateOrCreateSereniteaPotPlantHarvestReminderValidationErrorMessage(userLocale, days, hours);
+                if (validationErrorMessage != string.Empty)
+                {
+                    return validationErrorMessage;
+                }
+                await ReminderService.UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(messageContext, days, hours);
+                return ReminderResponseGenerator.GetSereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime(userLocale, days, hours);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
         public async Task<string> RemoveSereniteaPotPlantHarvestRemindersForUserAsync(DiscordMessageContext messageContext)
         {
             try

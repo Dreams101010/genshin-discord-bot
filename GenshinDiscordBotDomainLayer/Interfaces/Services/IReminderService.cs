@@ -15,6 +15,7 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.Services
         public Task UpdateOrCreateCheckInReminderAsync(DiscordMessageContext messageContext);
         public Task<bool> RemoveCheckInRemindersForUserAsync(DiscordMessageContext messageContext);
         public Task UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(DiscordMessageContext messageContext);
+        public Task UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(DiscordMessageContext messageContext, int days, int hours);
         public Task<bool> RemoveSereniteaPotPlantHarvestRemindersForUserAsync(DiscordMessageContext messageContext);
         public Task<List<Reminder>> GetExpiredRemindersAsync(ulong timeInSeconds);
         public Task UpdateExpiredRecurrentRemindersAsync(ulong timeInSeconds);

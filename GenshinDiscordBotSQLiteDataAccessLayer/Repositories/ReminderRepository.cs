@@ -22,7 +22,6 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
         }
         public async Task UpdateOrInsertReminderAsync(ReminderInsertModel reminderInfo)
         {
-            Console.WriteLine("before update");
             string updateSql = @"
                 UPDATE reminders SET guild_id = @GuildId, channel_id = @ChannelId, 
                 interval = @Interval, reminder_time = @ReminderTime, 

@@ -101,6 +101,23 @@ namespace GenshinDiscordBotUI.CommandModules
             await ReplyAsync(response);
         }
 
+        [Command("remindTeapotPlantHarvest")]
+        [Alias("remindHarvest")]
+        public async Task UpdateOrCreateSereniteaPotPlantHarvestReminder(int days, int hours)
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(context, days, hours);
+            await ReplyAsync(response);
+        }
+
         [Command("cancelRemindTeapotPlantHarvest")]
         [Alias("cancelRemindHarvest")]
         public async Task CancelSereniteaPotPlantHarvestRemindersForUser()

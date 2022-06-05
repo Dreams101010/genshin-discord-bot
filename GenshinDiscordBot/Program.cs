@@ -92,6 +92,7 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<DateTimeBusinessLogic>().SingleInstance();
             // Validation Logic
             builder.RegisterType<ResinCommandArgumentValidator>().SingleInstance();
+            builder.RegisterType<ReminderArgumentValidator>().SingleInstance();
             // Helpers
             builder.RegisterType<UserHelper>().InstancePerLifetimeScope();
             builder.RegisterType<ReminderConversionHelper>().SingleInstance();

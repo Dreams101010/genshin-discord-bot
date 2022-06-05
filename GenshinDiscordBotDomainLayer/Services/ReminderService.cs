@@ -101,6 +101,23 @@ namespace GenshinDiscordBotDomainLayer.Services
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
         }
 
+        public async Task UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(DiscordMessageContext messageContext, int days, int hours)
+        {
+            var message = await ReminderMessageBusinessLogic.GetSereniteaPotPlantHarvestReminderMessage(messageContext.UserDiscordId);
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Serenitea pot plant harvest",
+                Message = message,
+                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(68),
+                ReminderTime = DateTimeBusinessLogic.GetReminderTimeAsUnixSeconds(new TimeSpan(days, hours, 0, 0)),
+                Recurrent = true,
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
         public async Task<bool> RemoveSereniteaPotPlantHarvestRemindersForUserAsync(DiscordMessageContext messageContext)
         {
             ReminderRemoveModel reminderInfo = new()
