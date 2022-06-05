@@ -54,11 +54,11 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
         // gets next DateTime when user should be reminded at this time
         // for example: if time = 18:00 and current date time is 1/1/2000 21:00
         // next reminder datetime will be 2/1/2000 18:00
-        public DateTime GetNextDailyReminderTimeFor(TimeOnly time)
+        public DateTime GetNextDailyReminderTimeUtcFor(TimeOnly time)
         {
-            DateTime dtNow = DateTime.Now;
+            DateTime dtNow = DateTime.UtcNow;
             DateTime nextReminderDateTime 
-                = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, time.Hour, time.Minute, 0);
+                = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, time.Hour, time.Minute, 0, DateTimeKind.Utc);
             if (nextReminderDateTime < dtNow)
             {
                 nextReminderDateTime = nextReminderDateTime.AddDays(1);
@@ -66,15 +66,15 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             return nextReminderDateTime;
         }
 
-        public TimeSpan GetTimeToNextDailyReminder(TimeOnly time)
+        public TimeSpan GetTimeToNextDailyReminderUtc(TimeOnly time)
         {
-            var dtOfNextReminder = GetNextDailyReminderTimeFor(time);
+            var dtOfNextReminder = GetNextDailyReminderTimeUtcFor(time);
             return dtOfNextReminder - DateTime.Now;
         }
 
-        public ulong GetTimeToNextDailyReminderAsUnixSeconds(TimeOnly time)
+        public ulong GetTimeToNextDailyReminderUtcAsUnixSeconds(TimeOnly time)
         {
-            return GetReminderTimeAsUnixSeconds(GetTimeToNextDailyReminder(time));
+            return GetReminderTimeAsUnixSeconds(GetTimeToNextDailyReminderUtc(time));
         }
     }
 }
