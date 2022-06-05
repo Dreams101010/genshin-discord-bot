@@ -159,13 +159,70 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 
         internal string GetSereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime(UserLocale locale, int days, int hours)
         {
-            string format = locale switch
+            return locale switch
             {
-                UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime"],
+                UserLocale.enGB => GetSereniteaPotPlantHarvestSetupSuccessMessageWithCustomTimeEnglish(days, hours),
+                UserLocale.ruRU => GetSereniteaPotPlantHarvestSetupSuccessMessageWithCustomTimeRussian(days, hours),
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
+        }
+
+        private string GetSereniteaPotPlantHarvestSetupSuccessMessageWithCustomTimeEnglish(int days, int hours)
+        {
+            string format = Localization.English["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime"];
             return string.Format(format, days, hours);
+        }
+
+        private string GetSereniteaPotPlantHarvestSetupSuccessMessageWithCustomTimeRussian(int days, int hours)
+        {
+            string format = Localization.Russian["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessageWithCustomTime"];
+            string daysString = GetReminderDaysAsStringRussian(days);
+            string hoursString = GetReminderHoursAsStringRussian(hours);
+            string unionString = Localization.Russian["LanguageSpecific"]["AndUnion"];
+            if (daysString.Length == 0 || hoursString.Length == 0)
+            {
+                unionString = string.Empty;
+            }
+            return string.Format(format, daysString, unionString, hoursString);
+        }
+
+        private string GetReminderHoursAsStringRussian(int hours)
+        {
+            if (hours == 0)
+            {
+                return string.Empty;
+            }
+            var format = hours switch
+            {
+                0 => string.Empty,
+                1 or 21 => Localization.Russian["LanguageSpecific"]["HoursSingular"],
+                >= 2 and <= 4 or 22 or 23 => Localization.Russian["LanguageSpecific"]["HoursPlural1"],
+                < 0 or > 23 => throw new ArgumentException("Invalid hours value"),
+                _ => Localization.Russian["LanguageSpecific"]["HoursPlural2"],
+            };
+            return hours + format;
+        }
+
+        private string GetReminderDaysAsStringRussian(int days)
+        {
+            if (days == 0)
+            {
+                return string.Empty;
+            }
+            var format = days switch
+            {
+                0 => string.Empty,
+                11 => Localization.Russian["LanguageSpecific"]["DaysPlural2"],
+                >= 12 and <= 14 => Localization.Russian["LanguageSpecific"]["DaysPlural2"],
+                _ when days.ToString().EndsWith('1')
+                    => Localization.Russian["LanguageSpecific"]["DaysSingular"],
+                _ when (days.ToString().EndsWith('2') || days.ToString().EndsWith('3') || days.ToString().EndsWith('4'))
+                    => Localization.Russian["LanguageSpecific"]["DaysPlural1"],
+                < 0 => throw new ArgumentException("The number of days cannot be negative"),
+                _ => Localization.Russian["LanguageSpecific"]["DaysPlural2"],
+
+            };
+            return days + format;
         }
 
         internal string GetUpdateOrCreateSereniteaPotPlantHarvestReminderValidationErrorMessage(UserLocale locale, int days, int hours)

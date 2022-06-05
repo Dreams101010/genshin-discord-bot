@@ -18,7 +18,7 @@ namespace GenshinDiscordBotDomainLayer.ValidationLogic
         public bool UpdateOrCreateSereniteaPotPlantHarvestReminderAsync_TimeValid(int days, int hours)
         {
             TimeSpan timeToCheck = new TimeSpan(days, hours, 0, 0);
-            if (timeToCheck < ReminderDataProvider.MinTimeForSereniteaPotPlantHarvest 
+            if (timeToCheck <= ReminderDataProvider.MinTimeForSereniteaPotPlantHarvest 
                 || timeToCheck > ReminderDataProvider.MaxTimeForSereniteaPotPlantHarvest)
             {
                 return false;
