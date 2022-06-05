@@ -74,6 +74,24 @@ namespace GenshinDiscordBotDomainLayer.Services
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
         }
 
+        public async Task UpdateOrCreateCheckInReminderWithCustomTimeAsync
+            (DiscordMessageContext messageContext, TimeOnly timeOnly)
+        {
+            var message = await ReminderMessageBusinessLogic.GetCheckInReminderMessage(messageContext.UserDiscordId);
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Check-in reminder",
+                Message = message,
+                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
+                ReminderTime = DateTimeBusinessLogic.GetTimeToNextDailyReminderAsUnixSeconds(timeOnly),
+                Recurrent = true,
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
         public async Task<bool> RemoveCheckInRemindersForUserAsync(DiscordMessageContext messageContext)
         {
             ReminderRemoveModel reminderInfo = new()

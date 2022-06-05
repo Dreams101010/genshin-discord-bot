@@ -68,6 +68,22 @@ namespace GenshinDiscordBotUI.CommandModules
             await ReplyAsync(response);
         }
 
+        [Command("remindCheckIn")]
+        public async Task UpdateOrCreateCheckInReminder(string time)
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateCheckInReminderWithCustomTimeAsync(context, time);
+            await ReplyAsync(response);
+        }
+
         [Command("cancelRemindCheckIn")]
         public async Task CancelCheckInRemindersForUser()
         {

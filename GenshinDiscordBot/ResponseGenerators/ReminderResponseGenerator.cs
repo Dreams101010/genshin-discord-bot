@@ -65,6 +65,17 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return format;
         }
 
+        internal string GetCheckInReminderSetupSuccessMessageWithCustomTime(UserLocale locale, TimeOnly timeOnly)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderSetupSuccessMessageWithCustomTime"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderSetupSuccessMessageWithCustomTime"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return string.Format(format, timeOnly);
+        }
+
         internal string GetCheckInReminderCancelSuccessMessage(UserLocale locale)
         {
             string format = locale switch

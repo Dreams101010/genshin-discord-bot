@@ -7,6 +7,7 @@ using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotDomainLayer.Helpers;
 using GenshinDiscordBotUI.ResponseGenerators;
+using GenshinDiscordBotDomainLayer.Helpers.Time;
 using Serilog;
 
 namespace GenshinDiscordBotUI.CommandExecutors
@@ -83,6 +84,30 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 await ReminderService.UpdateOrCreateCheckInReminderAsync(messageContext);
                 return ReminderResponseGenerator.GetCheckInReminderSetupSuccessMessage(userLocale);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> UpdateOrCreateCheckInReminderWithCustomTimeAsync(
+            DiscordMessageContext messageContext, string time)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var parseSuccess = TimeParser.TryParseTime(time, out Time timeObject);
+                if (!parseSuccess)
+                {
+                    // TODO: get message that bot couldn't recognize time
+                }
+                var timeOnly = new TimeOnly(timeObject.Hours, timeObject.Minutes);
+                await ReminderService.UpdateOrCreateCheckInReminderWithCustomTimeAsync(messageContext, timeOnly);
+                return ReminderResponseGenerator.GetCheckInReminderSetupSuccessMessageWithCustomTime(userLocale, timeOnly);
             }
             catch (Exception e)
             {
