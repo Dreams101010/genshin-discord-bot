@@ -21,27 +21,58 @@ namespace GenshinDiscordBotUI
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task SendMessageAsync(MessageContext messageContext)
+        public async Task<bool> SendMessageAsync(MessageContext messageContext)
+        {
+            int retryCount = 5;
+            int currentRetry = 0;
+            while (currentRetry < retryCount)
+            {
+                try
+                {
+                    if (currentRetry > 1)
+                    {
+                        Logger.Information(string.Format("Sending message. Retry {0}", currentRetry));
+                        await Task.Delay(currentRetry * 50);
+                    }
+                    return await SendMessageInnerBodyAsync(messageContext);
+                }
+                catch (Exception ex)
+                {
+                    if (currentRetry == retryCount)
+                    {
+                        Logger.Error(
+                            string.Format("Message has not been sent after {0} retries", currentRetry));
+                        Logger.Error(ex, "Exception has occured while trying to send message");
+                        break;
+                    }
+                    currentRetry++;
+                }
+            }
+            return false;
+        }
+
+        private async Task<bool> SendMessageInnerBodyAsync(MessageContext messageContext)
         {
             var guild = Client.GetGuild(messageContext.GuildId);
             if (guild == null)
             {
-                Logger.Error("Guild was null");
-                return;
+                Logger.Error("Guild was null while trying to send message");
+                return false;
             }
             var channel = guild.GetTextChannel(messageContext.ChannelId);
             if (channel == null)
             {
-                Logger.Error("Channel was null");
-                return;
+                Logger.Error("Channel was null while trying to send message");
+                return false;
             }
             var user = await Client.GetUserAsync(messageContext.DiscordUserId);
             if (user == null)
             {
-                Logger.Error("User was null");
-                return;
+                Logger.Error("User was null while trying to send message");
+                return false;
             }
             await channel.SendMessageAsync($"{user.Mention} {messageContext.Message}");
+            return true;
         }
     }
 }

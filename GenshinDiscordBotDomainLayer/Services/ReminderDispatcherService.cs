@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
+using Serilog;
 using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Interfaces;
@@ -19,11 +20,13 @@ namespace GenshinDiscordBotDomainLayer.Services
         public IBotMessageSender BotMessageSender { get; }
         public DateTimeBusinessLogic DateTimeBusinessLogic { get; }
         public Localization.Localization Localization { get; }
+        public ILogger Logger { get; }
 
         public ReminderDispatcherService(ILifetimeScope scope, 
             IBotMessageSender botMessageSender,
             DateTimeBusinessLogic dateTimeBusinessLogic,
-            Localization.Localization localization)
+            Localization.Localization localization,
+            ILogger logger)
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
             BotMessageSender = botMessageSender 
@@ -32,6 +35,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 ?? throw new ArgumentNullException(nameof(dateTimeBusinessLogic));
             Localization = localization 
                 ?? throw new ArgumentNullException(nameof(localization));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task DispatcherAsync(CancellationToken cancellation)
@@ -51,13 +55,20 @@ namespace GenshinDiscordBotDomainLayer.Services
                     var expiredReminders = await reminderService.GetExpiredRemindersAsync(currentTime);
                     foreach (var reminder in expiredReminders)
                     {
+                        bool result = true;
                         if (currentTime - reminder.ReminderTime < 300)
                         {
-                            await SendReminderAsync(reminder);
+                            result = await SendReminderAsync(reminder);
                         }
                         else
                         {
-                            await SendDelayedReminderAsync(reminder);
+                            result = await SendDelayedReminderAsync(reminder);
+                        }
+                        if (!result)
+                        {
+                            // NOTE: this is temporary fix so we don't drop any messages
+                            Logger.Error("Reminder dispatcher method failed to send message. Aborting...");
+                            return;
                         }
                     }
                     if (expiredReminders.Count > 0)
@@ -71,7 +82,7 @@ namespace GenshinDiscordBotDomainLayer.Services
             catch (OperationCanceledException) { }
         }
 
-        private async Task SendReminderAsync(Reminder reminder)
+        private async Task<bool> SendReminderAsync(Reminder reminder)
         {
             MessageContext messageContext = new()
             {
@@ -80,10 +91,10 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = reminder.GuildId,
                 Message = reminder.Message,
             };
-            await BotMessageSender.SendMessageAsync(messageContext);
+            return await BotMessageSender.SendMessageAsync(messageContext);
         }
 
-        private async Task SendDelayedReminderAsync(Reminder reminder)
+        private async Task<bool> SendDelayedReminderAsync(Reminder reminder)
         {
             MessageContext messageContext = new()
             {
@@ -92,7 +103,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = reminder.GuildId,
                 Message = @$"{GetSorryMessage(reminder.UserLocale)} {reminder.Message} {DateTimeBusinessLogic.GetLocalTimeFromUnixSeconds(reminder.ReminderTime)}",
             };
-            await BotMessageSender.SendMessageAsync(messageContext);
+            return await BotMessageSender.SendMessageAsync(messageContext);
         }
 
         private string GetSorryMessage(UserLocale locale)

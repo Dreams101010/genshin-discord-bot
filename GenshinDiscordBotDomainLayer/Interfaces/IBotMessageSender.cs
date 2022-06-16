@@ -9,6 +9,6 @@ namespace GenshinDiscordBotDomainLayer.Interfaces
 {
     public interface IBotMessageSender
     {
-        public Task SendMessageAsync(MessageContext messageContext);
+        public Task<bool> SendMessageAsync(MessageContext messageContext);
     }
 }
