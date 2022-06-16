@@ -47,6 +47,24 @@ namespace GenshinDiscordBotDomainLayer.Services
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
         }
 
+        public async Task UpdateOrCreateArtifactReminderWithCustomTimeAsync
+            (DiscordMessageContext messageContext, TimeOnly timeOnly)
+        {
+            var message = await ReminderMessageBusinessLogic.GetArtifactReminderMessage(messageContext.UserDiscordId);
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Artifact reminder",
+                Message = message,
+                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
+                ReminderTime = DateTimeBusinessLogic.GetTimeToNextDailyReminderAsUnixSeconds(timeOnly),
+                Recurrent = true,
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
         public async Task<bool> RemoveArtifactRemindersForUserAsync(DiscordMessageContext messageContext)
         {
             ReminderRemoveModel reminderInfo = new()

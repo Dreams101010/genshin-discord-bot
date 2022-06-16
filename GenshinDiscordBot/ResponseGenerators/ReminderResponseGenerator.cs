@@ -32,6 +32,17 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return format;
         }
 
+        internal string GetArtifactReminderSetupSuccessMessageWithCustomTime(UserLocale locale, TimeOnly timeOnly)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderSetupSuccessMessageWithCustomTime"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderSetupSuccessMessageWithCustomTime"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return string.Format(format, timeOnly);
+        }
+
         public string GetArtifactReminderCancelSuccessMessage(UserLocale locale)
         {
             string format = locale switch
@@ -74,6 +85,17 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
             return string.Format(format, timeOnly);
+        }
+
+        internal string GetReminderTimeInvalid(UserLocale locale)
+        {
+            string format = locale switch
+            {
+                UserLocale.enGB => Localization.English["Reminder"]["ReminderTimeInvalid"],
+                UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderTimeInvalid"],
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+            return format;
         }
 
         internal string GetCheckInReminderCancelSuccessMessage(UserLocale locale)

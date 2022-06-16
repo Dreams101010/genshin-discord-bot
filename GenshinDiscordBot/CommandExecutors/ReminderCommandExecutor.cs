@@ -52,6 +52,30 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			}
 		}
 
+        public async Task<string> UpdateOrCreateArtifactReminderWithCustomTimeAsync(
+            DiscordMessageContext messageContext, string time)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var parseSuccess = TimeParser.TryParseTime(time, out Time timeObject);
+                if (!parseSuccess)
+                {
+                    return ReminderResponseGenerator.GetReminderTimeInvalid(userLocale);
+                }
+                var timeOnly = new TimeOnly(timeObject.Hours, timeObject.Minutes);
+                await ReminderService.UpdateOrCreateArtifactReminderWithCustomTimeAsync(messageContext, timeOnly);
+                return ReminderResponseGenerator.GetArtifactReminderSetupSuccessMessageWithCustomTime(userLocale, timeOnly);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
         public async Task<string> RemoveArtifactRemindersForUserAsync(DiscordMessageContext messageContext)
         {
             try
@@ -103,7 +127,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 var parseSuccess = TimeParser.TryParseTime(time, out Time timeObject);
                 if (!parseSuccess)
                 {
-                    // TODO: get message that bot couldn't recognize time
+                    return ReminderResponseGenerator.GetReminderTimeInvalid(userLocale);
                 }
                 var timeOnly = new TimeOnly(timeObject.Hours, timeObject.Minutes);
                 await ReminderService.UpdateOrCreateCheckInReminderWithCustomTimeAsync(messageContext, timeOnly);
