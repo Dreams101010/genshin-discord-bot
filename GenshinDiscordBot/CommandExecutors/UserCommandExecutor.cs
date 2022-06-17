@@ -34,7 +34,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 ?? throw new ArgumentNullException(nameof(userResponseGenerator));
         }
 
-        public async Task<string> GetHelpMessageAsync(ulong userDiscordId)
+        public async Task<string> GetHelpMessageAsync(ulong userDiscordId, string userName)
         {
             try
             {
@@ -51,13 +51,13 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> ListSettingsAsync(ulong userDiscordId)
+        public async Task<string> ListSettingsAsync(ulong userDiscordId, string userName)
         {
             try
             {
                 var id = userDiscordId;
                 var user = await UserService.ReadUserAndCreateIfNotExistsAsync(id);
-                string response = UserResponseGenerator.GetUserSettingsList(user);
+                string response = UserResponseGenerator.GetUserSettingsList(user, userName);
                 return response;
             }
             catch (Exception e)
@@ -68,15 +68,15 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> ListLanguagesAsync(ulong userDiscordId)
+        public async Task<string> ListLanguagesAsync(ulong userDiscordId, string userName)
         {
             var id = userDiscordId;
             var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
-            string response = UserResponseGenerator.GetListOfPossibleLanguages(userLocale);
+            string response = UserResponseGenerator.GetListOfPossibleLanguages(userLocale, userName);
             return response;
         }
 
-        public async Task<string> SetLanguageAsync(ulong userDiscordId, string localeToSet)
+        public async Task<string> SetLanguageAsync(ulong userDiscordId, string localeToSet, string userName)
         {
             try
             {
@@ -84,12 +84,13 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 var originalUserLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 if (!UserHelper.IsLocaleOrLanguage(localeToSet))
                 {
-                    string errorMessage = UserResponseGenerator.GetLanguageErrorMessage(originalUserLocale);
+                    string errorMessage = UserResponseGenerator.GetLanguageErrorMessage(
+                        originalUserLocale, userName);
                     return errorMessage;
                 }
                 var newLocale = UserHelper.GetLocaleFromString(localeToSet);
                 await UserService.SetUserLocale(id, newLocale);
-                string response = UserResponseGenerator.GetLanguageSuccessMessage(newLocale);
+                string response = UserResponseGenerator.GetLanguageSuccessMessage(newLocale, userName);
                 return response;
             }
             catch (Exception e)
@@ -100,14 +101,14 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> EnableRemindersAsync(ulong userDiscordId)
+        public async Task<string> EnableRemindersAsync(ulong userDiscordId, string userName)
         {
             try
             {
                 var id = userDiscordId;
                 var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 await UserService.SetRemindersStateAsync(id, state: true);
-                string response = UserResponseGenerator.GetEnableRemindersSuccessMessage(userLocale);
+                string response = UserResponseGenerator.GetEnableRemindersSuccessMessage(userLocale, userName);
                 return response;
             }
             catch (Exception e)
@@ -118,14 +119,14 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> DisableRemindersAsync(ulong userDiscordId)
+        public async Task<string> DisableRemindersAsync(ulong userDiscordId, string userName)
         {
             try
             {
                 var id = userDiscordId;
                 var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 await UserService.SetRemindersStateAsync(id, state: false);
-                string response = UserResponseGenerator.GetDisableRemindersSuccessMessage(userLocale);
+                string response = UserResponseGenerator.GetDisableRemindersSuccessMessage(userLocale, userName);
                 return response;
             }
             catch (Exception e)

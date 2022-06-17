@@ -33,7 +33,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
             ResinService = resinService ?? throw new ArgumentNullException(nameof(resinService));
         }
 
-		public async Task<string> GetResinAsync(ulong userDiscordId)
+		public async Task<string> GetResinAsync(ulong userDiscordId, string userName)
 		{
 			try
 			{
@@ -42,12 +42,14 @@ namespace GenshinDiscordBotUI.CommandExecutors
 				var resinInfo = await ResinService.GetResinForUserAsync(id);
 				if (!resinInfo.IsEmpty)
 				{
-					string response = ResinResponseGenerator.GetGetResinSuccessResponse(userLocale, resinInfo);
+					string response = ResinResponseGenerator.GetGetResinSuccessResponse(
+						userLocale, resinInfo, userName);
 					return response;
 				}
 				else
 				{
-					string errorMessage = ResinResponseGenerator.GetGetResinErrorMessage(userLocale);
+					string errorMessage = ResinResponseGenerator.GetGetResinErrorMessage(
+						userLocale, userName);
 					return errorMessage;
 				}
 			}
@@ -59,12 +61,12 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			}
 		}
 
-		public async Task<string> SetResinAsync(ulong userDiscordId, int newValue)
+		public async Task<string> SetResinAsync(ulong userDiscordId, int newValue, string userName)
 		{
 			var id = userDiscordId;
 			var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
 			string validationErrorMessage = ResinResponseGenerator
-				.GetSetResinValidationErrorMessage(userLocale, newValue);
+				.GetSetResinValidationErrorMessage(userLocale, newValue, userName);
 			if (validationErrorMessage != string.Empty)
             {
 				return validationErrorMessage;
@@ -72,7 +74,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			try
 			{
 				var result = await ResinService.SetResinForUserAsync(id, newValue);
-				string response = ResinResponseGenerator.GetSetResinSuccessMessage(userLocale);
+				string response = ResinResponseGenerator.GetSetResinSuccessMessage(userLocale, userName);
 				return response;
 			}
 			catch (Exception e)

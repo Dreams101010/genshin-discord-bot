@@ -25,7 +25,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             Localization = localization ?? throw new ArgumentNullException(nameof(localization));
         }
 
-        public string GetUserSettingsList(User user)
+        public string GetUserSettingsList(User user, string userName)
         {
             string format = user.Locale switch
             {
@@ -34,11 +34,12 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
             return string.Format(format,
+                userName,
                 UserHelper.GetLanguageFromLocale(user.Locale), 
                 UserHelper.GetReminderStateAsString(user.RemindersOptIn));
         }
 
-        public string GetListOfPossibleLanguages(UserLocale locale)
+        public string GetListOfPossibleLanguages(UserLocale locale, string userName)
         {
             string format = locale switch
             {
@@ -46,10 +47,10 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 UserLocale.ruRU => Localization.Russian["User"]["AvailableLanguages"],
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
-            return format;
+            return string.Format(format, userName);
         }
 
-        public string GetLanguageErrorMessage(UserLocale locale)
+        public string GetLanguageErrorMessage(UserLocale locale, string userName)
         {
             string format = locale switch
             {
@@ -57,10 +58,10 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 UserLocale.ruRU => Localization.Russian["User"]["LanguageErrorMessage"],
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
-            return format;
+            return string.Format(format, userName);
         }
 
-        public string GetLanguageSuccessMessage(UserLocale locale)
+        public string GetLanguageSuccessMessage(UserLocale locale, string userName)
         {
             string format = locale switch
             {
@@ -68,10 +69,10 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 UserLocale.ruRU => Localization.Russian["User"]["LanguageSuccessMessage"],
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
-            return format;
+            return string.Format(format, userName);
         }
 
-        public string GetEnableRemindersSuccessMessage(UserLocale locale)
+        public string GetEnableRemindersSuccessMessage(UserLocale locale, string userName)
         {
             string format = locale switch
             {
@@ -79,10 +80,10 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 UserLocale.ruRU => Localization.Russian["User"]["EnableRemindersSuccessMessage"],
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
-            return format;
+            return string.Format(format, userName);
         }
 
-        public string GetDisableRemindersSuccessMessage(UserLocale locale)
+        public string GetDisableRemindersSuccessMessage(UserLocale locale, string userName)
         {
             string format = locale switch
             {
@@ -90,7 +91,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 UserLocale.ruRU => Localization.Russian["User"]["DisableRemindersSuccessMessage"],
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
-            return format;
+            return string.Format(format, userName);
         }
     }
 }

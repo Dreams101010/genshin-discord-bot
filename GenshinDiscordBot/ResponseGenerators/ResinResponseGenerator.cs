@@ -29,7 +29,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             Localization = localization ?? throw new ArgumentNullException(nameof(localization));
         }
 
-        public string GetGetResinSuccessResponse(UserLocale locale, ResinInfoResultModel resultModel)
+        public string GetGetResinSuccessResponse(
+            UserLocale locale, ResinInfoResultModel resultModel, string userName)
         {
             string resinCountFormat = locale switch
             {
@@ -44,7 +45,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine(string.Format(resinCountFormat, resultModel.CurrentCount));
+            builder.AppendLine(string.Format(resinCountFormat, userName, 
+                resultModel.CurrentCount));
             var keys = resultModel.CompletionTimes.Keys.OrderBy(x => x);
             foreach (var key in keys)
             {
@@ -56,7 +58,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return builder.ToString();
         }
 
-        public string GetGetResinErrorMessage(UserLocale locale)
+        public string GetGetResinErrorMessage(
+            UserLocale locale, string userName)
         {
             string format = locale switch
             {
@@ -64,10 +67,11 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 UserLocale.ruRU => Localization.Russian["Resin"]["GetResinErrorMessage"],
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
-            return format;
+            return string.Format(format, userName);
         }
 
-        public string GetSetResinValidationErrorMessage(UserLocale locale, int newResinValue)
+        public string GetSetResinValidationErrorMessage(
+            UserLocale locale, int newResinValue, string userName)
         {
             // TODO: consider adding a non-throwing method to validation class and use it as
             // a catch-all
@@ -79,12 +83,12 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                     UserLocale.ruRU => Localization.Russian["Resin"]["InvalidResinValue"],
                     _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
                 };
-                return format;
+                return string.Format(format, userName);
             }
             return string.Empty;
         }
 
-        public string GetSetResinSuccessMessage(UserLocale locale)
+        public string GetSetResinSuccessMessage(UserLocale locale, string userName)
         {
             string format = locale switch
             {
@@ -92,7 +96,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 UserLocale.ruRU => Localization.Russian["Resin"]["SetResinSuccessMessage"],
                 _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
             };
-            return format;
+            return string.Format(format, userName);
         }
     }
 }

@@ -23,8 +23,9 @@ namespace GenshinDiscordBotUI.CommandModules
         {
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.GetHelpMessageAsync(id);
+			string response = await userCommandExecutor.GetHelpMessageAsync(id, userName);
 			await ReplyAsync(response);
 		}
 
@@ -33,8 +34,9 @@ namespace GenshinDiscordBotUI.CommandModules
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.ListSettingsAsync(id);
+			string response = await userCommandExecutor.ListSettingsAsync(id, userName);
 			await ReplyAsync(response);
 		}
 
@@ -43,8 +45,9 @@ namespace GenshinDiscordBotUI.CommandModules
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.ListLanguagesAsync(id);
+			string response = await userCommandExecutor.ListLanguagesAsync(id, userName);
             await ReplyAsync(response);
 		}
 
@@ -53,8 +56,9 @@ namespace GenshinDiscordBotUI.CommandModules
         {
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.SetLanguageAsync(id, localeToSet);
+			string response = await userCommandExecutor.SetLanguageAsync(id, localeToSet, userName);
 			await ReplyAsync(response);
 		}
 
@@ -63,8 +67,9 @@ namespace GenshinDiscordBotUI.CommandModules
         {
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.EnableRemindersAsync(id);
+			string response = await userCommandExecutor.EnableRemindersAsync(id, userName);
 			await ReplyAsync(response);
 		}
 
@@ -73,8 +78,9 @@ namespace GenshinDiscordBotUI.CommandModules
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.DisableRemindersAsync(id);
+			string response = await userCommandExecutor.DisableRemindersAsync(id, userName);
 			await ReplyAsync(response);
 		}
 	}
