@@ -144,7 +144,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 builder.AppendLine(header);
                 foreach (var reminder in reminderList)
                 {
-                    builder.AppendLine(string.Format(entry, reminder.CategoryName,
+                    builder.AppendLine(string.Format(entry, reminder.CategoryName, reminder.Id,
                         reminder.SetupTime, reminder.Interval, reminder.ReminderTime));
                 }
             }

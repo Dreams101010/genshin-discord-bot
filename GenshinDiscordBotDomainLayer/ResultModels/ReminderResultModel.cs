@@ -11,6 +11,7 @@ namespace GenshinDiscordBotDomainLayer.ResultModels
         public DateTime SetupTime { get; set; }
         public TimeSpan Interval { get; set; }
         public DateTime ReminderTime { get; set; }
+        public ulong Id { get; set; }
         public string CategoryName { get; set; }
         public string Message { get; set; }
     }

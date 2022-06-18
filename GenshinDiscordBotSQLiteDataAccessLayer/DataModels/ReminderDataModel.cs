@@ -10,6 +10,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DataModels
 {
     public struct ReminderDataModel
     {
+        public ulong Id { get; set; }
         public ulong UserDiscordId { get; set; }
         public string UserLocale { get; set; }
         public bool RemindersOptInFlag { get; set; }
@@ -25,6 +26,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DataModels
         {
             return new Reminder
             {
+                Id = this.Id,
                 CategoryName = this.CategoryName,
                 Message = this.Message,
                 ReminderTime = this.ReminderTime,

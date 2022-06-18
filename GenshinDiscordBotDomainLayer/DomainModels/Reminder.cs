@@ -8,6 +8,7 @@ namespace GenshinDiscordBotDomainLayer.DomainModels
 {
     public struct Reminder
     {
+        public ulong Id { get; set; }
         public ulong UserDiscordId { get; set; }
         public UserLocale UserLocale { get; set; }
         public bool RemindersOptInFlag { get; set; }

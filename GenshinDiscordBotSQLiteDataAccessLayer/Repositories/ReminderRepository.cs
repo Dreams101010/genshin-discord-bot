@@ -64,7 +64,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
         public async Task<List<Reminder>> GetRemindersPastTimeAsync(ulong timeInSeconds)
         {
             string sql = @"
-                SELECT users.discord_user_id UserDiscordId, user_locale UserLocale, 
+                SELECT reminders.id Id, users.discord_user_id UserDiscordId, user_locale UserLocale, 
                 reminders_opt_in RemindersOptInFlag, guild_id GuildId, channel_id ChannelId, 
                 interval Interval, reminder_time ReminderTime, name CategoryName, 
                 message Message, recurrent RecurrentFlag
@@ -97,7 +97,7 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
         public async Task<List<Reminder>> GetRemindersForUserAsync(ulong userDiscordId)
         {
             string sql = @"
-                SELECT users.discord_user_id UserDiscordId, user_locale UserLocale, 
+                SELECT reminders.id Id, users.discord_user_id UserDiscordId, user_locale UserLocale, 
                 reminders_opt_in RemindersOptInFlag, guild_id GuildId, channel_id ChannelId, 
                 interval Interval, reminder_time ReminderTime, name CategoryName, 
                 message Message, recurrent RecurrentFlag

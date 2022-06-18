@@ -26,6 +26,7 @@ namespace GenshinDiscordBotDomainLayer.Helpers
                 ReminderTime = DateTimeBusinessLogic.GetLocalTimeFromUnixSeconds(reminder.ReminderTime),
                 CategoryName = reminder.CategoryName,
                 Message = reminder.Message,
+                Id = reminder.Id,
                 Interval = TimeSpan.FromSeconds(reminder.Interval),
 
             };
