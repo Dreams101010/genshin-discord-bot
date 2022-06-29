@@ -132,7 +132,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 Message = message,
                 Interval = DateTimeBusinessLogic.GetSecondsInHours(68),
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(2, 22, 0, 0)),
-                Recurrent = true,
+                Recurrent = false,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
         }
@@ -149,7 +149,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 Message = message,
                 Interval = DateTimeBusinessLogic.GetSecondsInHours(68),
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(days, hours, 0, 0)),
-                Recurrent = true,
+                Recurrent = false,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
         }
