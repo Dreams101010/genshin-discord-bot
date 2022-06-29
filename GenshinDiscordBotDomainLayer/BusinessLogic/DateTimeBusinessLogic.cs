@@ -18,27 +18,21 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             DateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
         }
 
-        public ulong GetReminderTimeAsUnixSeconds(TimeSpan duration)
+        public ulong GetSecondsInHours(uint hours) => hours * 3600;
+
+        public ulong GetTimeAsUnixSeconds(DateTime dateTime)
         {
-            TimeSpan durationWithoutMilliseconds = 
-                new(duration.Days, duration.Hours, duration.Minutes, duration.Seconds, 0);
-            ulong durationInSeconds = Convert.ToUInt64(duration.TotalSeconds);
-            ulong currentTimeAsUnixSeconds = GetCurrentUtcTimeAsUnixSeconds();
-            return currentTimeAsUnixSeconds + durationInSeconds;
+            var dateTimeWithoutMillis = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day,
+                dateTime.Hour, dateTime.Minute, dateTime.Second);
+            var diff = dateTimeWithoutMillis - DateTime.UnixEpoch;
+            return Convert.ToUInt64(diff.TotalSeconds);
         }
 
         public ulong GetCurrentUtcTimeAsUnixSeconds()
         {
             var now = DateTimeProvider.GetDateTime();
             var utcNow = now.ToUniversalTime();
-            var utcNowWithoutMilliseconds = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second);
-            var diff = utcNowWithoutMilliseconds - DateTime.UnixEpoch;
-            return Convert.ToUInt64(diff.TotalSeconds);
-        }
-
-        public ulong GetHoursAsTotalSeconds(uint hours)
-        {
-            return hours * 60 * 60;
+            return GetTimeAsUnixSeconds(utcNow);
         }
 
         public DateTime GetUtcTimeFromUnixSeconds(ulong unixSeconds)
@@ -51,10 +45,42 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             return GetUtcTimeFromUnixSeconds(unixSeconds).ToLocalTime();
         }
 
+        /// <summary>
+        /// Gets the time at which reminder with given duration must be fired.
+        /// </summary>
+        /// <param name="reminderDuration">Duration of the reminder.</param>
+        /// <returns>Time at which reminder must be fird (in UTC) in Unix seconds (number of seconds from January 1st, 1970 00:00:00).</returns>
+        public ulong GetReminderUtcTimeAsUnixSeconds(TimeSpan reminderDuration)
+        {
+            TimeSpan durationWithoutMillis = 
+                new(reminderDuration.Days, reminderDuration.Hours,
+                reminderDuration.Minutes, reminderDuration.Seconds, 0);
+            ulong durationInSeconds = Convert.ToUInt64(durationWithoutMillis.TotalSeconds);
+            ulong currentUtcTimeAsUnixSeconds = GetCurrentUtcTimeAsUnixSeconds();
+            return currentUtcTimeAsUnixSeconds + durationInSeconds;
+        }
+
+        /// <summary>
+        /// Gets next time (in Unix seconds) at which reminder that must be fired at a given local time must be fired.
+        /// </summary>
+        /// <param name="time">Time at which reminder must be fired. (Local)</param>
+        /// <returns>Time at which reminder must be fird (in UTC) in Unix seconds (number of seconds from January 1st, 1970 00:00:00).</returns>
+        public ulong GetUtcTimeToNextDailyReminderAsUnixSeconds(TimeOnly time)
+        {
+            // Note that duration returned by GetDurationToNextDailyReminder (which uses local time) 
+            // is time zone-agnostic. 
+            return GetReminderUtcTimeAsUnixSeconds(GetDurationToNextDailyReminder(time));
+        }
+
         // gets next DateTime when user should be reminded at this time
         // for example: if time = 18:00 and current date time is 1/1/2000 21:00
         // next reminder datetime will be 2/1/2000 18:00
-        public DateTime GetNextDailyReminderTimeFor(TimeOnly time)
+        /// <summary>
+        /// Gets the next date and time at which reminder with a given time must be fired.
+        /// </summary>
+        /// <param name="time">Time at which reminder must be fired. (Local)</param>
+        /// <returns>Local date and time at which reminder must be fired.</returns>
+        private DateTime GetNextDailyReminderTimeFor(TimeOnly time)
         {
             DateTime dtNow = DateTime.Now;
             DateTime nextReminderDateTime 
@@ -66,15 +92,15 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             return nextReminderDateTime;
         }
 
-        public TimeSpan GetTimeToNextDailyReminder(TimeOnly time)
+        /// <summary>
+        /// Gets reminder duration for a reminder that must be fired at a given local time.
+        /// </summary>
+        /// <param name="time">Time at which reminder must be fired. (Local)</param>
+        /// <returns>Duration of the reminder.</returns>
+        private TimeSpan GetDurationToNextDailyReminder(TimeOnly time)
         {
             var dtOfNextReminder = GetNextDailyReminderTimeFor(time);
             return dtOfNextReminder - DateTime.Now;
-        }
-
-        public ulong GetTimeToNextDailyReminderAsUnixSeconds(TimeOnly time)
-        {
-            return GetReminderTimeAsUnixSeconds(GetTimeToNextDailyReminder(time));
         }
     }
 }

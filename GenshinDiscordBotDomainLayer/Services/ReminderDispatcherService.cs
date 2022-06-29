@@ -105,7 +105,7 @@ namespace GenshinDiscordBotDomainLayer.Services
             };
             return await BotMessageSender.SendMessageAsync(messageContext);
         }
-
+        
         private string GetSorryMessage(UserLocale locale)
         {
             string message = locale switch

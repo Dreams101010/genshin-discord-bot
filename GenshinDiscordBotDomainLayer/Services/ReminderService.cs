@@ -40,8 +40,8 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Artifact reminder",
                 Message = message,
-                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
-                ReminderTime = DateTimeBusinessLogic.GetReminderTimeAsUnixSeconds(new TimeSpan(24, 0, 0)),
+                Interval = DateTimeBusinessLogic.GetSecondsInHours(24),
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(24, 0, 0)),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
@@ -58,8 +58,8 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Artifact reminder",
                 Message = message,
-                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
-                ReminderTime = DateTimeBusinessLogic.GetTimeToNextDailyReminderAsUnixSeconds(timeOnly),
+                Interval = DateTimeBusinessLogic.GetSecondsInHours(24),
+                ReminderTime = DateTimeBusinessLogic.GetUtcTimeToNextDailyReminderAsUnixSeconds(timeOnly),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
@@ -85,8 +85,8 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Check-in reminder",
                 Message = message,
-                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
-                ReminderTime = DateTimeBusinessLogic.GetReminderTimeAsUnixSeconds(new TimeSpan(24, 0, 0)),
+                Interval = DateTimeBusinessLogic.GetSecondsInHours(24),
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(24, 0, 0)),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
@@ -103,8 +103,8 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Check-in reminder",
                 Message = message,
-                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(24),
-                ReminderTime = DateTimeBusinessLogic.GetTimeToNextDailyReminderAsUnixSeconds(timeOnly),
+                Interval = DateTimeBusinessLogic.GetSecondsInHours(24),
+                ReminderTime = DateTimeBusinessLogic.GetUtcTimeToNextDailyReminderAsUnixSeconds(timeOnly),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
@@ -130,8 +130,8 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Serenitea pot plant harvest",
                 Message = message,
-                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(68),
-                ReminderTime = DateTimeBusinessLogic.GetReminderTimeAsUnixSeconds(new TimeSpan(2, 22, 0, 0)),
+                Interval = DateTimeBusinessLogic.GetSecondsInHours(68),
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(2, 22, 0, 0)),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
@@ -147,8 +147,8 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Serenitea pot plant harvest",
                 Message = message,
-                Interval = DateTimeBusinessLogic.GetHoursAsTotalSeconds(68),
-                ReminderTime = DateTimeBusinessLogic.GetReminderTimeAsUnixSeconds(new TimeSpan(days, hours, 0, 0)),
+                Interval = DateTimeBusinessLogic.GetSecondsInHours(68),
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(days, hours, 0, 0)),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
