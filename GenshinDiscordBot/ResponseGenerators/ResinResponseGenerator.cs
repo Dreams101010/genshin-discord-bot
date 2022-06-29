@@ -32,18 +32,10 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         public string GetGetResinSuccessResponse(
             UserLocale locale, ResinInfoResultModel resultModel, string userName)
         {
-            string resinCountFormat = locale switch
-            {
-                UserLocale.enGB => Localization.English["Resin"]["ResinCount"],
-                UserLocale.ruRU => Localization.Russian["Resin"]["ResinCount"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
-            string timeToResin = locale switch
-            {
-                UserLocale.enGB => Localization.English["Resin"]["TimeToResin"],
-                UserLocale.ruRU => Localization.Russian["Resin"]["TimeToResin"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var resinCountFormat = Localization.GetLocalizedString("Resin",
+                "ResinCount", locale);
+            var timeToResin = Localization.GetLocalizedString("Resin",
+                "ResinCount", locale);
             StringBuilder builder = new StringBuilder();
             builder.AppendLine(string.Format(resinCountFormat, userName, 
                 resultModel.CurrentCount));
@@ -61,12 +53,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         public string GetGetResinErrorMessage(
             UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Resin"]["GetResinErrorMessage"],
-                UserLocale.ruRU => Localization.Russian["Resin"]["GetResinErrorMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Resin",
+                "GetResinErrorMessage", locale);
             return string.Format(format, userName);
         }
 
@@ -77,12 +65,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             // a catch-all
             if (!ResinCommandArgumentValidator.SetResinCount_ResinCountValid(newResinValue))
             {
-                string format = locale switch
-                {
-                    UserLocale.enGB => Localization.English["Resin"]["InvalidResinValue"],
-                    UserLocale.ruRU => Localization.Russian["Resin"]["InvalidResinValue"],
-                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-                };
+                var format = Localization.GetLocalizedString("Resin",
+                    "InvalidResinValue", locale);
                 return string.Format(format, userName);
             }
             return string.Empty;
@@ -90,12 +74,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 
         public string GetSetResinSuccessMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Resin"]["SetResinSuccessMessage"],
-                UserLocale.ruRU => Localization.Russian["Resin"]["SetResinSuccessMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Resin",
+                "SetResinSuccessMessage", locale);
             return string.Format(format, userName);
         }
     }

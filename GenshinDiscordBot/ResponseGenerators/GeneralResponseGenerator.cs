@@ -26,17 +26,12 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         {
             
             var nowUtc = DateTimeProvider.GetDateTime().ToUniversalTime();
-            return string.Format("Something went wrong.\nPlease contact the developer.\n The time of the event: {0}", nowUtc);
+            return string.Format("Something went wrong.\nPlease contact the developer.\nThe time of the event: {0}", nowUtc);
         }
 
         public string GetHelpMessage(UserLocale locale)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["General"]["HelpMessage"],
-                UserLocale.ruRU => Localization.Russian["General"]["HelpMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("General", "HelpMessage", locale);
             return format;
         }
     }

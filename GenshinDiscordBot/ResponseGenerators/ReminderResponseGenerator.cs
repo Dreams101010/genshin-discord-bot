@@ -23,102 +23,66 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         }
         public string GetArtifactReminderSetupSuccessMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderSetupSuccessMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderSetupSuccessMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder", 
+                "ArtifactReminderSetupSuccessMessage", locale);
             return string.Format(format, userName);
         }
 
         internal string GetArtifactReminderSetupSuccessMessageWithCustomTime(
             UserLocale locale, TimeOnly timeOnly, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderSetupSuccessMessageWithCustomTime"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderSetupSuccessMessageWithCustomTime"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                    "ArtifactReminderSetupSuccessMessageWithCustomTime", locale);
             return string.Format(format, userName, timeOnly);
         }
 
         public string GetArtifactReminderCancelSuccessMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderCancelSuccessMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderCancelSuccessMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "ArtifactReminderCancelSuccessMessage", locale);
             return string.Format(format, userName);
         }
 
         public string GetArtifactReminderCancelNotFoundMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["ArtifactReminderCancelNotFoundMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["ArtifactReminderCancelNotFoundMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "ArtifactReminderCancelNotFoundMessage", locale);
             return string.Format(format, userName);
         }
 
         internal string GetCheckInReminderSetupSuccessMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderSetupSuccessMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderSetupSuccessMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "CheckInReminderSetupSuccessMessage", locale);
             return string.Format(format, userName);
         }
 
         internal string GetCheckInReminderSetupSuccessMessageWithCustomTime(
             UserLocale locale, TimeOnly timeOnly, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderSetupSuccessMessageWithCustomTime"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderSetupSuccessMessageWithCustomTime"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "CheckInReminderSetupSuccessMessageWithCustomTime", locale);
             return string.Format(format, userName, timeOnly);
         }
 
         internal string GetReminderTimeInvalid(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["ReminderTimeInvalid"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderTimeInvalid"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "ReminderTimeInvalid", locale);
             return string.Format(format, userName);
         }
 
         internal string GetCheckInReminderCancelSuccessMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderCancelSuccessMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderCancelSuccessMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "CheckInReminderCancelSuccessMessage", locale);
             return string.Format(format, userName);
         }
 
         internal string GetCheckInReminderCancelNotFoundMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["CheckInReminderCancelNotFoundMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["CheckInReminderCancelNotFoundMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "CheckInReminderCancelNotFoundMessage", locale);
             return string.Format(format, userName);
         }
 
@@ -128,19 +92,11 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             StringBuilder builder = new StringBuilder();
             if (reminderList.Count > 0)
             {
-                string header = locale switch
-                {
-                    UserLocale.enGB => Localization.English["Reminder"]["ReminderListHeader"],
-                    UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderListHeader"],
-                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-                };
+                var header = Localization.GetLocalizedString("Reminder",
+                    "ReminderListHeader", locale);
                 header = string.Format(header, userName);
-                string entry = locale switch
-                {
-                    UserLocale.enGB => Localization.English["Reminder"]["ReminderListEntry"],
-                    UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderListEntry"],
-                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-                };
+                var entry = Localization.GetLocalizedString("Reminder",
+                    "ReminderListEntry", locale);
                 builder.AppendLine(header);
                 foreach (var reminder in reminderList)
                 {
@@ -150,12 +106,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             }
             else
             {
-                string emptyMessage = locale switch
-                {
-                    UserLocale.enGB => Localization.English["Reminder"]["ReminderListEmpty"],
-                    UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderListEmpty"],
-                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-                };
+                var emptyMessage = Localization.GetLocalizedString("Reminder",
+                    "ReminderListEmpty", locale);
                 emptyMessage = string.Format(emptyMessage, userName);
                 builder.AppendLine(emptyMessage);
             }
@@ -164,35 +116,23 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 
         internal string GetSereniteaPotPlantHarvestSetupSuccessMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestSetupSuccessMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "SereniteaPotPlantHarvestSetupSuccessMessage", locale);
             return string.Format(format, userName);
         }
 
         internal string GetSereniteaPotPlantHarvestCancelSuccessMessage(UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestCancelSuccessMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestCancelSuccessMessage"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "SereniteaPotPlantHarvestCancelSuccessMessage", locale);
             return string.Format(format, userName);
         }
 
         internal string GetSereniteaPotPlantHarvestCheckInReminderCancelNotFoundMessage(
             UserLocale locale, string userName)
         {
-            string format = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["GetSereniteaPotPlantHarvestCheckInReminderCancelNotFound"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["GetSereniteaPotPlantHarvestCheckInReminderCancelNotFound"],
-                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-            };
+            var format = Localization.GetLocalizedString("Reminder",
+                "GetSereniteaPotPlantHarvestCheckInReminderCancelNotFound", locale);
             return string.Format(format, userName);
         }
 
@@ -276,12 +216,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             if (!ReminderArgumentValidator
                     .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync_TimeValid(days, hours))
             {
-                string format = locale switch
-                {
-                    UserLocale.enGB => Localization.English["Reminder"]["SereniteaPotPlantHarvestTimeInvalid"],
-                    UserLocale.ruRU => Localization.Russian["Reminder"]["SereniteaPotPlantHarvestTimeInvalid"],
-                    _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
-                };
+                var format = Localization.GetLocalizedString("Reminder",
+                    "SereniteaPotPlantHarvestTimeInvalid", locale);
                 return string.Format(format, userName);
             }
             return string.Empty;

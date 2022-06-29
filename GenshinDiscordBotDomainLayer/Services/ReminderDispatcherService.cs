@@ -108,13 +108,7 @@ namespace GenshinDiscordBotDomainLayer.Services
         
         private string GetSorryMessage(UserLocale locale)
         {
-            string message = locale switch
-            {
-                UserLocale.enGB => Localization.English["Reminder"]["ReminderSorryMessage"],
-                UserLocale.ruRU => Localization.Russian["Reminder"]["ReminderSorryMessage"],
-                _ => throw new NotImplementedException("Invalid UserLocale enum state"),
-            };
-            return message;
+            return Localization.GetLocalizedString("Reminder", "ReminderSorryMessage", locale);
         }
     }
 }
