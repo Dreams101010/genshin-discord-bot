@@ -35,7 +35,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             var resinCountFormat = Localization.GetLocalizedString("Resin",
                 "ResinCount", locale);
             var timeToResin = Localization.GetLocalizedString("Resin",
-                "ResinCount", locale);
+                "TimeToResin", locale);
             StringBuilder builder = new StringBuilder();
             builder.AppendLine(string.Format(resinCountFormat, userName, 
                 resultModel.CurrentCount));
