@@ -185,5 +185,10 @@ namespace GenshinDiscordBotDomainLayer.Services
         {
             return await ReminderDatabaseInteractionHandler.GetRemindersForUserAsync(userDiscordId);
         }
+
+        public async Task<bool> RemoveReminderByIdAsync(ulong requesterDiscordId, ulong reminderId)
+        {
+            return await ReminderDatabaseInteractionHandler.RemoveReminderByIdAsync(requesterDiscordId, reminderId);
+        }
     }
 }

@@ -188,5 +188,16 @@ namespace GenshinDiscordBotUI.CommandModules
                 .GetRemindersForUserAsync(id, userName);
             await ReplyAsync(response);
         }
+
+        [Command("cancelReminder")]
+        public async Task RemoveReminderById(ulong reminderId)
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var userId = Context.Message.Author.Id;
+            string response = await reminderCommandExecutor
+                .RemoveReminderById(userId, reminderId);
+            await ReplyAsync(response);
+        }
     }
 }

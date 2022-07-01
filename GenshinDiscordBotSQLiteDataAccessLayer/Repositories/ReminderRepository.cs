@@ -109,5 +109,18 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             return (await Connection.QueryAsync<ReminderDataModel>
                     (sql, new { UserDiscordId = userDiscordId })).Select((x => x.ToReminderDomain())).ToList();
         }
+
+        public async Task<bool> RemoveReminderById(ulong requesterUserId, ulong reminderId)
+        {
+            string removeSql = "DELETE FROM reminders WHERE user_discord_id = @UserId AND id = @ReminderId;";
+            int affected = await Connection.ExecuteAsync(removeSql,
+                new
+                {
+                    UserId = requesterUserId,
+                    ReminderId = reminderId,
+                }
+            );
+            return affected > 0;
+        }
     }
 }

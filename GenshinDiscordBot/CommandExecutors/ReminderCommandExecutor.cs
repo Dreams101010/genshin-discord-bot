@@ -269,5 +269,29 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 return errorMessage;
             }
         }
+
+        public async Task<string> RemoveReminderById(ulong requesterDiscordId, ulong reminderId)
+        {
+            try
+            {
+                var id = requesterDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                bool successFlag = await ReminderService.RemoveReminderByIdAsync(requesterDiscordId, reminderId);
+                if (successFlag)
+                {
+                    return ReminderResponseGenerator.GetReminderRemoveByIdSuccessMessage(userLocale);
+                }
+                else
+                {
+                    return ReminderResponseGenerator.GetReminderRemoveByIdNotFoundMessage(userLocale);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
     }
 }

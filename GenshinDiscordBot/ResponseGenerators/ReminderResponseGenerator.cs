@@ -222,5 +222,18 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             }
             return string.Empty;
         }
+
+        internal string GetReminderRemoveByIdSuccessMessage(UserLocale locale)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ReminderRemoveByIdSuccessMessage", locale);
+            return format;
+        }
+        internal string GetReminderRemoveByIdNotFoundMessage(UserLocale locale)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ReminderRemoveByIdNotFoundMessage", locale);
+            return format;
+        }
     }
 }
