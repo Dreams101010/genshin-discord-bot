@@ -83,5 +83,11 @@ namespace GenshinDiscordBotUI.CommandModules
 			string response = await userCommandExecutor.DisableRemindersAsync(id, userName);
 			await ReplyAsync(response);
 		}
+
+		[Command("ehe")]
+		public async Task HeheAsync()
+        {
+			await ReplyAsync("EHE TE NANDAYO?");
+        }
 	}
 }
