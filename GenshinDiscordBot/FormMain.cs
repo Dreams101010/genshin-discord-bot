@@ -24,6 +24,7 @@ namespace GenshinDiscordBotUI
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             InitializeComponent();
             notifyIcon1.Visible = false;
+            Minimize();
             StartBot();
         }
 
