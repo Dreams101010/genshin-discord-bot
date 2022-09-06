@@ -90,7 +90,9 @@
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "Genshin Discord Bot";
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.Resize += new System.EventHandler(this.FormMain_Resize);
             this.ResumeLayout(false);
 

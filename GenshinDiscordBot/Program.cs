@@ -199,41 +199,10 @@ namespace GenshinDiscordBotUI
             {
                 Logger?.Information("Application shutting down...");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Logger?.Error("Unhandled exception in Main : {e}");
+                Logger?.Error($"Unhandled exception in Main : {e}");
                 throw;
-            }
-        }
-
-        static async Task MainOld(string[] args)
-        {
-            try
-            {
-                var container = CompositionRoot();
-                Logger = container.Resolve<ILogger>();
-                using var scope = container.BeginLifetimeScope();
-                var databaseInitializer = scope.Resolve<DatabaseInitializer>();
-                databaseInitializer.InitializeDb();
-                var app = scope.Resolve<Application>();
-                CancellationTokenSource cancellationTokenSource = new();
-                CancellationToken token = cancellationTokenSource.Token;
-                Logger?.Information("Application starting...");
-                var appTask = app.StartApplication(token);
-                Console.WriteLine("Bot will be online shortly. Press ENTER to shut the application down.");
-                Console.ReadLine();
-                Logger?.Information("Application shutting down...");
-                cancellationTokenSource.Cancel();
-                await appTask; // await app to finish shutting down properly
-                Logger?.Information("Application has shut down.");
-            }
-            catch (OperationCanceledException)
-            {
-                Logger?.Information("Application shutting down...");
-            }
-            catch (Exception)
-            {
-                Logger?.Error("Unhandled exception in Main : {e}");
             }
         }
     }

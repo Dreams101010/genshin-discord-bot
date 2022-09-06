@@ -23,8 +23,6 @@ namespace GenshinDiscordBotUI
             this.application = application ?? throw new ArgumentNullException(nameof(application));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             InitializeComponent();
-            notifyIcon1.Visible = false;
-            Minimize();
             StartBot();
         }
 
@@ -109,6 +107,11 @@ namespace GenshinDiscordBotUI
             Show();
             this.WindowState = FormWindowState.Normal;
             notifyIcon1.Visible = false;
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
