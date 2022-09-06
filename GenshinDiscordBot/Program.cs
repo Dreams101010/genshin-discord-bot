@@ -50,6 +50,7 @@ namespace GenshinDiscordBotUI
             await Bot.StartBot(token);
         }
     }
+    // TODO: configure logging via file
     class Program
     {
         // Logger for logging unhandled exceptions
@@ -81,6 +82,7 @@ namespace GenshinDiscordBotUI
                 c => new LoggerConfiguration()
                 .WriteTo.Console()
                 .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day)
+                .MinimumLevel.Error()
                 .CreateLogger()).SingleInstance();
             // Database connection
             builder.Register((c) => new SqliteConnection(sqliteConnectionString)).AsSelf().InstancePerLifetimeScope();
