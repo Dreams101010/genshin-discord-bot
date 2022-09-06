@@ -31,7 +31,7 @@ namespace GenshinDiscordBotDomainLayer.Interceptors
             var delegateType = GetDelegateType(invocation);
             if (delegateType == MethodType.Synchronous)
             {
-                Logger.Information("In {0}.{1}", invocation.Method.DeclaringType, invocation.Method.Name);
+                Logger.Debug("In {0}.{1}", invocation.Method.DeclaringType, invocation.Method.Name);
                 invocation.Proceed();
             }
             if (delegateType == MethodType.AsyncAction)
@@ -55,13 +55,13 @@ namespace GenshinDiscordBotDomainLayer.Interceptors
 
         private async Task HandleAsync(Task task, IInvocation invocation)
         {
-            Logger.Information("In {0}.{1}", invocation.Method.DeclaringType, invocation.Method.Name);
+            Logger.Debug("In {0}.{1}", invocation.Method.DeclaringType, invocation.Method.Name);
             await task;
         }
 
         private async Task<T> HandleAsyncWithResult<T>(Task<T> task, IInvocation invocation)
         {
-            Logger.Information("In {0}.{1}", invocation.Method.DeclaringType, invocation.Method.Name);
+            Logger.Debug("In {0}.{1}", invocation.Method.DeclaringType, invocation.Method.Name);
             var result = await task;
             return result;
         }
