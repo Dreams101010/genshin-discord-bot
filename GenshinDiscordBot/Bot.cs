@@ -20,6 +20,7 @@ namespace GenshinDiscordBotUI
         private ILogger Logger { get; }
         private IConfigurationRoot Configuration { get;  }
         private string Token { get; }
+        private bool IsInitialized { get; set; } = false;
         public Bot(
             DiscordSocketClient client, 
             CommandHandler commandHandler,
@@ -37,13 +38,16 @@ namespace GenshinDiscordBotUI
         }
         public async Task StartBot(CancellationToken token)
         {
-            await CommandHandler.InstallCommandsAsync();
+            if (!IsInitialized)
+            {
+                await CommandHandler.InstallCommandsAsync();
+                IsInitialized = true;
+            }
             await Client.LoginAsync(TokenType.Bot, Token);
             await Client.StartAsync();
             _ = ReminderDispatcherService.DispatcherAsync(token);
             await CancellationLoop(token);
             await Client.LogoutAsync();
-            await Client.DisposeAsync();
         }
 
         private async Task CancellationLoop(CancellationToken token)

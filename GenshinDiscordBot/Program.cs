@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Autofac.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Sinks.WinForms.Base;
 using GenshinDiscordBotSQLiteDataAccessLayer;
 using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
 using GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers;
@@ -33,23 +34,10 @@ using Microsoft.Data.Sqlite;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace GenshinDiscordBotUI
 {
-    class Application
-    {
-        public Bot Bot { get; }
-
-        public Application(Bot bot)
-        {
-            Bot = bot ?? throw new ArgumentNullException(nameof(bot));
-        }
-
-        public async Task StartApplication(CancellationToken token)
-        {
-            await Bot.StartBot(token);
-        }
-    }
     // TODO: configure logging via file
     class Program
     {
@@ -80,9 +68,9 @@ namespace GenshinDiscordBotUI
             // Logger
             builder.Register<ILogger>(
                 c => new LoggerConfiguration()
-                .WriteTo.Console()
+                .WriteToSimpleAndRichTextBox()
                 .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day)
-                .MinimumLevel.Error()
+                .MinimumLevel.Information()
                 .CreateLogger()).SingleInstance();
             // Database connection
             builder.Register((c) => new SqliteConnection(sqliteConnectionString)).AsSelf().InstancePerLifetimeScope();
@@ -101,6 +89,8 @@ namespace GenshinDiscordBotUI
             // Providers
             builder.RegisterType<DateTimeNowProvider>()
                 .As<IDateTimeProvider>().SingleInstance();
+            // Forms
+            builder.RegisterType<FormMain>().AsSelf().SingleInstance();
 
             foreach (var assembly in assemblies)
             {
@@ -188,7 +178,34 @@ namespace GenshinDiscordBotUI
             return localizationSource;
         }
 
+        [STAThread]
         static async Task Main(string[] args)
+        {
+            System.Windows.Forms.Application.EnableVisualStyles();
+            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+            System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            try
+            {   
+                var container = CompositionRoot();
+                Logger = container.Resolve<ILogger>();
+                using var scope = container.BeginLifetimeScope();
+                var databaseInitializer = scope.Resolve<DatabaseInitializer>();
+                databaseInitializer.InitializeDb();
+                var mainForm = scope.Resolve<FormMain>();
+                System.Windows.Forms.Application.Run(mainForm);
+            }
+            catch (OperationCanceledException)
+            {
+                Logger?.Information("Application shutting down...");
+            }
+            catch (Exception)
+            {
+                Logger?.Error("Unhandled exception in Main : {e}");
+                throw;
+            }
+        }
+
+        static async Task MainOld(string[] args)
         {
             try
             {
