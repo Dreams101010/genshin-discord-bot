@@ -69,7 +69,8 @@ namespace GenshinDiscordBotUI
             builder.Register<ILogger>(
                 c => new LoggerConfiguration()
                 .WriteToSimpleAndRichTextBox()
-                .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day)
+                .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day, 
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
                 .MinimumLevel.Information()
                 .CreateLogger()).SingleInstance();
             // Database connection
