@@ -38,6 +38,9 @@ namespace GenshinDiscordBotDomainLayer.Services
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        // TODO: fix this method
+        // update and delete reminders only if every reminder has been finished
+        // consolidate message sending into one message
         public async Task DispatcherAsync(CancellationToken cancellation)
         {
             try

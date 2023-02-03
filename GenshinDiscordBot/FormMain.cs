@@ -18,12 +18,19 @@ namespace GenshinDiscordBotUI
         private ILogger Logger { get; set; }
         private CancellationTokenSource? cancellationTokenSource;
         private Task? BotTask { get; set; }
+        private bool AllowDisplay { get; set; } = false;
+
         public FormMain(Application application, ILogger logger)
         {
             this.application = application ?? throw new ArgumentNullException(nameof(application));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             InitializeComponent();
             StartBot();
+        }
+
+        protected override void SetVisibleCore(bool value)
+        {
+            base.SetVisibleCore(AllowDisplay ? value : AllowDisplay);
         }
 
         private async void button_Start_Click(object sender, EventArgs e)
@@ -104,6 +111,7 @@ namespace GenshinDiscordBotUI
 
         private void Maximize()
         {
+            AllowDisplay = true;
             Show();
             this.WindowState = FormWindowState.Normal;
             notifyIcon1.Visible = false;

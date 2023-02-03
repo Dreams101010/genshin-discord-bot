@@ -65,7 +65,7 @@
             this.simpleLogTextBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.simpleLogTextBox1.Name = "simpleLogTextBox1";
             this.simpleLogTextBox1.ReadOnly = false;
-            this.simpleLogTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.simpleLogTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.simpleLogTextBox1.Size = new System.Drawing.Size(774, 397);
             this.simpleLogTextBox1.TabIndex = 3;
             // 
@@ -90,7 +90,6 @@
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "Genshin Discord Bot";
-            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.Resize += new System.EventHandler(this.FormMain_Resize);
