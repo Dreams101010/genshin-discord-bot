@@ -235,5 +235,33 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 "ReminderRemoveByIdNotFoundMessage", locale);
             return format;
         }
+
+        internal string GetParametricTransformerReminderSetupSuccessMessage(UserLocale locale, string userName)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ParametricTransformerReminderSetupSuccessMessage", locale);
+            return string.Format(format, userName);
+        }
+
+        internal string GetParametricTransformerReminderCancelSuccessMessage(UserLocale locale, string userName)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ParametricTransformerReminderCancelSuccessMessage", locale);
+            return string.Format(format, userName);
+        }
+
+        internal string GetParametricTransformerReminderCancelNotFoundMessage(UserLocale locale, string userName)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ParametricTransformerReminderCancelNotFoundMessage", locale);
+            return string.Format(format, userName);
+        }
+
+        internal string GetReminderSetupSuccessMessage(UserLocale locale, string userName)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ParametricTransformerReminderSetupSuccessMessage", locale);
+            return string.Format(format, userName);
+        }
     }
 }

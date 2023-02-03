@@ -52,5 +52,16 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
                 _ => throw new NotImplementedException("Invalid enum state"),
             };
         }
+
+        public async Task<string> GetParametricTransformerReminderMessage(ulong discordUserId)
+        {
+            var user = await UserService.ReadUserAndCreateIfNotExistsAsync(discordUserId);
+            return user.Locale switch
+            {
+                DomainModels.UserLocale.enGB => Localization.English["Reminder"]["ParametricTransformerReminderMessage"],
+                DomainModels.UserLocale.ruRU => Localization.Russian["Reminder"]["ParametricTransformerReminderMessage"],
+                _ => throw new NotImplementedException("Invalid enum state"),
+            };
+        }
     }
 }

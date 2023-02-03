@@ -9,6 +9,7 @@ using GenshinDiscordBotDomainLayer.Helpers;
 using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotDomainLayer.Helpers.Time;
 using Serilog;
+using GenshinDiscordBotDomainLayer.DomainModels;
 
 namespace GenshinDiscordBotUI.CommandExecutors
 {
@@ -33,6 +34,54 @@ namespace GenshinDiscordBotUI.CommandExecutors
             ReminderResponseGenerator = reminderResponseGenerator ?? throw new ArgumentNullException(nameof(reminderResponseGenerator));
             ReminderConversionHelper = reminderConversionHelper ?? throw new ArgumentNullException(nameof(reminderConversionHelper));
             UserService = userService ?? throw new ArgumentNullException(nameof(userService));
+        }
+
+        public async Task<string> UpdateOrCreateReminderAsync(
+            DiscordMessageContext messageContext, string messageText, string userName, string timeSpanStr)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
+                {
+                    // NOTE: temp method usage, probably needs it's own error message
+                    return ReminderResponseGenerator
+                        .GetReminderTimeInvalid(userLocale, userName);
+                }
+                await ReminderService.UpdateOrCreateReminderAsync(messageContext, messageText, timeSpan);
+                return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> UpdateOrCreateRecurrentReminderAsync(
+            DiscordMessageContext messageContext, string messageText, string userName, string timeSpanStr)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
+                {
+                    // NOTE: temp method usage, probably needs it's own error message
+                    return ReminderResponseGenerator
+                        .GetReminderTimeInvalid(userLocale, userName);
+                }
+                await ReminderService.UpdateOrCreateRecurrentReminderAsync(messageContext, messageText, timeSpan);
+                return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
         }
 
         public async Task<string> UpdateOrCreateArtifactReminderAsync(
@@ -240,6 +289,52 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 {
                     return ReminderResponseGenerator
                         .GetSereniteaPotPlantHarvestCheckInReminderCancelNotFoundMessage(userLocale, userName);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> UpdateOrCreateParametricTransformerReminderAsync(
+            DiscordMessageContext messageContext, string userName)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                await ReminderService.UpdateOrCreateParametricTransformerReminderAsync(messageContext);
+                return ReminderResponseGenerator
+                    .GetParametricTransformerReminderSetupSuccessMessage(userLocale, userName);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> RemoveParametricTransformerRemindersForUserAsync(
+            DiscordMessageContext messageContext, string userName)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var result = await ReminderService.RemoveParametricTransformerRemindersForUserAsync(messageContext);
+                if (result)
+                {
+                    return ReminderResponseGenerator
+                        .GetParametricTransformerReminderCancelSuccessMessage(userLocale, userName);
+                }
+                else
+                {
+                    return ReminderResponseGenerator
+                        .GetParametricTransformerReminderCancelNotFoundMessage(userLocale, userName);
                 }
             }
             catch (Exception e)

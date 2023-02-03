@@ -20,6 +20,41 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             Scope = scope ?? throw new ArgumentNullException(nameof(scope));
         }
+
+        [Command("remind")]
+        public async Task UpdateOrCreateReminder(string description, string timeSpan)
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var userName = Context.Message.Author.Username;
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateReminderAsync(context, description, userName, timeSpan);
+            await ReplyAsync(response);
+        }
+
+        [Command("remindRecurrent")]
+        public async Task UpdateOrCreateRecurrentReminder(string description, string interval)
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var userName = Context.Message.Author.Username;
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateRecurrentReminderAsync(context, description, userName, interval);
+            await ReplyAsync(response);
+        }
+
         [Command("remindArtifacts")]
         public async Task UpdateOrCreateArtifactReminder()
         {
@@ -173,6 +208,40 @@ namespace GenshinDiscordBotUI.CommandModules
             };
             string response = await reminderCommandExecutor
                 .RemoveSereniteaPotPlantHarvestRemindersForUserAsync(context, userName);
+            await ReplyAsync(response);
+        }
+
+        [Command("remindTransformer")]
+        public async Task UpdateOrCreateParametricTransformerReminder()
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var userName = Context.Message.Author.Username;
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateParametricTransformerReminderAsync(context, userName);
+            await ReplyAsync(response);
+        }
+
+        [Command("cancelRemindTransformer")]
+        public async Task CancelParametricTransformerRemindersForUser()
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var userName = Context.Message.Author.Username;
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .RemoveParametricTransformerRemindersForUserAsync(context, userName);
             await ReplyAsync(response);
         }
 

@@ -30,6 +30,39 @@ namespace GenshinDiscordBotDomainLayer.Services
                 ?? throw new ArgumentNullException(nameof(reminderDatabaseInteractionHandler));
         }
 
+        public async Task UpdateOrCreateReminderAsync(
+            DiscordMessageContext messageContext, string description, TimeSpan timeSpan)
+        {
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Generic reminder",
+                Message = description,
+                Interval = 0,
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(timeSpan),
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
+        public async Task UpdateOrCreateRecurrentReminderAsync
+            (DiscordMessageContext messageContext, string description, TimeSpan timeSpan)
+        {
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Generic reminder",
+                Message = description,
+                Interval = (ulong)timeSpan.TotalSeconds,
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(timeSpan),
+                Recurrent = true,
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
         public async Task UpdateOrCreateArtifactReminderAsync(DiscordMessageContext messageContext)
         {
             var message = await ReminderMessageBusinessLogic.GetArtifactReminderMessage(messageContext.UserDiscordId);
@@ -160,6 +193,33 @@ namespace GenshinDiscordBotDomainLayer.Services
             {
                 UserDiscordId = messageContext.UserDiscordId,
                 CategoryName = "Serenitea pot plant harvest",
+            };
+            return await ReminderDatabaseInteractionHandler.RemoveRemindersForUserAsync(reminderInfo);
+        }
+
+        public async Task UpdateOrCreateParametricTransformerReminderAsync(DiscordMessageContext messageContext)
+        {
+            var message = await ReminderMessageBusinessLogic.GetParametricTransformerReminderMessage(messageContext.UserDiscordId);
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Parametric Transformer reminder",
+                Message = message,
+                Interval = DateTimeBusinessLogic.GetSecondsInHours(7 * 24),
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(7, 0, 0, 0)),
+                Recurrent = false,
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
+        public async Task<bool> RemoveParametricTransformerRemindersForUserAsync(DiscordMessageContext messageContext)
+        {
+            ReminderRemoveModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                CategoryName = "Parametric Transformer reminder",
             };
             return await ReminderDatabaseInteractionHandler.RemoveRemindersForUserAsync(reminderInfo);
         }

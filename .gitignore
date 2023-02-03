@@ -455,3 +455,6 @@ $RECYCLE.BIN/
 
 # Application secrets file
 **/appsecrets.json
+
+# Development artifacts
+Artifacts/
