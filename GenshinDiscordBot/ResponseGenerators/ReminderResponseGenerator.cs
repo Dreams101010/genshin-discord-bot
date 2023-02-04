@@ -243,6 +243,39 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return string.Format(format, userName);
         }
 
+        internal string GetParametricTransformerReminderSetupSuccessMessageWithCustomTime(
+            UserLocale locale, int days, int hours, string userName)
+        {
+            return locale switch
+            {
+                UserLocale.enGB => GetParametricTransformerReminderSetupSuccessMessageWithCustomTimeEnglish(
+                    days, hours, userName),
+                UserLocale.ruRU => GetParametricTransformerReminderSetupSuccessMessageWithCustomTimeRussian(
+                    days, hours, userName),
+                _ => throw new NotImplementedException("Invalid state of UserLocale enum"),
+            };
+        }
+
+        private string GetParametricTransformerReminderSetupSuccessMessageWithCustomTimeEnglish(
+            int days, int hours, string userName)
+        {
+            var format = Localization.English["Reminder"]["ParametricTransformerReminderSetupSuccessMessageWithCustomTime"];
+            return string.Format(format, userName, days, hours);
+        }
+        internal string GetParametricTransformerReminderSetupSuccessMessageWithCustomTimeRussian(
+            int days, int hours, string userName)
+        {
+            string format = Localization.Russian["Reminder"]["ParametricTransformerReminderSetupSuccessMessageWithCustomTime"];
+            string daysString = GetReminderDaysAsStringRussian(days);
+            string hoursString = GetReminderHoursAsStringRussian(hours);
+            string unionString = Localization.Russian["LanguageSpecific"]["AndUnion"];
+            if (daysString.Length == 0 || hoursString.Length == 0)
+            {
+                unionString = string.Empty;
+            }
+            return string.Format(format, userName, daysString, unionString, hoursString);
+        }
+
         internal string GetParametricTransformerReminderCancelSuccessMessage(UserLocale locale, string userName)
         {
             var format = Localization.GetLocalizedString("Reminder",
@@ -262,6 +295,21 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             var format = Localization.GetLocalizedString("Reminder",
                 "GenericReminderAddSuccessMessage", locale);
             return string.Format(format, userName);
+        }
+
+        internal string GetUpdateOrCreateParametricTransformerReminderCustomTimeValidationErrorMessage
+            (UserLocale locale, int days, int hours, string userName)
+        {
+            // TODO: consider adding a non-throwing method to validation class and use it as
+            // a catch-all
+            if (!ReminderArgumentValidator
+                    .UpdateOrCreateParametricTransformerReminderAsync_TimeValid(days, hours))
+            {
+                var format = Localization.GetLocalizedString("Reminder",
+                    "ParametricTransformerTimeInvalid", locale);
+                return string.Format(format, userName);
+            }
+            return string.Empty;
         }
     }
 }

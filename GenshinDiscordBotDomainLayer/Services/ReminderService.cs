@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
-using GenshinDiscordBotDomainLayer.BusinessLogic;
-using GenshinDiscordBotDomainLayer.Interfaces;
-using GenshinDiscordBotDomainLayer.Interfaces.Services;
-using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
+﻿using GenshinDiscordBotDomainLayer.BusinessLogic;
 using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
+using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
+using GenshinDiscordBotDomainLayer.Interfaces.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GenshinDiscordBotDomainLayer.Services
 {
@@ -22,11 +19,11 @@ namespace GenshinDiscordBotDomainLayer.Services
             DateTimeBusinessLogic dateTimeBusinessLogic,
             IReminderDatabaseInteractionHandler reminderDatabaseInteractionHandler)
         {
-            ReminderMessageBusinessLogic = reminderMessageBusinessLogic 
+            ReminderMessageBusinessLogic = reminderMessageBusinessLogic
                 ?? throw new ArgumentNullException(nameof(reminderMessageBusinessLogic));
-            DateTimeBusinessLogic = dateTimeBusinessLogic 
+            DateTimeBusinessLogic = dateTimeBusinessLogic
                 ?? throw new ArgumentNullException(nameof(dateTimeBusinessLogic));
-            ReminderDatabaseInteractionHandler = reminderDatabaseInteractionHandler 
+            ReminderDatabaseInteractionHandler = reminderDatabaseInteractionHandler
                 ?? throw new ArgumentNullException(nameof(reminderDatabaseInteractionHandler));
         }
 
@@ -209,6 +206,23 @@ namespace GenshinDiscordBotDomainLayer.Services
                 Message = message,
                 Interval = DateTimeBusinessLogic.GetSecondsInHours(7 * 24),
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(7, 0, 0, 0)),
+                Recurrent = false,
+            };
+            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+        }
+
+        public async Task UpdateOrCreateParametricTransformerReminderAsync(DiscordMessageContext messageContext, int days, int hours)
+        {
+            var message = await ReminderMessageBusinessLogic.GetParametricTransformerReminderMessage(messageContext.UserDiscordId);
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Parametric Transformer reminder",
+                Message = message,
+                Interval = DateTimeBusinessLogic.GetSecondsInHours((uint)(days * 24 + hours)),
+                ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(days, hours, 0, 0)),
                 Recurrent = false,
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);

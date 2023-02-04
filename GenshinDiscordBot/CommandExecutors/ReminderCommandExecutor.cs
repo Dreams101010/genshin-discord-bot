@@ -45,7 +45,6 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
                 if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
                 {
-                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
                         .GetReminderTimeInvalid(userLocale, userName);
                 }
@@ -309,6 +308,33 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 await ReminderService.UpdateOrCreateParametricTransformerReminderAsync(messageContext);
                 return ReminderResponseGenerator
                     .GetParametricTransformerReminderSetupSuccessMessage(userLocale, userName);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> UpdateOrCreateParametricTransformerReminderAsync(
+            DiscordMessageContext messageContext, int days, int hours, string userName)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+               string validationErrorMessage = ReminderResponseGenerator
+                    .GetUpdateOrCreateParametricTransformerReminderCustomTimeValidationErrorMessage(
+                    userLocale, days, hours, userName);
+                if (validationErrorMessage != string.Empty)
+                {
+                    return validationErrorMessage;
+                }
+                await ReminderService.UpdateOrCreateParametricTransformerReminderAsync(messageContext, days, hours);
+                return ReminderResponseGenerator
+                    .GetParametricTransformerReminderSetupSuccessMessageWithCustomTime(
+                        userLocale, days, hours, userName);
             }
             catch (Exception e)
             {

@@ -34,5 +34,25 @@ namespace GenshinDiscordBotDomainLayer.ValidationLogic
                 throw new ArgumentException("Invalid value of a time interval");
             }
         }
+
+        public bool UpdateOrCreateParametricTransformerReminderAsync_TimeValid(int days, int hours)
+        {
+            TimeSpan timeToCheck = new TimeSpan(days, hours, 0, 0);
+            if (timeToCheck <= ReminderDataProvider.MinTimeForParametricTransformer
+                || timeToCheck > ReminderDataProvider.MaxTimeForParametricTransformer)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public void UpdateOrCreateParametricTransformerReminderAsync_Validate(int days, int hours)
+        {
+            var validationResult = UpdateOrCreateParametricTransformerReminderAsync_TimeValid(days, hours);
+            if (!validationResult)
+            {
+                throw new ArgumentException("Invalid value of a time interval");
+            }
+        }
     }
 }

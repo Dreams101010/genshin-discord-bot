@@ -228,6 +228,23 @@ namespace GenshinDiscordBotUI.CommandModules
             await ReplyAsync(response);
         }
 
+        [Command("remindTransformer")]
+        public async Task UpdateOrCreateParametricTransformerReminder(int days, int hours)
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var userName = Context.Message.Author.Username;
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateParametricTransformerReminderAsync(context, days, hours, userName);
+            await ReplyAsync(response);
+        }
+
         [Command("cancelRemindTransformer")]
         public async Task CancelParametricTransformerRemindersForUser()
         {
