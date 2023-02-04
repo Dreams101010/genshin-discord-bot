@@ -28,6 +28,7 @@ namespace GenshinDiscordBotDomainLayer.Helpers
                 Message = reminder.Message,
                 Id = reminder.Id,
                 Interval = TimeSpan.FromSeconds(reminder.Interval),
+                IsRecurrent = reminder.RecurrentFlag
 
             };
             return resultModel;

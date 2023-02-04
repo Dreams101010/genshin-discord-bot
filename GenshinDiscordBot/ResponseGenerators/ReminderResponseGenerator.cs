@@ -89,6 +89,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         internal string GetReminderListString(
             UserLocale locale, List<ReminderResultModel> reminderList, string userName)
         {
+            string localizedYes = Localization.GetLocalizedString("General", "Yes", locale);
+            string localizedNo = Localization.GetLocalizedString("General", "No", locale);
             StringBuilder builder = new StringBuilder();
             if (reminderList.Count > 0)
             {
@@ -100,8 +102,9 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 builder.AppendLine(header);
                 foreach (var reminder in reminderList)
                 {
-                    builder.AppendLine(string.Format(entry, reminder.CategoryName, reminder.Id,
-                        reminder.SetupTime, reminder.Interval, reminder.ReminderTime));
+                    string reminderRecurrenceString = reminder.IsRecurrent ? localizedYes : localizedNo;
+                    builder.AppendLine(string.Format(entry, reminder.Id, reminder.CategoryName, reminder.Message,
+                        reminder.SetupTime, reminder.Interval, reminder.ReminderTime, reminderRecurrenceString));
                 }
             }
             else

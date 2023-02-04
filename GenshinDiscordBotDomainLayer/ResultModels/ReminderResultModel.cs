@@ -14,5 +14,6 @@ namespace GenshinDiscordBotDomainLayer.ResultModels
         public ulong Id { get; set; }
         public string CategoryName { get; set; }
         public string Message { get; set; }
+        public bool IsRecurrent { get; set; }
     }
 }
