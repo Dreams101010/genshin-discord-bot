@@ -7,6 +7,7 @@ using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.Localization;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
+using System.Globalization;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
@@ -86,11 +87,18 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return string.Format(format, userName);
         }
 
+        // TODO: move locale resolving into separate class
         internal string GetReminderListString(
             UserLocale locale, List<ReminderResultModel> reminderList, string userName)
         {
             string localizedYes = Localization.GetLocalizedString("General", "Yes", locale);
             string localizedNo = Localization.GetLocalizedString("General", "No", locale);
+            var culture = locale switch
+            {
+                UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
+                UserLocale.ruRU => CultureInfo.GetCultureInfo("ru-RU"),
+                _ => throw new Exception("Invalid enum state"),
+            };
             StringBuilder builder = new StringBuilder();
             if (reminderList.Count > 0)
             {
@@ -104,7 +112,8 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 {
                     string reminderRecurrenceString = reminder.IsRecurrent ? localizedYes : localizedNo;
                     builder.AppendLine(string.Format(entry, reminder.Id, reminder.CategoryName, reminder.Message,
-                        reminder.SetupTime, reminder.Interval, reminder.ReminderTime, reminderRecurrenceString));
+                        reminder.SetupTime.ToString(culture), reminder.Interval, 
+                        reminder.ReminderTime.ToString(culture), reminderRecurrenceString));
                 }
             }
             else
