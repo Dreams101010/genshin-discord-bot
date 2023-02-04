@@ -38,6 +38,23 @@ namespace GenshinDiscordBotUI.CommandModules
             await ReplyAsync(response);
         }
 
+        [Command("remindDate")]
+        public async Task UpdateOrCreateReminderByDate(string description, string dateTime)
+        {
+            using var scope = Scope.BeginLifetimeScope();
+            var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            var userName = Context.Message.Author.Username;
+            DiscordMessageContext context = new DiscordMessageContext()
+            {
+                UserDiscordId = Context.Message.Author.Id,
+                ChannelId = Context.Message.Channel.Id,
+                GuildId = Context.Guild.Id,
+            };
+            string response = await reminderCommandExecutor
+                .UpdateOrCreateReminderByDateAsync(context, description, userName, dateTime);
+            await ReplyAsync(response);
+        }
+
         [Command("remindRecurrent")]
         public async Task UpdateOrCreateRecurrentReminder(string description, string interval)
         {

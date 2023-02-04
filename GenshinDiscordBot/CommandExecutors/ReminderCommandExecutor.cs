@@ -10,6 +10,9 @@ using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotDomainLayer.Helpers.Time;
 using Serilog;
 using GenshinDiscordBotDomainLayer.DomainModels;
+using GenshinDiscordBotDomainLayer.ValidationLogic;
+using System.Globalization;
+using System.Threading;
 
 namespace GenshinDiscordBotUI.CommandExecutors
 {
@@ -20,12 +23,14 @@ namespace GenshinDiscordBotUI.CommandExecutors
         private GeneralResponseGenerator GeneralResponseGenerator { get; set; }
         private ReminderResponseGenerator ReminderResponseGenerator { get; set; }
         public ReminderConversionHelper ReminderConversionHelper { get; }
+        public DateTimeArgumentValidator DateTimeArgumentValidator { get; set; }
         private IUserService UserService { get; set; }
 
         public ReminderCommandExecutor(IReminderService reminderService, ILogger logger, 
             GeneralResponseGenerator generalResponseGenerator,
             ReminderResponseGenerator reminderResponseGenerator,
             ReminderConversionHelper reminderConversionHelper,
+            DateTimeArgumentValidator dateTimeArgumentValidator,
             IUserService userService)
         {
             ReminderService = reminderService ?? throw new ArgumentNullException(nameof(reminderService));
@@ -33,6 +38,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
             GeneralResponseGenerator = generalResponseGenerator ?? throw new ArgumentNullException(nameof(generalResponseGenerator));
             ReminderResponseGenerator = reminderResponseGenerator ?? throw new ArgumentNullException(nameof(reminderResponseGenerator));
             ReminderConversionHelper = reminderConversionHelper ?? throw new ArgumentNullException(nameof(reminderConversionHelper));
+            DateTimeArgumentValidator = dateTimeArgumentValidator ?? throw new ArgumentNullException(nameof(dateTimeArgumentValidator));
             UserService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
@@ -49,6 +55,42 @@ namespace GenshinDiscordBotUI.CommandExecutors
                         .GetReminderTimeInvalid(userLocale, userName);
                 }
                 await ReminderService.UpdateOrCreateReminderAsync(messageContext, messageText, timeSpan);
+                return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        // TODO: put parsing logic into separate class
+        public async Task<string> UpdateOrCreateReminderByDateAsync(
+            DiscordMessageContext messageContext, string messageText, string userName, string dateTimeStr)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var culture = userLocale switch
+                {
+                    UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
+                    UserLocale.ruRU => CultureInfo.GetCultureInfo("ru-RU"),
+                    _ => throw new Exception("Invalid enum state"),
+                };
+                if (!DateTime.TryParse(
+                    dateTimeStr, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+                {
+                    return ReminderResponseGenerator
+                        .GetReminderTimeInvalid(userLocale, userName);
+                }
+                if (!DateTimeArgumentValidator.IsInFuture(dateTime))
+                {
+                    return ReminderResponseGenerator
+                        .GetReminderTimeInvalid(userLocale, userName);
+                }
+                await ReminderService.UpdateOrCreateReminderAsync(messageContext, messageText, dateTime);
                 return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
             }
             catch (Exception e)

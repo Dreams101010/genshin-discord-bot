@@ -43,6 +43,24 @@ namespace GenshinDiscordBotDomainLayer.Services
             await ReminderDatabaseInteractionHandler.CreateNewReminderAsync(reminderInfo);
         }
 
+        public async Task UpdateOrCreateReminderAsync(
+            DiscordMessageContext messageContext, string description, DateTime reminderTime)
+        {
+            ulong utcReminderTime = DateTimeBusinessLogic.GetTimeAsUnixSeconds(reminderTime.ToUniversalTime());
+            ulong currentUtcTime = DateTimeBusinessLogic.GetCurrentUtcTimeAsUnixSeconds();
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Generic reminder",
+                Message = description,
+                Interval = utcReminderTime - currentUtcTime,
+                ReminderTime = utcReminderTime,
+            };
+            await ReminderDatabaseInteractionHandler.CreateNewReminderAsync(reminderInfo);
+        }
+
         public async Task UpdateOrCreateRecurrentReminderAsync
             (DiscordMessageContext messageContext, string description, TimeSpan timeSpan)
         {
