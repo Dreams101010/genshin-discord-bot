@@ -38,9 +38,6 @@ namespace GenshinDiscordBotDomainLayer.Services
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // TODO: fix this method
-        // update and delete reminders only if every reminder has been finished
-        // consolidate message sending into one message
         public async Task DispatcherAsync(CancellationToken cancellation)
         {
             try
@@ -56,25 +53,26 @@ namespace GenshinDiscordBotDomainLayer.Services
                     using var scope = Scope.BeginLifetimeScope();
                     var reminderService = scope.Resolve<IReminderService>();
                     var expiredReminders = await reminderService.GetExpiredRemindersAsync(currentTime);
+                    bool successOnEveryMessage = true;
                     foreach (var reminder in expiredReminders)
                     {
-                        bool result = true;
+                        bool sendSuccessful = true;
                         if (currentTime - reminder.ReminderTime < 300)
                         {
-                            result = await SendReminderAsync(reminder);
+                            sendSuccessful = await SendReminderAsync(reminder);
                         }
                         else
                         {
-                            result = await SendDelayedReminderAsync(reminder);
+                            sendSuccessful = await SendDelayedReminderAsync(reminder);
                         }
-                        if (!result)
+                        if (!sendSuccessful)
                         {
-                            // NOTE: this is temporary fix so we don't drop any messages
-                            Logger.Error("Reminder dispatcher method failed to send message. Aborting...");
-                            return;
+                            successOnEveryMessage = false;
                         }
                     }
-                    if (expiredReminders.Count > 0)
+                    // only update and remove reminders if we have successfully sent
+                    // all messages
+                    if (expiredReminders.Count > 0 && successOnEveryMessage)
                     {
                         await reminderService.UpdateExpiredRecurrentRemindersAsync(currentTime);
                         await reminderService.RemoveExpiredNonRecurrentRemindersAsync(currentTime);
