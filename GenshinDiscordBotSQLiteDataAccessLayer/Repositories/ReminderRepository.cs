@@ -50,6 +50,23 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
             }
         }
 
+        public async Task CreateNewReminderAsync(ReminderInsertModel reminderInfo)
+        {
+            string insertSql = @"
+                INSERT INTO reminders (guild_id, channel_id, user_discord_id, 
+                interval, reminder_time, category_id, message, recurrent) 
+                VALUES 
+                (@GuildId, @ChannelId, @UserDiscordId, @Interval, @ReminderTime, 
+                (SELECT id FROM reminder_categories WHERE name = @CategoryName), 
+                @Message, @Recurrent);
+            ";
+            int affectedByInsert = await Connection.ExecuteAsync(insertSql, reminderInfo);
+            if (affectedByInsert == 0)
+            {
+                throw new Exception("Database error while updating rows: affected mismatch");
+            }
+        }
+
         public async Task<bool> RemoveRemindersForUserAsync(ReminderRemoveModel reminderInfo)
         {
             string removeSql = @"

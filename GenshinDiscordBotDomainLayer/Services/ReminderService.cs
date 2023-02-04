@@ -40,7 +40,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 Interval = (ulong)timeSpan.TotalSeconds,
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(timeSpan),
             };
-            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+            await ReminderDatabaseInteractionHandler.CreateNewReminderAsync(reminderInfo);
         }
 
         public async Task UpdateOrCreateRecurrentReminderAsync
@@ -57,7 +57,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(timeSpan),
                 Recurrent = true,
             };
-            await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
+            await ReminderDatabaseInteractionHandler.CreateNewReminderAsync(reminderInfo);
         }
 
         public async Task UpdateOrCreateArtifactReminderAsync(DiscordMessageContext messageContext)

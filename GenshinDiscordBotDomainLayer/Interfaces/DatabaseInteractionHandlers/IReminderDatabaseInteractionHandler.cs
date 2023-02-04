@@ -11,6 +11,7 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers
     public interface IReminderDatabaseInteractionHandler
     {
         public Task UpdateOrCreateReminderAsync(ReminderInsertModel reminderInfo);
+        public Task CreateNewReminderAsync(ReminderInsertModel reminderInfo);
         public Task<bool> RemoveRemindersForUserAsync(ReminderRemoveModel reminderInfo);
         public Task<List<Reminder>> GetRemindersPastTimeAsync(ulong time);
         public Task UpdateExpiredRecurrentRemindersAsync(ulong timeInSeconds);
