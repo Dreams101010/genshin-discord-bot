@@ -37,7 +37,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Generic reminder",
                 Message = description,
-                Interval = 0,
+                Interval = (ulong)timeSpan.TotalSeconds,
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(timeSpan),
             };
             await ReminderDatabaseInteractionHandler.UpdateOrCreateReminderAsync(reminderInfo);
