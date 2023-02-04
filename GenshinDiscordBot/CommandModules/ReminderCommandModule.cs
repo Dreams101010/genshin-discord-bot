@@ -270,8 +270,10 @@ namespace GenshinDiscordBotUI.CommandModules
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
             var userName = Context.Message.Author.Username;
             var id = Context.Message.Author.Id;
+            var guildId = Context.Guild.Id;
+            var channelId = Context.Channel.Id;
             string response = await reminderCommandExecutor
-                .GetRemindersForUserAsync(id, userName);
+                .GetRemindersForUserAsync(id, guildId, channelId, userName);
             await ReplyAsync(response);
         }
 

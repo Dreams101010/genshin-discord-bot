@@ -127,6 +127,27 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                     (sql, new { UserDiscordId = userDiscordId })).Select((x => x.ToReminderDomain())).ToList();
         }
 
+        public async Task<List<Reminder>> GetRemindersForUserInChannelAsync(
+            ulong userDiscordId, ulong guildId, ulong channelId)
+        {
+            string sql = @"
+                SELECT reminders.id Id, users.discord_user_id UserDiscordId, user_locale UserLocale, 
+                reminders_opt_in RemindersOptInFlag, guild_id GuildId, channel_id ChannelId, 
+                interval Interval, reminder_time ReminderTime, name CategoryName, 
+                message Message, recurrent RecurrentFlag
+                FROM users 
+                INNER JOIN reminders ON users.discord_user_id = reminders.user_discord_id 
+                INNER JOIN reminder_categories ON reminders.category_id = reminder_categories.id
+                WHERE discord_user_id = @UserDiscordId AND guild_id = @GuildId AND channel_id = @ChannelId;
+            ";
+            return (await Connection.QueryAsync<ReminderDataModel>
+                    (sql, new { 
+                        UserDiscordId = userDiscordId,
+                        GuildId = guildId,
+                        ChannelId = channelId
+                    })).Select((x => x.ToReminderDomain())).ToList();
+        }
+
         public async Task<bool> RemoveReminderById(ulong requesterUserId, ulong reminderId)
         {
             string removeSql = "DELETE FROM reminders WHERE user_discord_id = @UserId AND id = @ReminderId;";

@@ -371,13 +371,14 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> GetRemindersForUserAsync(ulong userDiscordId, string userName)
+        public async Task<string> GetRemindersForUserAsync(
+            ulong userDiscordId, ulong guildId, ulong channelId, string userName)
         {
             try
             {
                 var id = userDiscordId;
                 var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
-                var reminderList = await ReminderService.GetRemindersForUserAsync(id);
+                var reminderList = await ReminderService.GetRemindersForUserAsync(id, guildId, channelId);
                 var reminderResultModelList = ReminderConversionHelper.GetReminderResultModelList(reminderList);
                 var result = ReminderResponseGenerator
                     .GetReminderListString(userLocale, reminderResultModelList, userName);

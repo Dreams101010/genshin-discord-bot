@@ -92,6 +92,18 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
             return await ReminderRepository.GetRemindersForUserAsync(userDiscordId);
         }
 
+        public async Task<List<Reminder>> GetRemindersForUserInChannelAsync(ulong userDiscordId, ulong guildId, ulong channelId)
+        {
+            return await ExecuteInTransactionAsync(async () => await GetRemindersForUserInChannelFuncAsync(
+                userDiscordId, guildId, channelId));
+        }
+
+        private async Task<List<Reminder>> GetRemindersForUserInChannelFuncAsync(ulong userDiscordId, ulong guildId, ulong channelId)
+        {
+            return await ReminderRepository.GetRemindersForUserInChannelAsync(
+                userDiscordId, guildId, channelId);
+        }
+
         public async Task<bool> RemoveReminderByIdAsync(ulong requesterDiscordId, ulong reminderId)
         {
             return await ExecuteInTransactionAsync(async () 
