@@ -177,7 +177,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 GuildId = messageContext.GuildId,
                 CategoryName = "Serenitea pot plant harvest",
                 Message = message,
-                Interval = DateTimeBusinessLogic.GetSecondsInHours(68),
+                Interval = DateTimeBusinessLogic.GetSecondsInHours((uint)(days * 24 + hours)),
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(new TimeSpan(days, hours, 0, 0)),
                 Recurrent = false,
             };
