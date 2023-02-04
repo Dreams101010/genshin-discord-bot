@@ -260,7 +260,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         internal string GetReminderSetupSuccessMessage(UserLocale locale, string userName)
         {
             var format = Localization.GetLocalizedString("Reminder",
-                "ParametricTransformerReminderSetupSuccessMessage", locale);
+                "GenericReminderAddSuccessMessage", locale);
             return string.Format(format, userName);
         }
     }
