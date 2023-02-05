@@ -35,7 +35,6 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
                 int affectedByUpdate = await Connection.ExecuteAsync(updateSql, userDataModel);
                 if (affectedByUpdate == 0)
                 {
-                    // TODO: create specific exceptions
                     throw new Exception("Database error while updating rows: affected mismatch");
                 }
             }
