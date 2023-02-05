@@ -9,20 +9,24 @@ using Discord.Commands;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotDomainLayer.Contexts;
 using Discord;
+using Serilog;
 
 namespace GenshinDiscordBotUI.CommandExecutors
 {
     public abstract class CommandExecutorBase
     {
         private IUserService UserService { get; set; }
+        private ILogger Logger { get; }
         public RequestContext RequestContext { get; }
         private const ulong DM_GUILD_ID = 0;
         private const ulong DM_CHANNEL_ID = 0;
 
-        protected CommandExecutorBase(IUserService userService, RequestContext requestContext)
+        protected CommandExecutorBase(IUserService userService, ILogger logger,
+            RequestContext requestContext)
         {
-            UserService = userService;
-            RequestContext = requestContext;
+            UserService = userService ?? throw new ArgumentNullException(nameof(userService));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            RequestContext = requestContext ?? throw new ArgumentNullException(nameof(requestContext));
         }
 
         public async void PopulateContextAsync(SocketCommandContext commandContext)
@@ -46,8 +50,9 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     }
                 default:
                     {
+                        Logger.Error("Invalid channel type enum state in PopulateContextAsync");
+                        // throw exception so that it stops handling invalid request
                         throw new Exception("Invalid channel type enum state");
-                        // TODO: gracefully return error here
                     }
             }
             // create user if not exists and read it
