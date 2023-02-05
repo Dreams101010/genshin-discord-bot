@@ -26,6 +26,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateReminderAsync(description, timeSpan);
             await ReplyAsync(response);
@@ -36,6 +37,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateReminderByDateAsync(description, dateTime);
             await ReplyAsync(response);
@@ -46,6 +48,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateRecurrentReminderAsync(description, interval);
             await ReplyAsync(response);
@@ -56,6 +59,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateRecurrentReminderAsync(description, startDateTime, interval);
             await ReplyAsync(response);
@@ -66,6 +70,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateArtifactReminderAsync();
             await ReplyAsync(response);
@@ -76,6 +81,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateArtifactReminderWithCustomTimeAsync(time);
             await ReplyAsync(response);
@@ -86,6 +92,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .RemoveArtifactRemindersForUserAsync();
             await ReplyAsync(response);
@@ -96,6 +103,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateCheckInReminderAsync();
             await ReplyAsync(response);
@@ -106,6 +114,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateCheckInReminderWithCustomTimeAsync(time);
             await ReplyAsync(response);
@@ -116,6 +125,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .RemoveCheckInRemindersForUserAsync();
             await ReplyAsync(response);
@@ -127,6 +137,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync();
             await ReplyAsync(response);
@@ -138,6 +149,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(days, hours);
             await ReplyAsync(response);
@@ -149,6 +161,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .RemoveSereniteaPotPlantHarvestRemindersForUserAsync();
             await ReplyAsync(response);
@@ -159,6 +172,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateParametricTransformerReminderAsync();
             await ReplyAsync(response);
@@ -169,6 +183,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .UpdateOrCreateParametricTransformerReminderAsync(days, hours);
             await ReplyAsync(response);
@@ -179,6 +194,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor
                 .RemoveParametricTransformerRemindersForUserAsync();
             await ReplyAsync(response);
@@ -190,6 +206,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor.GetRemindersForUserAsync();
             await ReplyAsync(response);
         }
@@ -199,6 +216,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
+            reminderCommandExecutor.PopulateContextAsync(Context);
             string response = await reminderCommandExecutor.RemoveReminderById(reminderId);
             await ReplyAsync(response);
         }
