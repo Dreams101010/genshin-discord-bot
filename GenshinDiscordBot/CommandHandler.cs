@@ -7,6 +7,8 @@ using Discord.WebSocket;
 using Discord.Commands;
 using System.Reflection;
 using Autofac;
+using Discord;
+using System.Configuration;
 
 namespace GenshinDiscordBotUI
 {
@@ -46,6 +48,21 @@ namespace GenshinDiscordBotUI
 
             // Don't process the command if it was a system message
             if (messageParam is not SocketUserMessage message) return;
+
+            // Don't process the command if it is not a DM command or a text channel command
+            var channelType = messageParam.Channel.GetChannelType();
+            if (channelType == null)
+            {
+                return;
+            }
+            switch (channelType)
+            {
+                case ChannelType.DM:
+                case ChannelType.Text:
+                    break;
+                default:
+                    return;
+            }
 
             // Create a number to track where the prefix ends and the command begins
             int argPos = 0;

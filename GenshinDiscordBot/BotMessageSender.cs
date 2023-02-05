@@ -7,6 +7,7 @@ using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using Discord.WebSocket;
 using Serilog;
+using Discord;
 
 namespace GenshinDiscordBotUI
 {
@@ -34,7 +35,14 @@ namespace GenshinDiscordBotUI
                         Logger.Information(string.Format("Sending message. Retry {0}", currentRetry));
                         await Task.Delay(currentRetry * 50);
                     }
-                    return await SendMessageInnerBodyAsync(messageContext);
+                    if (IsDmMessage(messageContext))
+                    {
+                        return await SendDmMessage(messageContext);
+                    }
+                    else
+                    {
+                        return await SendChannelMessageAsync(messageContext);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -51,7 +59,7 @@ namespace GenshinDiscordBotUI
             return false;
         }
 
-        private async Task<bool> SendMessageInnerBodyAsync(MessageContext messageContext)
+        private async Task<bool> SendChannelMessageAsync(MessageContext messageContext)
         {
             var guild = Client.GetGuild(messageContext.GuildId);
             if (guild == null)
@@ -73,6 +81,23 @@ namespace GenshinDiscordBotUI
             }
             await channel.SendMessageAsync($"{user.Mention} {messageContext.Message}");
             return true;
+        }
+
+        private async Task<bool> SendDmMessage(MessageContext messageContext)
+        {
+            var user = await Client.GetUserAsync(messageContext.DiscordUserId);
+            if (user == null)
+            {
+                Logger.Error("User was null while trying to send message");
+                return false;
+            }
+            await user.SendMessageAsync($"{user.Mention} {messageContext.Message}");
+            return true;
+        }
+
+        private bool IsDmMessage(MessageContext context)
+        {
+            return context.GuildId == 0 && context.ChannelId == 0;
         }
     }
 }
