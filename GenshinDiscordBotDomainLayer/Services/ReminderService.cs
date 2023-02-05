@@ -293,10 +293,10 @@ namespace GenshinDiscordBotDomainLayer.Services
             await ReminderDatabaseInteractionHandler.RemoveExpiredNonRecurrentRemindersAsync(timeInSeconds);
         }
 
-        public async Task<List<Reminder>> GetRemindersForUserAsync(ulong userDiscordId, ulong guildId, ulong channelId)
+        public async Task<List<Reminder>> GetRemindersForUserAsync(DiscordMessageContext messageContext)
         {
             return await ReminderDatabaseInteractionHandler.GetRemindersForUserInChannelAsync(
-                userDiscordId, guildId, channelId);
+                messageContext.UserDiscordId, messageContext.GuildId, messageContext.ChannelId);
         }
 
         public async Task<bool> RemoveReminderByIdAsync(ulong requesterDiscordId, ulong reminderId)
