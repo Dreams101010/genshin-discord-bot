@@ -25,7 +25,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.GetHelpMessageAsync(id, userName);
+			string response = await userCommandExecutor.GetHelpMessageAsync();
 			await ReplyAsync(response);
 		}
 
@@ -36,7 +36,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.ListSettingsAsync(id, userName);
+			string response = await userCommandExecutor.ListSettingsAsync();
 			await ReplyAsync(response);
 		}
 
@@ -47,7 +47,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.ListLanguagesAsync(id, userName);
+			string response = await userCommandExecutor.ListLanguagesAsync();
             await ReplyAsync(response);
 		}
 
@@ -58,7 +58,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.SetLanguageAsync(id, localeToSet, userName);
+			string response = await userCommandExecutor.SetLanguageAsync(localeToSet);
 			await ReplyAsync(response);
 		}
 
@@ -69,7 +69,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.EnableRemindersAsync(id, userName);
+			string response = await userCommandExecutor.EnableRemindersAsync();
 			await ReplyAsync(response);
 		}
 
@@ -80,7 +80,7 @@ namespace GenshinDiscordBotUI.CommandModules
 			var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
 			var userName = Context.Message.Author.Username;
 			var id = Context.Message.Author.Id;
-			string response = await userCommandExecutor.DisableRemindersAsync(id, userName);
+			string response = await userCommandExecutor.DisableRemindersAsync();
 			await ReplyAsync(response);
 		}
 

@@ -26,15 +26,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateReminderAsync(context, description, userName, timeSpan);
+                .UpdateOrCreateReminderAsync(description, timeSpan);
             await ReplyAsync(response);
         }
 
@@ -43,15 +36,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateReminderByDateAsync(context, description, userName, dateTime);
+                .UpdateOrCreateReminderByDateAsync(description, dateTime);
             await ReplyAsync(response);
         }
 
@@ -60,15 +46,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateRecurrentReminderAsync(context, description, userName, interval);
+                .UpdateOrCreateRecurrentReminderAsync(description, interval);
             await ReplyAsync(response);
         }
 
@@ -77,15 +56,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateRecurrentReminderAsync(context, description, userName, startDateTime, interval);
+                .UpdateOrCreateRecurrentReminderAsync(description, startDateTime, interval);
             await ReplyAsync(response);
         }
 
@@ -94,15 +66,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateArtifactReminderAsync(context, userName);
+                .UpdateOrCreateArtifactReminderAsync();
             await ReplyAsync(response);
         }
 
@@ -111,15 +76,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateArtifactReminderWithCustomTimeAsync(context, time, userName);
+                .UpdateOrCreateArtifactReminderWithCustomTimeAsync(time);
             await ReplyAsync(response);
         }
 
@@ -128,15 +86,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .RemoveArtifactRemindersForUserAsync(context, userName);
+                .RemoveArtifactRemindersForUserAsync();
             await ReplyAsync(response);
         }
 
@@ -145,15 +96,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateCheckInReminderAsync(context, userName);
+                .UpdateOrCreateCheckInReminderAsync();
             await ReplyAsync(response);
         }
 
@@ -162,15 +106,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateCheckInReminderWithCustomTimeAsync(context, time, userName);
+                .UpdateOrCreateCheckInReminderWithCustomTimeAsync(time);
             await ReplyAsync(response);
         }
 
@@ -179,15 +116,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .RemoveCheckInRemindersForUserAsync(context, userName);
+                .RemoveCheckInRemindersForUserAsync();
             await ReplyAsync(response);
         }
 
@@ -197,15 +127,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(context, userName);
+                .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync();
             await ReplyAsync(response);
         }
 
@@ -215,15 +138,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(context, days, hours, userName);
+                .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(days, hours);
             await ReplyAsync(response);
         }
 
@@ -233,15 +149,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .RemoveSereniteaPotPlantHarvestRemindersForUserAsync(context, userName);
+                .RemoveSereniteaPotPlantHarvestRemindersForUserAsync();
             await ReplyAsync(response);
         }
 
@@ -250,15 +159,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateParametricTransformerReminderAsync(context, userName);
+                .UpdateOrCreateParametricTransformerReminderAsync();
             await ReplyAsync(response);
         }
 
@@ -267,15 +169,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .UpdateOrCreateParametricTransformerReminderAsync(context, days, hours, userName);
+                .UpdateOrCreateParametricTransformerReminderAsync(days, hours);
             await ReplyAsync(response);
         }
 
@@ -284,15 +179,8 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            DiscordMessageContext context = new DiscordMessageContext()
-            {
-                UserDiscordId = Context.Message.Author.Id,
-                ChannelId = Context.Message.Channel.Id,
-                GuildId = Context.Guild.Id,
-            };
             string response = await reminderCommandExecutor
-                .RemoveParametricTransformerRemindersForUserAsync(context, userName);
+                .RemoveParametricTransformerRemindersForUserAsync();
             await ReplyAsync(response);
         }
 
@@ -302,12 +190,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userName = Context.Message.Author.Username;
-            var id = Context.Message.Author.Id;
-            var guildId = Context.Guild.Id;
-            var channelId = Context.Channel.Id;
-            string response = await reminderCommandExecutor
-                .GetRemindersForUserAsync(id, guildId, channelId, userName);
+            string response = await reminderCommandExecutor.GetRemindersForUserAsync();
             await ReplyAsync(response);
         }
 
@@ -316,9 +199,7 @@ namespace GenshinDiscordBotUI.CommandModules
         {
             using var scope = Scope.BeginLifetimeScope();
             var reminderCommandExecutor = scope.Resolve<ReminderCommandExecutor>();
-            var userId = Context.Message.Author.Id;
-            string response = await reminderCommandExecutor
-                .RemoveReminderById(userId, reminderId);
+            string response = await reminderCommandExecutor.RemoveReminderById(reminderId);
             await ReplyAsync(response);
         }
     }
