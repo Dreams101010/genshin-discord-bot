@@ -38,7 +38,8 @@ namespace GenshinDiscordBotDomainLayer.Services
         {
             ResinValidator.SetResinCount_Validate(resinCount);
             await UserDatabaseInteractionHandler.CreateUserIfNotExistsAsync(discordId);
-            await ResinDatabaseInteractionHandler.SetResinForUserAsync(discordId, resinCount);
+            var model = ResinBusinessLogic.GetResinTrackingInfo(resinCount, discordId);
+            await ResinDatabaseInteractionHandler.SetResinForUserAsync(model);
             return true;
         }
 

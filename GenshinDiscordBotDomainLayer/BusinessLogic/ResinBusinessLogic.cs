@@ -35,6 +35,18 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             return result;
         }
 
+        public ResinTrackingInfo GetResinTrackingInfo(int startCount, ulong userDiscordId)
+        {
+            var utcNow = DateTimeProvider.GetDateTime().ToUniversalTime();
+            var model = new ResinTrackingInfo()
+            {
+                StartCount = startCount,
+                StartTime = utcNow,
+                UserDiscordId = userDiscordId
+            };
+            return model;
+        }
+
         private int GetDifferenceInMinutes(DateTime first, DateTime second)
         {
             return Convert.ToInt32(Math.Floor((first - second).TotalMinutes));

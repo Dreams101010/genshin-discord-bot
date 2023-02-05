@@ -21,22 +21,15 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers
             ResinRepository = resinRepository ?? throw new ArgumentNullException(nameof(resinRepository));
         }
 
-        public async Task<bool> SetResinForUserAsync(ulong discordId, int resinCount)
+        public async Task<bool> SetResinForUserAsync(ResinTrackingInfo resinInfo)
         {
             return await ExecuteInTransactionAsync(
-                async () => await SetResinForUserFuncAsync(discordId, resinCount)
+                async () => await SetResinForUserFuncAsync(resinInfo)
             );
         }
 
-        // TODO : rewrite this, inject DateTime provider and business logic class
-        private async Task<bool> SetResinForUserFuncAsync(ulong discordId, int resinCount)
+        private async Task<bool> SetResinForUserFuncAsync(ResinTrackingInfo resinInfo)
         {
-            var resinInfo = new ResinTrackingInfo()
-            {
-                StartCount = resinCount,
-                StartTime = DateTime.Now.ToUniversalTime(),
-                UserDiscordId = discordId
-            };
             await ResinRepository.AddOrUpdateResinCountAsync(resinInfo);
             return true;
         }
