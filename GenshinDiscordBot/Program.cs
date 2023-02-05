@@ -26,6 +26,7 @@ using GenshinDiscordBotDomainLayer.Providers;
 using GenshinDiscordBotDomainLayer.ErrorHandlers;
 using GenshinDiscordBotDomainLayer.DataProviders;
 using GenshinDiscordBotDomainLayer.Helpers;
+using GenshinDiscordBotDomainLayer.Contexts;
 using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.CommandExecutors;
@@ -85,6 +86,10 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<ResinCommandArgumentValidator>().SingleInstance();
             builder.RegisterType<ReminderArgumentValidator>().SingleInstance();
             builder.RegisterType<DateTimeArgumentValidator>().SingleInstance();
+            // Contexts
+            builder.RegisterType<DiscordContext>().InstancePerLifetimeScope();
+            builder.RegisterType<UserContext>().InstancePerLifetimeScope();
+            builder.RegisterType<RequestContext>().InstancePerLifetimeScope();
             // Helpers
             builder.RegisterType<UserHelper>().InstancePerLifetimeScope();
             builder.RegisterType<ReminderConversionHelper>().SingleInstance();

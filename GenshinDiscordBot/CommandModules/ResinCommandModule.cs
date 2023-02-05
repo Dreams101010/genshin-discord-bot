@@ -26,9 +26,8 @@ namespace GenshinDiscordBotUI.CommandModules
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var resinCommandExecutor = scope.Resolve<ResinCommandExecutor>();
-			var userName = Context.Message.Author.Username;
-			var id = Context.Message.Author.Id;
-			string response = await resinCommandExecutor.GetResinAsync(id, userName);
+			resinCommandExecutor.PopulateContextAsync(Context);
+			string response = await resinCommandExecutor.GetResinAsync();
 			await ReplyAsync(response);
 		}
 
@@ -37,9 +36,8 @@ namespace GenshinDiscordBotUI.CommandModules
 		{
 			using var scope = Scope.BeginLifetimeScope();
 			var resinCommandExecutor = scope.Resolve<ResinCommandExecutor>();
-			var userName = Context.Message.Author.Username;
-			var id = Context.Message.Author.Id;
-			string response = await resinCommandExecutor.SetResinAsync(id, newValue, userName);
+            resinCommandExecutor.PopulateContextAsync(Context);
+			string response = await resinCommandExecutor.SetResinAsync(newValue);
 			await ReplyAsync(response);
 		}
 	}

@@ -13,10 +13,11 @@ using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using System.Globalization;
 using System.Threading;
+using GenshinDiscordBotDomainLayer.Contexts;
 
 namespace GenshinDiscordBotUI.CommandExecutors
 {
-    public class ReminderCommandExecutor
+    public class ReminderCommandExecutor : CommandExecutorBase
     {
         private IReminderService ReminderService { get; set; }
         private ILogger Logger { get; }
@@ -25,13 +26,15 @@ namespace GenshinDiscordBotUI.CommandExecutors
         public ReminderConversionHelper ReminderConversionHelper { get; }
         public DateTimeArgumentValidator DateTimeArgumentValidator { get; set; }
         private IUserService UserService { get; set; }
+        public RequestContext Context { get; }
 
         public ReminderCommandExecutor(IReminderService reminderService, ILogger logger, 
             GeneralResponseGenerator generalResponseGenerator,
             ReminderResponseGenerator reminderResponseGenerator,
             ReminderConversionHelper reminderConversionHelper,
             DateTimeArgumentValidator dateTimeArgumentValidator,
-            IUserService userService)
+            IUserService userService,
+            RequestContext requestContext) : base(userService, requestContext)
         {
             ReminderService = reminderService ?? throw new ArgumentNullException(nameof(reminderService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -40,15 +43,22 @@ namespace GenshinDiscordBotUI.CommandExecutors
             ReminderConversionHelper = reminderConversionHelper ?? throw new ArgumentNullException(nameof(reminderConversionHelper));
             DateTimeArgumentValidator = dateTimeArgumentValidator ?? throw new ArgumentNullException(nameof(dateTimeArgumentValidator));
             UserService = userService ?? throw new ArgumentNullException(nameof(userService));
+            Context = requestContext ?? throw new ArgumentNullException(nameof(requestContext));
         }
 
-        public async Task<string> UpdateOrCreateReminderAsync(
-            DiscordMessageContext messageContext, string messageText, string userName, string timeSpanStr)
+        public async Task<string> UpdateOrCreateReminderAsync(string messageText, string timeSpanStr)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
                 {
                     return ReminderResponseGenerator
@@ -66,13 +76,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
         }
 
         // TODO: put parsing logic into separate class
-        public async Task<string> UpdateOrCreateReminderByDateAsync(
-            DiscordMessageContext messageContext, string messageText, string userName, string dateTimeStr)
+        public async Task<string> UpdateOrCreateReminderByDateAsync(string messageText, string dateTimeStr)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var culture = userLocale switch
                 {
                     UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
@@ -104,12 +120,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
         }
 
         public async Task<string> UpdateOrCreateRecurrentReminderAsync(
-            DiscordMessageContext messageContext, string messageText, string userName, string timeSpanStr)
+            string messageText, string timeSpanStr)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
                 {
                     // NOTE: temp method usage, probably needs it's own error message
@@ -128,12 +151,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
         }
 
         public async Task<string> UpdateOrCreateRecurrentReminderAsync(
-            DiscordMessageContext messageContext, string messageText, string userName, string startDateTimeStr, string timeSpanStr)
+            string messageText, string startDateTimeStr, string timeSpanStr)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var culture = userLocale switch
                 {
                     UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
@@ -164,13 +194,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> UpdateOrCreateArtifactReminderAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> UpdateOrCreateArtifactReminderAsync()
         {
 			try
 			{
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 await ReminderService.UpdateOrCreateArtifactReminderAsync(messageContext);
                 return ReminderResponseGenerator.GetArtifactReminderSetupSuccessMessage(userLocale, userName);
 			}
@@ -182,13 +218,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
 			}
 		}
 
-        public async Task<string> UpdateOrCreateArtifactReminderWithCustomTimeAsync(
-            DiscordMessageContext messageContext, string time, string userName)
+        public async Task<string> UpdateOrCreateArtifactReminderWithCustomTimeAsync(string time)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var parseSuccess = TimeParser.TryParseTime(time, out Time timeObject);
                 if (!parseSuccess)
                 {
@@ -208,13 +250,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> RemoveArtifactRemindersForUserAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> RemoveArtifactRemindersForUserAsync()
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var result = await ReminderService.RemoveArtifactRemindersForUserAsync(messageContext);
                 if (result)
                 {
@@ -235,13 +283,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> UpdateOrCreateCheckInReminderAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> UpdateOrCreateCheckInReminderAsync()
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 await ReminderService.UpdateOrCreateCheckInReminderAsync(messageContext);
                 return ReminderResponseGenerator.GetCheckInReminderSetupSuccessMessage(userLocale, userName);
             }
@@ -253,13 +307,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> UpdateOrCreateCheckInReminderWithCustomTimeAsync(
-            DiscordMessageContext messageContext, string time, string userName)
+        public async Task<string> UpdateOrCreateCheckInReminderWithCustomTimeAsync(string time)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var parseSuccess = TimeParser.TryParseTime(time, out Time timeObject);
                 if (!parseSuccess)
                 {
@@ -279,13 +339,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> RemoveCheckInRemindersForUserAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> RemoveCheckInRemindersForUserAsync()
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var result = await ReminderService.RemoveCheckInRemindersForUserAsync(messageContext);
                 if (result)
                 {
@@ -306,13 +372,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> UpdateOrCreateSereniteaPotPlantHarvestReminderAsync()
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 await ReminderService.UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(messageContext);
                 return ReminderResponseGenerator
                     .GetSereniteaPotPlantHarvestSetupSuccessMessage(userLocale, userName);
@@ -325,13 +397,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(
-            DiscordMessageContext messageContext, int days, int hours, string userName)
+        public async Task<string> UpdateOrCreateSereniteaPotPlantHarvestReminderAsync(int days, int hours)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 string validationErrorMessage = ReminderResponseGenerator
                     .GetUpdateOrCreateSereniteaPotPlantHarvestReminderValidationErrorMessage(
                     userLocale, days, hours, userName);
@@ -352,13 +430,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> RemoveSereniteaPotPlantHarvestRemindersForUserAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> RemoveSereniteaPotPlantHarvestRemindersForUserAsync()
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var result = await ReminderService.RemoveSereniteaPotPlantHarvestRemindersForUserAsync(messageContext);
                 if (result)
                 {
@@ -379,13 +463,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> UpdateOrCreateParametricTransformerReminderAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> UpdateOrCreateParametricTransformerReminderAsync()
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 await ReminderService.UpdateOrCreateParametricTransformerReminderAsync(messageContext);
                 return ReminderResponseGenerator
                     .GetParametricTransformerReminderSetupSuccessMessage(userLocale, userName);
@@ -398,14 +488,20 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> UpdateOrCreateParametricTransformerReminderAsync(
-            DiscordMessageContext messageContext, int days, int hours, string userName)
+        public async Task<string> UpdateOrCreateParametricTransformerReminderAsync(int days, int hours)
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
-               string validationErrorMessage = ReminderResponseGenerator
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
+                string validationErrorMessage = ReminderResponseGenerator
                     .GetUpdateOrCreateParametricTransformerReminderCustomTimeValidationErrorMessage(
                     userLocale, days, hours, userName);
                 if (validationErrorMessage != string.Empty)
@@ -425,13 +521,19 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> RemoveParametricTransformerRemindersForUserAsync(
-            DiscordMessageContext messageContext, string userName)
+        public async Task<string> RemoveParametricTransformerRemindersForUserAsync()
         {
             try
             {
-                var id = messageContext.UserDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
                 var result = await ReminderService.RemoveParametricTransformerRemindersForUserAsync(messageContext);
                 if (result)
                 {
@@ -452,14 +554,20 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> GetRemindersForUserAsync(
-            ulong userDiscordId, ulong guildId, ulong channelId, string userName)
+        public async Task<string> GetRemindersForUserAsync()
         {
             try
             {
-                var id = userDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
-                var reminderList = await ReminderService.GetRemindersForUserAsync(id, guildId, channelId);
+                var id = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                var messageContext = new DiscordMessageContext
+                {
+                    UserDiscordId = id,
+                    GuildId = Context.DiscordContext.GuildId,
+                    ChannelId = Context.DiscordContext.ChannelId,
+                };
+                var reminderList = await ReminderService.GetRemindersForUserAsync(messageContext);
                 var reminderResultModelList = ReminderConversionHelper.GetReminderResultModelList(reminderList);
                 var result = ReminderResponseGenerator
                     .GetReminderListString(userLocale, reminderResultModelList, userName);
@@ -473,13 +581,14 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
-        public async Task<string> RemoveReminderById(ulong requesterDiscordId, ulong reminderId)
+        public async Task<string> RemoveReminderById(ulong reminderId)
         {
             try
             {
-                var id = requesterDiscordId;
-                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
-                bool successFlag = await ReminderService.RemoveReminderByIdAsync(requesterDiscordId, reminderId);
+                var userId = Context.DiscordContext.UserId;
+                var userLocale = Context.UserContext.User.Locale;
+                var userName = Context.DiscordContext.UserName;
+                bool successFlag = await ReminderService.RemoveReminderByIdAsync(userId, reminderId);
                 if (successFlag)
                 {
                     return ReminderResponseGenerator.GetReminderRemoveByIdSuccessMessage(userLocale);
