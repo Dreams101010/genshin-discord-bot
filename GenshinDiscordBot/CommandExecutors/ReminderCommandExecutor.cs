@@ -82,11 +82,13 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 if (!DateTime.TryParse(
                     dateTimeStr, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
                 {
+                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
                         .GetReminderTimeInvalid(userLocale, userName);
                 }
                 if (!DateTimeArgumentValidator.IsInFuture(dateTime))
                 {
+                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
                         .GetReminderTimeInvalid(userLocale, userName);
                 }
@@ -115,6 +117,43 @@ namespace GenshinDiscordBotUI.CommandExecutors
                         .GetReminderTimeInvalid(userLocale, userName);
                 }
                 await ReminderService.UpdateOrCreateRecurrentReminderAsync(messageContext, messageText, timeSpan);
+                return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
+        public async Task<string> UpdateOrCreateRecurrentReminderAsync(
+            DiscordMessageContext messageContext, string messageText, string userName, string startDateTimeStr, string timeSpanStr)
+        {
+            try
+            {
+                var id = messageContext.UserDiscordId;
+                var userLocale = (await UserService.ReadUserAndCreateIfNotExistsAsync(id)).Locale;
+                var culture = userLocale switch
+                {
+                    UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
+                    UserLocale.ruRU => CultureInfo.GetCultureInfo("ru-RU"),
+                    _ => throw new Exception("Invalid enum state"),
+                };
+                if (!DateTime.TryParse(
+                    startDateTimeStr, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+                {
+                    // NOTE: temp method usage, probably needs it's own error message
+                    return ReminderResponseGenerator
+                        .GetReminderTimeInvalid(userLocale, userName);
+                }
+                if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
+                {
+                    // NOTE: temp method usage, probably needs it's own error message
+                    return ReminderResponseGenerator
+                        .GetReminderTimeInvalid(userLocale, userName);
+                }
+                await ReminderService.UpdateOrCreateRecurrentReminderAsync(messageContext, messageText, dateTime, timeSpan);
                 return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
             }
             catch (Exception e)

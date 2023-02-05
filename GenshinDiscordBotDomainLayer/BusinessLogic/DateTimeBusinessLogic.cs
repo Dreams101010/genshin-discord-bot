@@ -28,6 +28,15 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             return Convert.ToUInt64(diff.TotalSeconds);
         }
 
+        public ulong GetUtcTimeAsUnixSeconds(DateTime dateTime)
+        {
+            var dateTimeWithoutMillis = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day,
+                dateTime.Hour, dateTime.Minute, dateTime.Second);
+            var dateTimeWithoutMillisUtc = dateTimeWithoutMillis.ToUniversalTime();
+            var diff = dateTimeWithoutMillisUtc - DateTime.UnixEpoch;
+            return Convert.ToUInt64(diff.TotalSeconds);
+        }
+
         public ulong GetCurrentUtcTimeAsUnixSeconds()
         {
             var now = DateTimeProvider.GetDateTime();

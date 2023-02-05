@@ -5,6 +5,7 @@ using GenshinDiscordBotDomainLayer.Interfaces.DatabaseInteractionHandlers;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace GenshinDiscordBotDomainLayer.Services
@@ -73,6 +74,25 @@ namespace GenshinDiscordBotDomainLayer.Services
                 Message = description,
                 Interval = (ulong)timeSpan.TotalSeconds,
                 ReminderTime = DateTimeBusinessLogic.GetReminderUtcTimeAsUnixSeconds(timeSpan),
+                Recurrent = true,
+            };
+            await ReminderDatabaseInteractionHandler.CreateNewReminderAsync(reminderInfo);
+        }
+
+        public async Task UpdateOrCreateRecurrentReminderAsync(
+            DiscordMessageContext messageContext, string description, DateTime startTime, TimeSpan timeSpan)
+        {
+            var startTimeUtc = startTime.ToUniversalTime();
+            Debug.WriteLine(startTimeUtc);
+            ReminderInsertModel reminderInfo = new()
+            {
+                UserDiscordId = messageContext.UserDiscordId,
+                ChannelId = messageContext.ChannelId,
+                GuildId = messageContext.GuildId,
+                CategoryName = "Generic reminder",
+                Message = description,
+                Interval = (ulong)timeSpan.TotalSeconds,
+                ReminderTime = DateTimeBusinessLogic.GetUtcTimeAsUnixSeconds(startTime),
                 Recurrent = true,
             };
             await ReminderDatabaseInteractionHandler.CreateNewReminderAsync(reminderInfo);

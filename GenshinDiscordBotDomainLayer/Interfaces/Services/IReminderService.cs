@@ -16,6 +16,8 @@ namespace GenshinDiscordBotDomainLayer.Interfaces.Services
             DiscordMessageContext messageContext, string description, DateTime reminderTime);
         public Task UpdateOrCreateRecurrentReminderAsync(
             DiscordMessageContext messageContext, string description, TimeSpan timeSpan);
+        public Task UpdateOrCreateRecurrentReminderAsync(
+    DiscordMessageContext messageContext, string description, DateTime startTime, TimeSpan timeSpan);
         public Task UpdateOrCreateArtifactReminderAsync(DiscordMessageContext messageContext);
         public Task UpdateOrCreateArtifactReminderWithCustomTimeAsync
             (DiscordMessageContext messageContext, TimeOnly timeOnly);
