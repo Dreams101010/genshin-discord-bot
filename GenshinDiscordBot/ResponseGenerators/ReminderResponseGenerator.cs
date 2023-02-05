@@ -8,6 +8,7 @@ using GenshinDiscordBotDomainLayer.ResultModels;
 using GenshinDiscordBotDomainLayer.Localization;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using System.Globalization;
+using GenshinDiscordBotDomainLayer.Contexts;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
@@ -15,12 +16,15 @@ namespace GenshinDiscordBotUI.ResponseGenerators
     {
         public Localization Localization { get; }
         public ReminderArgumentValidator ReminderArgumentValidator { get; }
+        public RequestContext Context { get; }
 
         public ReminderResponseGenerator(Localization localization, 
-            ReminderArgumentValidator reminderArgumentValidator)
+            ReminderArgumentValidator reminderArgumentValidator,
+            RequestContext requestContext)
         {
             Localization = localization ?? throw new ArgumentNullException(nameof(localization));
             ReminderArgumentValidator = reminderArgumentValidator ?? throw new ArgumentNullException(nameof(reminderArgumentValidator));
+            Context = requestContext ?? throw new ArgumentNullException(nameof(requestContext));
         }
         public string GetArtifactReminderSetupSuccessMessage(UserLocale locale, string userName)
         {
@@ -87,18 +91,12 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return string.Format(format, userName);
         }
 
-        // TODO: move locale resolving into separate class
         internal string GetReminderListString(
             UserLocale locale, List<ReminderResultModel> reminderList, string userName)
         {
             string localizedYes = Localization.GetLocalizedString("General", "Yes", locale);
             string localizedNo = Localization.GetLocalizedString("General", "No", locale);
-            var culture = locale switch
-            {
-                UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
-                UserLocale.ruRU => CultureInfo.GetCultureInfo("ru-RU"),
-                _ => throw new Exception("Invalid enum state"),
-            };
+            CultureInfo culture = Context.GetUserCulture();
             StringBuilder builder = new StringBuilder();
             if (reminderList.Count > 0)
             {
@@ -223,8 +221,6 @@ namespace GenshinDiscordBotUI.ResponseGenerators
 
         internal string GetUpdateOrCreateSereniteaPotPlantHarvestReminderValidationErrorMessage(UserLocale locale, int days, int hours, string userName)
         {
-            // TODO: consider adding a non-throwing method to validation class and use it as
-            // a catch-all
             if (!ReminderArgumentValidator
                     .UpdateOrCreateSereniteaPotPlantHarvestReminderAsync_TimeValid(days, hours))
             {
@@ -312,8 +308,6 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         internal string GetUpdateOrCreateParametricTransformerReminderCustomTimeValidationErrorMessage
             (UserLocale locale, int days, int hours, string userName)
         {
-            // TODO: consider adding a non-throwing method to validation class and use it as
-            // a catch-all
             if (!ReminderArgumentValidator
                     .UpdateOrCreateParametricTransformerReminderAsync_TimeValid(days, hours))
             {

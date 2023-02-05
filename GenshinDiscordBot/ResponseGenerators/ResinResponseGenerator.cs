@@ -61,8 +61,6 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         public string GetSetResinValidationErrorMessage(
             UserLocale locale, int newResinValue, string userName)
         {
-            // TODO: consider adding a non-throwing method to validation class and use it as
-            // a catch-all
             if (!ResinCommandArgumentValidator.SetResinCount_ResinCountValid(newResinValue))
             {
                 var format = Localization.GetLocalizedString("Resin",

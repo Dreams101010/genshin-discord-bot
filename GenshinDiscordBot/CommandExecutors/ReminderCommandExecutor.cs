@@ -89,12 +89,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                var culture = userLocale switch
-                {
-                    UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
-                    UserLocale.ruRU => CultureInfo.GetCultureInfo("ru-RU"),
-                    _ => throw new Exception("Invalid enum state"),
-                };
+                CultureInfo culture = Context.GetUserCulture();
                 if (!DateTime.TryParse(
                     dateTimeStr, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
                 {
@@ -164,12 +159,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                var culture = userLocale switch
-                {
-                    UserLocale.enGB => CultureInfo.GetCultureInfo("en-GB"),
-                    UserLocale.ruRU => CultureInfo.GetCultureInfo("ru-RU"),
-                    _ => throw new Exception("Invalid enum state"),
-                };
+                CultureInfo culture = Context.GetUserCulture();
                 if (!DateTime.TryParse(
                     startDateTimeStr, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
                 {
