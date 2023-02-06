@@ -79,7 +79,6 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 	                category_id integer NOT NULL, 
 	                message text NOT NULL,
 	                recurrent boolean NOT NULL,
-	                UNIQUE (user_discord_id, message),
  	                FOREIGN KEY (user_discord_id) REFERENCES users(discord_user_id),
 	                FOREIGN KEY (category_id) REFERENCES reminder_categories(id)
                 );";
