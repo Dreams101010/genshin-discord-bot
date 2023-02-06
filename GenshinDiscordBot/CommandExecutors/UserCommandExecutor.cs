@@ -26,7 +26,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
             UserHelper userHelper,
             GeneralResponseGenerator generalResponseGenerator,
             UserResponseGenerator userResponseGenerator,
-            RequestContext requestContext) : base(userService, requestContext)
+            RequestContext requestContext) : base(userService, logger, requestContext)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             UserService = userService ?? throw new ArgumentNullException(nameof(userService));

@@ -14,6 +14,7 @@ using GenshinDiscordBotDomainLayer.ValidationLogic;
 using System.Globalization;
 using System.Threading;
 using GenshinDiscordBotDomainLayer.Contexts;
+using GenshinDiscordBotDomainLayer.BusinessLogic;
 
 namespace GenshinDiscordBotUI.CommandExecutors
 {
@@ -24,6 +25,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
         private GeneralResponseGenerator GeneralResponseGenerator { get; set; }
         private ReminderResponseGenerator ReminderResponseGenerator { get; set; }
         public ReminderConversionHelper ReminderConversionHelper { get; }
+        public DateTimeBusinessLogic DateTimeBusinessLogic { get; set; }
         public DateTimeArgumentValidator DateTimeArgumentValidator { get; set; }
         private IUserService UserService { get; set; }
         public RequestContext Context { get; }
@@ -33,8 +35,9 @@ namespace GenshinDiscordBotUI.CommandExecutors
             ReminderResponseGenerator reminderResponseGenerator,
             ReminderConversionHelper reminderConversionHelper,
             DateTimeArgumentValidator dateTimeArgumentValidator,
+            DateTimeBusinessLogic dateTimeBusinessLogic,
             IUserService userService,
-            RequestContext requestContext) : base(userService, requestContext)
+            RequestContext requestContext) : base(userService, logger, requestContext)
         {
             ReminderService = reminderService ?? throw new ArgumentNullException(nameof(reminderService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -42,6 +45,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
             ReminderResponseGenerator = reminderResponseGenerator ?? throw new ArgumentNullException(nameof(reminderResponseGenerator));
             ReminderConversionHelper = reminderConversionHelper ?? throw new ArgumentNullException(nameof(reminderConversionHelper));
             DateTimeArgumentValidator = dateTimeArgumentValidator ?? throw new ArgumentNullException(nameof(dateTimeArgumentValidator));
+            DateTimeBusinessLogic = dateTimeBusinessLogic ?? throw new ArgumentNullException(nameof(dateTimeBusinessLogic));
             UserService = userService ?? throw new ArgumentNullException(nameof(userService));
             Context = requestContext ?? throw new ArgumentNullException(nameof(requestContext));
         }
@@ -59,7 +63,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
+                if (!DateTimeBusinessLogic.ParseTimeSpan(timeSpanStr, out TimeSpan timeSpan))
                 {
                     return ReminderResponseGenerator
                         .GetReminderTimeInvalid(userLocale, userName);
@@ -90,8 +94,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
                 CultureInfo culture = Context.GetUserCulture();
-                if (!DateTime.TryParse(
-                    dateTimeStr, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+                if (!DateTimeBusinessLogic.ParseLocalDateTime(dateTimeStr, culture, out DateTime dateTime))
                 {
                     // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator

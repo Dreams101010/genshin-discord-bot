@@ -6,12 +6,37 @@ using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ResultModels;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace GenshinDiscordBotDomainLayer.BusinessLogic
 {
     public class DateTimeBusinessLogic
     {
         private IDateTimeProvider DateTimeProvider { get; set; }
+
+        public bool ParseLocalDateTime(string toParse, CultureInfo culture, out DateTime parsed)
+        {
+            if (!DateTime.TryParse(
+                toParse, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+            {
+                parsed = DateTimeProvider.GetDateTime();
+                return false;
+            }
+            parsed = dateTime;
+            return true;
+        }
+
+        public bool ParseTimeSpan(string toParse, out TimeSpan parsed)
+        {
+            if (!TimeSpan.TryParse(toParse, out TimeSpan timeSpan))
+            {
+                parsed = TimeSpan.Zero;
+                return false;
+            }
+            parsed = timeSpan;
+            return true;
+        }
 
         public DateTimeBusinessLogic(IDateTimeProvider dateTimeProvider)
         {
