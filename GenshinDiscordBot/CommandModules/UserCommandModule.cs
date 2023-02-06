@@ -28,6 +28,16 @@ namespace GenshinDiscordBotUI.CommandModules
 			await ReplyAsync(response);
 		}
 
+		[Command("help")]
+		public async Task PrintHelpMessageForCommand(string command)
+		{
+            using var scope = Scope.BeginLifetimeScope();
+            var userCommandExecutor = scope.Resolve<UserCommandExecutor>();
+            userCommandExecutor.PopulateContextAsync(Context);
+            string response = await userCommandExecutor.GetHelpMessageForCommandAsync(command);
+            await ReplyAsync(response);
+        }
+
 		[Command("printSettings")]
 		public async Task ListSettingsAsync()
 		{

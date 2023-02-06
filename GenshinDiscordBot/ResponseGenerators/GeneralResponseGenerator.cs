@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GenshinDiscordBotDomainLayer.Interfaces;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.Localization;
+using Discord.Rest;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
@@ -32,6 +33,22 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         public string GetHelpMessage(UserLocale locale)
         {
             var format = Localization.GetLocalizedString("General", "HelpMessage", locale);
+            return format;
+        }
+
+        public string GetHelpMessageForCommand(string command, UserLocale locale)
+        {
+            var helpMessage = Localization.GetOptionalLocalizedString("CommandHelp", command, locale);
+            if (helpMessage == string.Empty)
+            {
+                return GetHelpMessageNotFound(locale);
+            }
+            return helpMessage;
+        }
+
+        public string GetHelpMessageNotFound(UserLocale locale)
+        {
+            var format = Localization.GetLocalizedString("General", "HelpMessageNotFound", locale);
             return format;
         }
     }

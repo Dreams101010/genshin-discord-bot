@@ -54,6 +54,22 @@ namespace GenshinDiscordBotUI.CommandExecutors
             }
         }
 
+        public async Task<string> GetHelpMessageForCommandAsync(string command)
+        {
+            try
+            {
+                var userLocale = Context.UserContext.User.Locale;
+                string response = GeneralResponseGenerator.GetHelpMessageForCommand(command, userLocale);
+                return response;
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"An error has occured while handling a command: {e}");
+                string errorMessage = GeneralResponseGenerator.GetGeneralErrorMessage();
+                return errorMessage;
+            }
+        }
+
         public async Task<string> ListSettingsAsync()
         {
             try

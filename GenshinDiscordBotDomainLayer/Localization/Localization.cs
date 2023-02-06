@@ -41,5 +41,40 @@ namespace GenshinDiscordBotDomainLayer.Localization
                 _ => throw new NotImplementedException(),
             };
         }
+
+        public string GetOptionalLocalizedString(string section, string name, UserLocale locale)
+        {
+            switch (locale)
+            {
+                case UserLocale.enGB:
+                    {
+                        if (!LocalizationSource.English.ContainsKey(section))
+                        {
+                            return string.Empty;
+                        }
+                        if (!LocalizationSource.English[section].ContainsKey(name))
+                        {
+                            return string.Empty;
+                        }
+                        return LocalizationSource.English[section][name];
+                    }
+                case UserLocale.ruRU:
+                    {
+                        if (!LocalizationSource.Russian.ContainsKey(section))
+                        {
+                            return string.Empty;
+                        }
+                        if (!LocalizationSource.Russian[section].ContainsKey(name))
+                        {
+                            return string.Empty;
+                        }
+                        return LocalizationSource.Russian[section][name];
+                    }
+                default:
+                    {
+                        throw new NotImplementedException();
+                    }
+            }
+        }
     }
 }
