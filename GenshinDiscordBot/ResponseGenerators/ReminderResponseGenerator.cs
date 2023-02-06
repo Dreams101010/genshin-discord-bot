@@ -77,6 +77,27 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             return string.Format(format, userName);
         }
 
+        internal string GetReminderDateTimeInvalid(UserLocale locale, string userName)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ReminderDateTimeInvalid", locale);
+            return string.Format(format, userName);
+        }
+
+        internal string GetReminderTimeSpanInvalid(UserLocale locale, string userName)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ReminderTimeSpanInvalid", locale);
+            return string.Format(format, userName);
+        }
+
+        internal string GetReminderDateTimeNotInFuture(UserLocale locale, string userName)
+        {
+            var format = Localization.GetLocalizedString("Reminder",
+                "ReminderDateTimeNotInFuture", locale);
+            return string.Format(format, userName);
+        }
+
         internal string GetCheckInReminderCancelSuccessMessage(UserLocale locale, string userName)
         {
             var format = Localization.GetLocalizedString("Reminder",

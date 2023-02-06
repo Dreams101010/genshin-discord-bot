@@ -66,7 +66,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 if (!DateTimeBusinessLogic.ParseTimeSpan(timeSpanStr, out TimeSpan timeSpan))
                 {
                     return ReminderResponseGenerator
-                        .GetReminderTimeInvalid(userLocale, userName);
+                        .GetReminderTimeSpanInvalid(userLocale, userName);
                 }
                 await ReminderService.UpdateOrCreateReminderAsync(messageContext, messageText, timeSpan);
                 return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
@@ -96,15 +96,13 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 CultureInfo culture = Context.GetUserCulture();
                 if (!DateTimeBusinessLogic.ParseLocalDateTime(dateTimeStr, culture, out DateTime dateTime))
                 {
-                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
-                        .GetReminderTimeInvalid(userLocale, userName);
+                        .GetReminderDateTimeInvalid(userLocale, userName);
                 }
                 if (!DateTimeArgumentValidator.IsInFuture(dateTime))
                 {
-                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
-                        .GetReminderTimeInvalid(userLocale, userName);
+                        .GetReminderDateTimeNotInFuture(userLocale, userName);
                 }
                 await ReminderService.UpdateOrCreateReminderAsync(messageContext, messageText, dateTime);
                 return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
@@ -131,11 +129,10 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
+                if (!DateTimeBusinessLogic.ParseTimeSpan(timeSpanStr, out TimeSpan timeSpan))
                 {
-                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
-                        .GetReminderTimeInvalid(userLocale, userName);
+                        .GetReminderTimeSpanInvalid(userLocale, userName);
                 }
                 await ReminderService.UpdateOrCreateRecurrentReminderAsync(messageContext, messageText, timeSpan);
                 return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
@@ -163,18 +160,21 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
                 CultureInfo culture = Context.GetUserCulture();
-                if (!DateTime.TryParse(
-                    startDateTimeStr, culture, DateTimeStyles.AssumeLocal, out DateTime dateTime))
+                if (!DateTimeBusinessLogic.ParseLocalDateTime(
+                    startDateTimeStr, culture, out DateTime dateTime))
                 {
-                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
-                        .GetReminderTimeInvalid(userLocale, userName);
+                        .GetReminderDateTimeInvalid(userLocale, userName);
                 }
-                if (!TimeSpan.TryParse(timeSpanStr, out TimeSpan timeSpan))
+                if (!DateTimeArgumentValidator.IsInFuture(dateTime))
                 {
-                    // NOTE: temp method usage, probably needs it's own error message
                     return ReminderResponseGenerator
-                        .GetReminderTimeInvalid(userLocale, userName);
+                        .GetReminderDateTimeNotInFuture(userLocale, userName);
+                }
+                if (!DateTimeBusinessLogic.ParseTimeSpan(timeSpanStr, out TimeSpan timeSpan))
+                {
+                    return ReminderResponseGenerator
+                        .GetReminderTimeSpanInvalid(userLocale, userName);
                 }
                 await ReminderService.UpdateOrCreateRecurrentReminderAsync(messageContext, messageText, dateTime, timeSpan);
                 return ReminderResponseGenerator.GetReminderSetupSuccessMessage(userLocale, userName);
