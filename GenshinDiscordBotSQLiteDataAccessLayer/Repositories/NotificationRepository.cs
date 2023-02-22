@@ -43,8 +43,8 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.Repositories
 
         public async Task UpdateNotificationJobAsync(NotificationJob job)
         {
-            string updateSql = @"]
-                UPDATE notif_jobs SET notif_jobs.data = @DataJson WHERE notif_jobs.id = @Id;
+            string updateSql = @"
+                UPDATE notif_jobs SET data = @DataJson WHERE id = @Id;
             ";
             int affectedByUpdate = await Connection.ExecuteAsync(updateSql, job);
             if (affectedByUpdate == 0)
