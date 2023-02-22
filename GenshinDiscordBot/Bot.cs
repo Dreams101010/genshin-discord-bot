@@ -17,6 +17,7 @@ namespace GenshinDiscordBotUI
         private DiscordSocketClient Client { get; }
         private CommandHandler CommandHandler { get; }
         public IReminderDispatcherService ReminderDispatcherService { get; }
+        public INotificationService NotificationService { get; }
         private ILogger Logger { get; }
         private IConfigurationRoot Configuration { get;  }
         private string Token { get; }
@@ -25,12 +26,14 @@ namespace GenshinDiscordBotUI
             DiscordSocketClient client, 
             CommandHandler commandHandler,
             IReminderDispatcherService reminderDispatcherService,
+            INotificationService notificationService,
             IConfigurationRoot root,
             ILogger logger)
         {
             Client = client ?? throw new ArgumentNullException(nameof(client));
             CommandHandler = commandHandler ?? throw new ArgumentNullException(nameof(commandHandler));
             ReminderDispatcherService = reminderDispatcherService ?? throw new ArgumentNullException(nameof(reminderDispatcherService));
+            NotificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             Configuration = root ?? throw new ArgumentNullException(nameof(root));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             client.Log += Log;
@@ -46,6 +49,7 @@ namespace GenshinDiscordBotUI
             await Client.LoginAsync(TokenType.Bot, Token);
             await Client.StartAsync();
             _ = ReminderDispatcherService.DispatcherAsync(token);
+            NotificationService.Start();
             await CancellationLoop(token);
             await Client.LogoutAsync();
         }

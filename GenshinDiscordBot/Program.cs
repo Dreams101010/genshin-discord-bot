@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using GenshinDiscordBotCrawler;
 
 namespace GenshinDiscordBotUI
 {
@@ -100,6 +101,8 @@ namespace GenshinDiscordBotUI
                 .As<IDateTimeProvider>().SingleInstance();
             // Forms
             builder.RegisterType<FormMain>().AsSelf().SingleInstance();
+            // Parsers
+            builder.RegisterType<GenshinWikiPromoTableParser>().AsSelf().SingleInstance();
 
             foreach (var assembly in assemblies)
             {

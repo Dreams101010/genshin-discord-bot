@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<Nullable>enable</Nullable>
   </PropertyGroup>
@@ -12,6 +12,7 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
     <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.1" />
     <PackageReference Include="Discord.Net" Version="3.2.1" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
@@ -24,6 +25,12 @@
   <ItemGroup>
     <ProjectReference Include="..\GenshinDiscordBotDomainLayer\GenshinDiscordBotDomainLayer.csproj" />
     <ProjectReference Include="..\GenshinDiscordBotSQLiteDataAccessLayer\GenshinDiscordBotSQLiteDataAccessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GenshinDiscordBotCrawler">
+      <HintPath>..\..\GenshinDiscordBotCrawler\GenshinDiscordBotCrawler\bin\Release\net7.0\GenshinDiscordBotCrawler.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

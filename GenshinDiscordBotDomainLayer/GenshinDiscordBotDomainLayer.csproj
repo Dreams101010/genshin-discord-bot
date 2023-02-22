@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
 	<Nullable>enable</Nullable>
 	<Platforms>AnyCPU</Platforms>
   </PropertyGroup>
@@ -11,6 +11,12 @@
     <PackageReference Include="Castle.Core" Version="4.4.1" />
     <PackageReference Include="Pidgin" Version="3.1.0" />
     <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GenshinDiscordBotCrawler">
+      <HintPath>..\..\GenshinDiscordBotCrawler\GenshinDiscordBotCrawler\bin\Release\net7.0\GenshinDiscordBotCrawler.dll</HintPath>
+    </Reference>
   </ItemGroup>
 	
 </Project>

@@ -19,6 +19,10 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer.DataModels.Notification
         public ulong ErrorEndpointGuildId { get; set; }
         public ulong ErrorEndpointChannelId { get; set; }
 
+        public NotificationJobDataModel()
+        {
+
+        }
         public NotificationJobDataModel(NotificationJob job)
         {
             JobId = job.Id;
