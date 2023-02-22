@@ -96,6 +96,31 @@ namespace GenshinDiscordBotSQLiteDataAccessLayer
 	                CONSTRAINT rolls_since_five_star_valid CHECK (rolls_since_five_star >= 0 AND rolls_since_five_star <= 200)
                 );";
             command.ExecuteNonQuery();
+            command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS notif_endpoints
+                (
+                  id INTEGER PRIMARY KEY,
+                  user_discord_id INTEGER NOT NULL,
+                  guild_id INTEGER NOT NULL,
+                  channel_id INTEGER NOT NULL,
+                  UNIQUE(user_discord_id, guild_id, channel_id)
+                );
+            ";
+            command.ExecuteNonQuery();
+            command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS notif_jobs
+                (
+                  id INTEGER PRIMARY KEY,
+                  kind TEXT NOT NULL,
+                  data TEXT NOT NULL,
+                  success_endpoint_id INTEGER NOT NULL,
+                  error_endpoint_id INTEGER NOT NULL,
+                  UNIQUE(kind, success_endpoint_id, error_endpoint_id),
+                  FOREIGN KEY(success_endpoint_id) references notif_endpoints(id),
+                  FOREIGN KEY(error_endpoint_id) references notif_endpoints(id)
+                );
+            ";
+            command.ExecuteNonQuery();
             // Fast-forward delayed reminders
             var fastForwardSql = @"
                 UPDATE reminders 
