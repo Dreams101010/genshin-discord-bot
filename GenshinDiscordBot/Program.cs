@@ -66,6 +66,8 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<CommandHandler>().InstancePerLifetimeScope();
             // Bot helpers
             builder.RegisterType<BotMessageSender>().As<IBotMessageSender>().SingleInstance();
+            // Notifiers
+            builder.RegisterType<DiscordNotifier>().As<INotifier>().SingleInstance();
             // Logger
             builder.Register<ILogger>(
                 c => new LoggerConfiguration()

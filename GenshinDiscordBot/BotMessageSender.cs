@@ -41,7 +41,14 @@ namespace GenshinDiscordBotUI
                     }
                     else
                     {
-                        return await SendChannelMessageAsync(messageContext);
+                        if (messageContext.DiscordUserId != 0)
+                        {
+                            return await SendChannelMessageWithMentionAsync(messageContext);
+                        }
+                        else
+                        {
+                            return await SendChannelMessageAsync(messageContext);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -60,6 +67,24 @@ namespace GenshinDiscordBotUI
         }
 
         private async Task<bool> SendChannelMessageAsync(MessageContext messageContext)
+        {
+            var guild = Client.GetGuild(messageContext.GuildId);
+            if (guild == null)
+            {
+                Logger.Error("Guild was null while trying to send message");
+                return false;
+            }
+            var channel = guild.GetTextChannel(messageContext.ChannelId);
+            if (channel == null)
+            {
+                Logger.Error("Channel was null while trying to send message");
+                return false;
+            }
+            await channel.SendMessageAsync($"{messageContext.Message}");
+            return true;
+        }
+
+        private async Task<bool> SendChannelMessageWithMentionAsync(MessageContext messageContext)
         {
             var guild = Client.GetGuild(messageContext.GuildId);
             if (guild == null)
