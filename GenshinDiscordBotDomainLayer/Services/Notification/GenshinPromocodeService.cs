@@ -24,16 +24,19 @@ namespace GenshinDiscordBotDomainLayer.Services.Notification
         public INotificationDatabaseInteractionHandler DatabaseInteractionHandler { get; }
         public GenshinWikiPromoTableParser Parser { get; }
         public INotifier Notifier { get; }
+        public IDateTimeProvider DateTimeProvider { get; }
         public GenshinPromocodeService(ILogger logger, 
             INotificationDatabaseInteractionHandler notificationDatabaseInteractionHandler,
             GenshinWikiPromoTableParser parser,
-            INotifier notifier)
+            INotifier notifier,
+            IDateTimeProvider dateTimeProvider)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             DatabaseInteractionHandler = notificationDatabaseInteractionHandler 
                 ?? throw new ArgumentNullException(nameof(notificationDatabaseInteractionHandler));
             Parser = parser ?? throw new ArgumentNullException(nameof(parser));
             Notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
+            DateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider)); 
         }
         public async Task PerformJobAsync(NotificationJob job)
         {
@@ -63,6 +66,10 @@ namespace GenshinDiscordBotDomainLayer.Services.Notification
                 // form message
                 string message = GetErrorMessage(parsedResult.Errors);
                 success &= await Notifier.Notify(message, job.ErrorEndpoint);
+                foreach (var i in parsedResult.Errors)
+                {
+                    Logger.Error($"Genshin wiki parsing error. Message: {i.Message}\nContext: {i.Context}");
+                }
             }
             // if notification has been successful, store acquired results in the database
             if (success)
@@ -175,14 +182,8 @@ namespace GenshinDiscordBotDomainLayer.Services.Notification
             StringBuilder s = new();
             if (errors.Any())
             {
-                s.AppendLine("Genshin parsing errors:");
-                foreach (var error in errors)
-                {
-                    // NOTE: this is a bad idea, consider writing to log instead
-                    s.AppendLine($"{error.Message}");
-                    s.AppendLine($"{error.Context}");
-                    s.AppendLine();
-                }
+                s.Append($"Errors were encoutered during parsing of Genshin Impact Wiki. " +
+                    $"Time of event: {DateTimeProvider.GetDateTime()}");
             }
             return s.ToString();
         }
