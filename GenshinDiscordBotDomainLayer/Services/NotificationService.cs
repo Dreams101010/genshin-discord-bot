@@ -43,14 +43,25 @@ namespace GenshinDiscordBotDomainLayer.Services
 
         private async void OnElapsed(object? state)
         {
-            using var newScope = Scope.BeginLifetimeScope();
-            var businessLogic = newScope.Resolve<IGenshinPromocodeService>();
-            var databaseHandler = newScope.Resolve<INotificationDatabaseInteractionHandler>();
-            var jobs = await databaseHandler.GetNotificationJobsAsync();
-            await PerformJobsAsync(jobs, newScope);
-            // reset the timer
-            var nextDelay = GetStartDelay();
-            ExecutionTimer.Change(nextDelay, Timeout.Infinite);
+            try
+            {
+                Logger.Information("Performing notification jobs...");
+                using var newScope = Scope.BeginLifetimeScope();
+                var businessLogic = newScope.Resolve<IGenshinPromocodeService>();
+                var databaseHandler = newScope.Resolve<INotificationDatabaseInteractionHandler>();
+                var jobs = await databaseHandler.GetNotificationJobsAsync();
+                await PerformJobsAsync(jobs, newScope);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Exception has occured in Notification Service.");
+            }
+            finally
+            {
+                // reset the timer
+                var nextDelay = GetStartDelay();
+                ExecutionTimer.Change(nextDelay, Timeout.Infinite);
+            }
         }
 
         private async Task PerformJobsAsync(IList<NotificationJob> jobs, ILifetimeScope scope)

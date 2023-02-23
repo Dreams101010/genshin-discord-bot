@@ -40,43 +40,57 @@ namespace GenshinDiscordBotDomainLayer.Services.Notification
         }
         public async Task PerformJobAsync(NotificationJob job)
         {
-            bool success = true;
-            // deserialize the promocode list
-            var stateFromDb = DeserializeStateOrCreateNew(job.DataJson);
-            // get parsed results
-            var parsedResult = Parser.Parse();
-            // aggregate promocode and promolink data from DB and web
-            // these will be used to update db
-            var activePromocodes = AggregatePromocodes(stateFromDb.PromoCodes, parsedResult.CodeResults);
-            var activePromolinks = AggregatePromolinks(stateFromDb.PromoLinks, parsedResult.LinkResults);
-            // get the promocodes and promolinks not yet shown to user
-            var promocodesToShow = GetDifference(activePromocodes, stateFromDb.PromoCodes);
-            var promolinksToShow = GetDifference(activePromolinks, stateFromDb.PromoLinks);
-            // notify users
-            if (promocodesToShow.Any() || promolinksToShow.Any())
+            try
             {
-                // form message for users
-                string message = GetSuccessMessage(promocodesToShow, promolinksToShow);
+                Logger.Information("Starting Genshin Impact Promocodes notification job.");
+                bool success = true;
+                // deserialize the promocode list
+                var stateFromDb = DeserializeStateOrCreateNew(job.DataJson);
+                // get parsed results
+                var parsedResult = Parser.Parse();
+                // aggregate promocode and promolink data from DB and web
+                // these will be used to update db
+                var activePromocodes = AggregatePromocodes(stateFromDb.PromoCodes, parsedResult.CodeResults);
+                var activePromolinks = AggregatePromolinks(stateFromDb.PromoLinks, parsedResult.LinkResults);
+                // get the promocodes and promolinks not yet shown to user
+                var promocodesToShow = GetDifference(activePromocodes, stateFromDb.PromoCodes);
+                var promolinksToShow = GetDifference(activePromolinks, stateFromDb.PromoLinks);
                 // notify users
-                success &= await Notifier.Notify(message, job.SuccessEndpoint);
-            }
-            // notify about errors
-            if (parsedResult.Errors.Any())
-            {
-                // form message
-                string message = GetErrorMessage(parsedResult.Errors);
-                success &= await Notifier.Notify(message, job.ErrorEndpoint);
-                foreach (var i in parsedResult.Errors)
+                if (promocodesToShow.Any() || promolinksToShow.Any())
                 {
-                    Logger.Error($"Genshin wiki parsing error. Message: {i.Message}\nContext: {i.Context}");
+                    // form message for users
+                    string message = GetSuccessMessage(promocodesToShow, promolinksToShow);
+                    // notify users
+                    success &= await Notifier.Notify(message, job.SuccessEndpoint);
+                }
+                // notify about errors
+                if (parsedResult.Errors.Any())
+                {
+                    // form message
+                    string message = GetErrorMessage(parsedResult.Errors);
+                    success &= await Notifier.Notify(message, job.ErrorEndpoint);
+                    foreach (var i in parsedResult.Errors)
+                    {
+                        Logger.Error($"Genshin wiki parsing error. Message: {i.Message}\nContext: {i.Context}");
+                    }
+                }
+                // if notification has been successful, store acquired results in the database
+                if (success)
+                {
+                    Logger.Information("Genshin Impact Promocodes job was successful. Storing new state into database...");
+                    var newState = new GenshinNotificationState(activePromocodes, activePromolinks);
+                    job.DataJson = JsonSerializer.Serialize(newState);
+                    await DatabaseInteractionHandler.UpdateNotificationJobAsync(job);
+                    Logger.Information("New state for Genshin Impact Promocodes job has been saved.");
+                }
+                else
+                {
+                    Logger.Information("Couldn't notify users about Genshin Impact promocodes. Perhaps the Internet connection or Discord is down?");
                 }
             }
-            // if notification has been successful, store acquired results in the database
-            if (success)
+            catch (Exception e)
             {
-                var newState = new GenshinNotificationState(activePromocodes, activePromolinks);
-                job.DataJson = JsonSerializer.Serialize(newState);
-                await DatabaseInteractionHandler.UpdateNotificationJobAsync(job);
+                Logger.Error(e, "Exception has occured when performing a Genshin Impact Promocodes job");
             }
         }
 
