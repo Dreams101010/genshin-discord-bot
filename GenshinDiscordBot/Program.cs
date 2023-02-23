@@ -36,7 +36,8 @@ using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using GenshinDiscordBotCrawler;
+using GenshinDiscordBotCrawler.Genshin;
+using GenshinDiscordBotCrawler.Honkai;
 
 namespace GenshinDiscordBotUI
 {
@@ -74,7 +75,7 @@ namespace GenshinDiscordBotUI
                 c => new LoggerConfiguration()
                 .WriteToSimpleAndRichTextBox()
                 .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day, 
-                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning)
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
                 .MinimumLevel.Information()
                 .CreateLogger()).SingleInstance();
             // Database connection
@@ -103,6 +104,7 @@ namespace GenshinDiscordBotUI
             builder.RegisterType<FormMain>().AsSelf().SingleInstance();
             // Parsers
             builder.RegisterType<GenshinWikiPromoTableParser>().AsSelf().SingleInstance();
+            builder.RegisterType<HonkaiWikiPromoTableParser>().AsSelf().SingleInstance();
 
             foreach (var assembly in assemblies)
             {

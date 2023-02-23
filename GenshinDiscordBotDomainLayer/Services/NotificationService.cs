@@ -47,7 +47,6 @@ namespace GenshinDiscordBotDomainLayer.Services
             {
                 Logger.Information("Performing notification jobs...");
                 using var newScope = Scope.BeginLifetimeScope();
-                var businessLogic = newScope.Resolve<IGenshinPromocodeService>();
                 var databaseHandler = newScope.Resolve<INotificationDatabaseInteractionHandler>();
                 var jobs = await databaseHandler.GetNotificationJobsAsync();
                 await PerformJobsAsync(jobs, newScope);
@@ -73,6 +72,12 @@ namespace GenshinDiscordBotDomainLayer.Services
                     case NotificationJobKind.GenshinPromocodes:
                         {
                             var promocodeService = scope.Resolve<IGenshinPromocodeService>();
+                            await promocodeService.PerformJobAsync(job);
+                            break;
+                        }
+                    case NotificationJobKind.HonkaiImpact3rdPromocodes:
+                        {
+                            var promocodeService = scope.Resolve<IHonkaiImpact3rdPromocodeService>();
                             await promocodeService.PerformJobAsync(job);
                             break;
                         }

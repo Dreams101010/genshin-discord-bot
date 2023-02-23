@@ -1,4 +1,4 @@
-﻿using GenshinDiscordBotCrawler;
+﻿using GenshinDiscordBotCrawler.Genshin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
