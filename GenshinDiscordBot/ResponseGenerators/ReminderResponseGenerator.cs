@@ -9,6 +9,7 @@ using GenshinDiscordBotDomainLayer.Localization;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
 using System.Globalization;
 using GenshinDiscordBotDomainLayer.Contexts;
+using GenshinDiscordBotDomainLayer.Interfaces;
 
 namespace GenshinDiscordBotUI.ResponseGenerators
 {
@@ -113,7 +114,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
         }
 
         internal string GetReminderListString(
-            UserLocale locale, List<ReminderResultModel> reminderList, string userName)
+            UserLocale locale, List<ReminderResultModel> reminderList, string userName, DateTime currentUtc)
         {
             string localizedYes = Localization.GetLocalizedString("General", "Yes", locale);
             string localizedNo = Localization.GetLocalizedString("General", "No", locale);
@@ -130,9 +131,10 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                 foreach (var reminder in reminderList)
                 {
                     string reminderRecurrenceString = reminder.IsRecurrent ? localizedYes : localizedNo;
+                    TimeSpan timeRemaining = reminder.GetTimeRemaining(currentUtc);
                     builder.AppendLine(string.Format(entry, reminder.Id, reminder.CategoryName, reminder.Message,
                         reminder.SetupTime.ToString(culture), reminder.Interval, 
-                        reminder.ReminderTime.ToString(culture), reminderRecurrenceString));
+                        reminder.ReminderTime.ToString(culture), timeRemaining.ToString(@"hh\:mm\:ss", culture), reminderRecurrenceString));
                 }
             }
             else

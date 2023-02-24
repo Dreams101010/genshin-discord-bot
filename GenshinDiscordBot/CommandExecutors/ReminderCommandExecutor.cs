@@ -562,8 +562,9 @@ namespace GenshinDiscordBotUI.CommandExecutors
                 };
                 var reminderList = await ReminderService.GetRemindersForUserAsync(messageContext);
                 var reminderResultModelList = ReminderConversionHelper.GetReminderResultModelList(reminderList);
+                var currentUtc = DateTimeBusinessLogic.GetCurrentUtcDateTime();
                 var result = ReminderResponseGenerator
-                    .GetReminderListString(userLocale, reminderResultModelList, userName);
+                    .GetReminderListString(userLocale, reminderResultModelList, userName, currentUtc);
                 return result;
             }
             catch (Exception e)

@@ -62,6 +62,11 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
             return Convert.ToUInt64(diff.TotalSeconds);
         }
 
+        public DateTime GetCurrentUtcDateTime()
+        {
+            return DateTimeProvider.GetDateTime().ToUniversalTime();
+        }
+
         public ulong GetCurrentUtcTimeAsUnixSeconds()
         {
             var now = DateTimeProvider.GetDateTime();

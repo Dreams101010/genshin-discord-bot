@@ -15,5 +15,10 @@ namespace GenshinDiscordBotDomainLayer.ResultModels
         public string CategoryName { get; set; }
         public string Message { get; set; }
         public bool IsRecurrent { get; set; }
+
+        public TimeSpan GetTimeRemaining(DateTime currentUtc)
+        {
+            return ReminderTime.ToUniversalTime() - currentUtc;
+        }
     }
 }
