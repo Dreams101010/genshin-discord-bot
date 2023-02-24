@@ -9,6 +9,7 @@ using Discord;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
+using System.Windows.Forms;
 
 namespace GenshinDiscordBotUI
 {
@@ -37,6 +38,7 @@ namespace GenshinDiscordBotUI
             Configuration = root ?? throw new ArgumentNullException(nameof(root));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             client.Log += Log;
+            client.ButtonExecuted += ButtonHandler;
             Token = Configuration.GetSection("Discord")["Token"];
         }
         public async Task StartBot(CancellationToken token)
@@ -70,6 +72,62 @@ namespace GenshinDiscordBotUI
         {
             Logger.Information(msg.ToString());
             return Task.CompletedTask;
+        }
+
+        public async Task ButtonHandler(SocketMessageComponent component)
+        {
+            // only works with guilds
+            var user = component.User as SocketGuildUser;
+            if (user == null)
+            {
+                Logger.Error("Couldn't get guild user while handling a component button press");
+                await component.RespondAsync("Sorry, something went wrong. Please contact my creator", ephemeral: true);
+                return;
+            }
+            var channel = component.Channel as SocketGuildChannel;
+            if (channel == null)
+            {
+                Logger.Error("Couldn't get guild channel while handling a component button press");
+                await component.RespondAsync("Sorry, something went wrong. Please contact my creator", ephemeral: true);
+                return;
+            }
+            var guild = channel.Guild;
+            var genshinPromocodesRole = 
+                guild.Roles.Where((x) => x.Name == "Genshin Promocodes Role").FirstOrDefault();
+            if (genshinPromocodesRole == null)
+            {
+                Logger.Error("Couldn't get Genshin Promocodes role while handling a component button press");
+                await component.RespondAsync("Sorry, something went wrong. Please contact my creator", ephemeral: true);
+                return;
+            }
+            var honkaiPromocodesRole = 
+                guild.Roles.Where((x) => x.Name == "Honkai Impact 3rd Promocodes Role").FirstOrDefault();
+            if (honkaiPromocodesRole == null)
+            {
+                Logger.Error("Couldn't get Honkai Impact 3rd Promocodes role while handling a component button press");
+                await component.RespondAsync("Sorry, something went wrong. Please contact my creator", ephemeral: true);
+                return;
+            }
+            switch (component.Data.CustomId)
+            {
+                // Since we set our buttons custom id as 'custom-id', we can check for it like this:
+                case "genshin-promocode-role-give":
+                    await user.AddRoleAsync(genshinPromocodesRole);
+                    await component.RespondAsync("I have given you the Genshin Promocodes role.", ephemeral: true);
+                    break;
+                case "genshin-promocode-role-remove":
+                    await user.RemoveRoleAsync(genshinPromocodesRole);
+                    await component.RespondAsync("I have taken the Genshin Promocodes role from you.", ephemeral: true);
+                    break;
+                case "honkai-promocode-role-give":
+                    await user.AddRoleAsync(honkaiPromocodesRole);
+                    await component.RespondAsync("I have given you the Honkai Impact 3rd Promocodes role.", ephemeral: true);
+                    break;
+                case "honkai-promocode-role-remove":
+                    await user.RemoveRoleAsync(honkaiPromocodesRole);
+                    await component.RespondAsync("I have taken the Honkai Impact 3rd Promocodes role from you.", ephemeral: true);
+                    break;
+            }
         }
 
         public DiscordSocketClient GetClient() => Client;
