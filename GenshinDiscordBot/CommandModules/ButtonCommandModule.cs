@@ -30,5 +30,15 @@ namespace GenshinDiscordBotUI.CommandModules
 
             await ReplyAsync("Use these to give or remove the Honkai Promocode role from yourself.", components: builder.Build());
         }
+
+        [Command("createHonkaiStarRailRoleButtons")]
+        public async Task CreateHonkaiStarRailPromocodesRoleButtons()
+        {
+            var builder = new ComponentBuilder()
+                .WithButton("Give Honkai Star Rail Promocode role", "honkai-star-rail-promocode-role-give")
+                .WithButton("Remove Honkai Star Rail Promocode role", "honkai-star-rail-promocode-role-remove");
+
+            await ReplyAsync("Use these to give or remove the Honkai Star Rail Promocode role from yourself.", components: builder.Build());
+        }
     }
 }

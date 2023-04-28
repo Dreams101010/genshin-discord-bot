@@ -40,6 +40,7 @@ using System.Windows.Forms;
 using GenshinDiscordBotCrawler.Genshin;
 using GenshinDiscordBotCrawler.Honkai;
 using GenshinDiscordBotUI.SlashCommands;
+using GenshinDiscordBotCrawler.HonkaiStarRail;
 
 namespace GenshinDiscordBotUI
 {
@@ -114,6 +115,7 @@ namespace GenshinDiscordBotUI
             // Parsers
             builder.RegisterType<GenshinWikiPromoTableParser>().AsSelf().SingleInstance();
             builder.RegisterType<HonkaiWikiPromoTableParser>().AsSelf().SingleInstance();
+            builder.RegisterType<StarRailPromoTableParser>().AsSelf().SingleInstance();
 
             foreach (var assembly in assemblies)
             {

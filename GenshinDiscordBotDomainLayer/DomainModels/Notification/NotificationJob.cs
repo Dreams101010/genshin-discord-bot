@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GenshinDiscordBotDomainLayer.DomainModels.Notification
 {
-    public enum NotificationJobKind { GenshinPromocodes, HonkaiImpact3rdPromocodes }
+    public enum NotificationJobKind { GenshinPromocodes, HonkaiImpact3rdPromocodes, HonkaiStarRailPromocodes }
     public class NotificationJob
     {
         public int Id { get; init; }

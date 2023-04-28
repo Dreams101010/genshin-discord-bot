@@ -81,6 +81,12 @@ namespace GenshinDiscordBotDomainLayer.Services
                             await promocodeService.PerformJobAsync(job);
                             break;
                         }
+                    case NotificationJobKind.HonkaiStarRailPromocodes:
+                        {
+                            var promocodeService = scope.Resolve<IStarRailPromocodeService>();
+                            await promocodeService.PerformJobAsync(job);
+                            break;
+                        }
                     default:
                         {
                             throw new NotImplementedException("Unhandled enum state");

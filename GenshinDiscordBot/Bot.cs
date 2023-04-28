@@ -131,6 +131,14 @@ namespace GenshinDiscordBotUI
                 await component.RespondAsync("Sorry, something went wrong. Please contact my creator", ephemeral: true);
                 return;
             }
+            var honkaiStarRailPromocodesRole =
+                guild.Roles.Where((x) => x.Name == "Honkai Star Rail Promocodes Role").FirstOrDefault();
+            if (honkaiPromocodesRole == null)
+            {
+                Logger.Error("Couldn't get Honkai Star Rail Promocodes role while handling a component button press");
+                await component.RespondAsync("Sorry, something went wrong. Please contact my creator", ephemeral: true);
+                return;
+            }
             switch (component.Data.CustomId)
             {
                 // Since we set our buttons custom id as 'custom-id', we can check for it like this:
@@ -149,6 +157,14 @@ namespace GenshinDiscordBotUI
                 case "honkai-promocode-role-remove":
                     await user.RemoveRoleAsync(honkaiPromocodesRole);
                     await component.RespondAsync("I have taken the Honkai Impact 3rd Promocodes role from you.", ephemeral: true);
+                    break;
+                case "honkai-star-rail-promocode-role-give":
+                    await user.AddRoleAsync(honkaiStarRailPromocodesRole);
+                    await component.RespondAsync("I have given you the Honkai Star Rail Promocodes role.", ephemeral: true);
+                    break;
+                case "honkai-star-rail-promocode-role-remove":
+                    await user.RemoveRoleAsync(honkaiStarRailPromocodesRole);
+                    await component.RespondAsync("I have taken the Honkai Star Rail Promocodes role from you.", ephemeral: true);
                     break;
             }
         }
