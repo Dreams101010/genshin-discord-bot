@@ -60,6 +60,39 @@ namespace GenshinDiscordBotUI.CommandExecutors
             // populate from user
             RequestContext.UserContext.User = user;
         }
+
+        public async void PopulateContextAsync(SocketSlashCommand command)
+        {
+            // populate from command context
+            switch (command.Channel.GetChannelType())
+            {
+                case ChannelType.DM:
+                    {
+                        RequestContext.DiscordContext.SetDiscordContextData(
+                            DM_GUILD_ID, DM_CHANNEL_ID, command.User.Id,
+                            command.User.Username);
+                        break;
+                    }
+                case ChannelType.Text:
+                    {
+                        var guildId = (command.Channel as IGuildChannel).GuildId;
+                        RequestContext.DiscordContext.SetDiscordContextData(
+                            guildId, command.Channel.Id,
+                            command.User.Id, command.User.Username);
+                        break;
+                    }
+                default:
+                    {
+                        Logger.Error("Invalid channel type enum state in PopulateContextAsync");
+                        // throw exception so that it stops handling invalid request
+                        throw new Exception("Invalid channel type enum state");
+                    }
+            }
+            // create user if not exists and read it
+            User user = await GetUserAsync(RequestContext.DiscordContext.UserId);
+            // populate from user
+            RequestContext.UserContext.User = user;
+        }
         private async Task<User> GetUserAsync(ulong userId)
         {
             return await UserService.ReadUserAndCreateIfNotExistsAsync(userId);

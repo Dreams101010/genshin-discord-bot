@@ -27,6 +27,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
             ReminderArgumentValidator = reminderArgumentValidator ?? throw new ArgumentNullException(nameof(reminderArgumentValidator));
             Context = requestContext ?? throw new ArgumentNullException(nameof(requestContext));
         }
+
         public string GetArtifactReminderSetupSuccessMessage(UserLocale locale, string userName)
         {
             var format = Localization.GetLocalizedString("Reminder", 
@@ -134,7 +135,7 @@ namespace GenshinDiscordBotUI.ResponseGenerators
                     TimeSpan timeRemaining = reminder.GetTimeRemaining(currentUtc);
                     builder.AppendLine(string.Format(entry, reminder.Id, reminder.CategoryName, reminder.Message,
                         reminder.SetupTime.ToString(culture), reminder.Interval, 
-                        reminder.ReminderTime.ToString(culture), timeRemaining.ToString(@"hh\:mm\:ss", culture), reminderRecurrenceString));
+                        reminder.ReminderTime.ToString(culture), timeRemaining.ToString(@"c", culture), reminderRecurrenceString));
                 }
             }
             else

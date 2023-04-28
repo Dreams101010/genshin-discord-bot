@@ -88,7 +88,7 @@ namespace GenshinDiscordBotDomainLayer.BusinessLogic
         /// Gets the time at which reminder with given duration must be fired.
         /// </summary>
         /// <param name="reminderDuration">Duration of the reminder.</param>
-        /// <returns>Time at which reminder must be fird (in UTC) in Unix seconds (number of seconds from January 1st, 1970 00:00:00).</returns>
+        /// <returns>Time at which reminder must be fired (in UTC) in Unix seconds (number of seconds from January 1st, 1970 00:00:00).</returns>
         public ulong GetReminderUtcTimeAsUnixSeconds(TimeSpan reminderDuration)
         {
             TimeSpan durationWithoutMillis = 

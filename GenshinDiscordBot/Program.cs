@@ -30,6 +30,7 @@ using GenshinDiscordBotDomainLayer.Contexts;
 using GenshinDiscordBotUI.ResponseGenerators;
 using GenshinDiscordBotUI.Helpers;
 using GenshinDiscordBotUI.CommandExecutors;
+using GenshinDiscordBotUI.Models.SlashCommand;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.Data.Sqlite;
 using System.Reflection;
@@ -38,6 +39,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using GenshinDiscordBotCrawler.Genshin;
 using GenshinDiscordBotCrawler.Honkai;
+using GenshinDiscordBotUI.SlashCommands;
 
 namespace GenshinDiscordBotUI
 {
@@ -49,6 +51,7 @@ namespace GenshinDiscordBotUI
         static IContainer CompositionRoot()
         {
             var localizationSource = ReadLocalizationSource();
+            var slashCommandsSource = ReadSlashCommandSource();
             var assemblies = GetProjectAssemblies();
             var sqliteConnectionString = BuildConfigurationRoot().GetConnectionString("Sqlite");
             var builder = new ContainerBuilder();
@@ -56,6 +59,12 @@ namespace GenshinDiscordBotUI
             builder.Populate(new ServiceCollection());
             // Application
             builder.RegisterType<Application>();
+            // Slash commands
+            builder.Register((ctx) => slashCommandsSource).SingleInstance();
+            builder.RegisterType<SlashCommandDispatcher>().SingleInstance();
+            builder.RegisterType<UserSlashCommandHandler>().InstancePerLifetimeScope();
+            builder.RegisterType<ResinSlashCommandHandler>().InstancePerLifetimeScope();
+            builder.RegisterType<ReminderSlashCommandHandler>().InstancePerLifetimeScope();
             // Localization
             builder.Register((ctx) => localizationSource).SingleInstance();
             builder.RegisterType<Localization>().SingleInstance();
@@ -190,6 +199,22 @@ namespace GenshinDiscordBotUI
                 throw new Exception("Couldn't deserialize json from file");
             }
             return localizationSource;
+        }
+
+        static SlashCommandSource ReadSlashCommandSource()
+        {
+            using var streamReader = new StreamReader("slashCommands.json");
+            var json = streamReader.ReadToEnd();
+            if (json == null)
+            {
+                throw new Exception("Couldn't read slash commands json from file");
+            }
+            SlashCommandListJsonModel? model = JsonSerializer.Deserialize<SlashCommandListJsonModel>(json);
+            if (model == null)
+            {
+                throw new Exception("Couldn't deserialize json from file");
+            }
+            return model.ToSlashCommandSource();
         }
 
         [STAThread]

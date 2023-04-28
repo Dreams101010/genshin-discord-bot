@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using System.Windows.Forms;
+using System.ComponentModel;
+using GenshinDiscordBotUI.Models.SlashCommand;
+using GenshinDiscordBotUI.SlashCommands;
 
 namespace GenshinDiscordBotUI
 {
@@ -20,7 +23,8 @@ namespace GenshinDiscordBotUI
         public IReminderDispatcherService ReminderDispatcherService { get; }
         public INotificationService NotificationService { get; }
         private ILogger Logger { get; }
-        private IConfigurationRoot Configuration { get;  }
+        private IConfigurationRoot Configuration { get; }
+        private SlashCommandDispatcher SlashCommandDispatcher { get; }
         private string Token { get; }
         private bool IsInitialized { get; set; } = false;
         public Bot(
@@ -29,6 +33,7 @@ namespace GenshinDiscordBotUI
             IReminderDispatcherService reminderDispatcherService,
             INotificationService notificationService,
             IConfigurationRoot root,
+            SlashCommandDispatcher slashCommandDispatcher,
             ILogger logger)
         {
             Client = client ?? throw new ArgumentNullException(nameof(client));
@@ -36,9 +41,12 @@ namespace GenshinDiscordBotUI
             ReminderDispatcherService = reminderDispatcherService ?? throw new ArgumentNullException(nameof(reminderDispatcherService));
             NotificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             Configuration = root ?? throw new ArgumentNullException(nameof(root));
+            SlashCommandDispatcher = slashCommandDispatcher ?? throw new ArgumentNullException(nameof(slashCommandDispatcher));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            client.Ready += On_ClientReady;
             client.Log += Log;
             client.ButtonExecuted += ButtonHandler;
+            client.SlashCommandExecuted += On_SlashCommandExecution;
             Token = Configuration.GetSection("Discord")["Token"];
         }
         public async Task StartBot(CancellationToken token)
@@ -72,6 +80,21 @@ namespace GenshinDiscordBotUI
         {
             Logger.Information(msg.ToString());
             return Task.CompletedTask;
+        }
+
+        public async Task On_ClientReady()
+        {
+            if (Configuration.GetRequiredSection("Configuration")["SetGlobalCommands"] == "true")
+            {
+                System.Diagnostics.Debug.WriteLine("init");
+                await SlashCommandDispatcher.RegisterSlashCommandsAsync(Client);
+            }
+        }
+
+        private async Task On_SlashCommandExecution(SocketSlashCommand command)
+        {
+            var response = await SlashCommandDispatcher.DispatchAsync(command);
+            await command.RespondAsync(response, ephemeral: true);
         }
 
         public async Task ButtonHandler(SocketMessageComponent component)

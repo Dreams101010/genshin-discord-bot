@@ -1,0 +1,292 @@
+{
+  "Commands": [
+    {
+      "Name": "help",
+      "Description": "Show help for commands",
+      "Category": "User",
+      "Params": []
+    },
+    {
+      "Name": "help_for_command",
+      "Description": "Show help for a specific command",
+      "Category": "User",
+      "Params": [
+        {
+          "Name": "command_name",
+          "Description": "Name of the command to get help for",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "print_settings",
+      "Description": "Print settings for user",
+      "Category": "User",
+      "Params": []
+    },
+    {
+      "Name": "list_languages",
+      "Description": "List available languages",
+      "Category": "User",
+      "Params": []
+    },
+    {
+      "Name": "set_language",
+      "Description": "Set language to use",
+      "Category": "User",
+      "Params": [
+        {
+          "Name": "language",
+          "Description": "Language to set",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "reminders_on",
+      "Description": "Enable the reminders",
+      "Category": "User",
+      "Params": []
+    },
+    {
+      "Name": "reminders_off",
+      "Description": "Disable the reminders",
+      "Category": "User",
+      "Params": []
+    },
+    {
+      "Name": "get_resin",
+      "Description": "Get current amount of resin",
+      "Category": "Resin",
+      "Params": []
+    },
+    {
+      "Name": "set_resin",
+      "Description": "Set current amount of resin",
+      "Category": "Resin",
+      "Params": [
+        {
+          "Name": "resin_amount",
+          "Description": "Resin amount to set",
+          "Type": "Int",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "remind",
+      "Description": "Set a reminder with a given time",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "message",
+          "Description": "Message for the reminder",
+          "Type": "String",
+          "IsRequired": true
+        },
+        {
+          "Name": "time_to",
+          "Description": "Time to the reminder (DD.hh:mm:ss or other format)",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "remind_date",
+      "Description": "Set a reminder with to a given date and time",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "message",
+          "Description": "Message for the reminder",
+          "Type": "String",
+          "IsRequired": true
+        },
+        {
+          "Name": "date_and_time",
+          "Description": "Date and time at which reminder must be executed (DD.MM.YY hh:mm:ss)",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "remind_recurrent",
+      "Description": "Set a recurrent reminder with a given time between reminders",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "message",
+          "Description": "Message for the reminder",
+          "Type": "String",
+          "IsRequired": true
+        },
+        {
+          "Name": "time_between",
+          "Description": "Time between the reminders (DD.HH:MM:SS or other format)",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "remind_recurrent_date_time",
+      "Description": "Set a reminder with a given time and date and time",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "message",
+          "Description": "Message for the reminder",
+          "Type": "String",
+          "IsRequired": true
+        },
+        {
+          "Name": "first_date_time",
+          "Description": "Date and time at which the reminder must first be executed",
+          "Type": "String",
+          "IsRequired": true
+        },
+        {
+          "Name": "time_between",
+          "Description": "Time between the reminders (DD.HH:MM:SS or other format)",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "remind_artifacts",
+      "Description": "Set a reminder about artifacts",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "remind_artifacts_time",
+      "Description": "Set a reminder about artifacts",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "time",
+          "Description": "Time at which to execute the reminder (hh:mm)",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "cancel_remind_artifacts",
+      "Description": "Cancel reminders about artifacts",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "remind_checkin",
+      "Description": "Set a reminder about check-in",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "remind_checkin_time",
+      "Description": "Set a reminder about check-in",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "time",
+          "Description": "Time at which to execute the reminder (hh:mm)",
+          "Type": "String",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "cancel_remind_checkin",
+      "Description": "Cancel reminders about check-in",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "remind_harvest",
+      "Description": "Set a reminder about Serenitea Pot harvest",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "remind_harvest_time",
+      "Description": "Set a reminder about Serenitea Pot harvest",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "days",
+          "Description": "Days to harvest",
+          "Type": "Int",
+          "IsRequired": true
+        },
+        {
+          "Name": "hours",
+          "Description": "Hours to harvest",
+          "Type": "Int",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "cancel_remind_harvest",
+      "Description": "Cancel reminders about Serenitea Pot harvest",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "remind_transformer",
+      "Description": "Set a reminder about Parametric Transformer",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "remind_transformer_time",
+      "Description": "Set a reminder about Parametric Transformer",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "days",
+          "Description": "Days to Parametric Transformer",
+          "Type": "Int",
+          "IsRequired": true
+        },
+        {
+          "Name": "hours",
+          "Description": "Hours to Parametric Transformer",
+          "Type": "Int",
+          "IsRequired": true
+        }
+      ]
+    },
+    {
+      "Name": "cancel_remind_transformer",
+      "Description": "Cancel reminders about Parametric Transformer",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "list_reminders",
+      "Description": "List current reminders",
+      "Category": "Reminder",
+      "Params": []
+    },
+    {
+      "Name": "cancel_reminder",
+      "Description": "Cancel reminder by id",
+      "Category": "Reminder",
+      "Params": [
+        {
+          "Name": "id",
+          "Description": "Id of reminder to cancel",
+          "Type": "Int",
+          "IsRequired": true
+        }
+      ]
+    }
+  ]
+}

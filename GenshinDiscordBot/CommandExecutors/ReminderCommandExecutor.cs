@@ -7,7 +7,8 @@ using GenshinDiscordBotDomainLayer.DomainModels.HelperModels;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
 using GenshinDiscordBotDomainLayer.Helpers;
 using GenshinDiscordBotUI.ResponseGenerators;
-using GenshinDiscordBotDomainLayer.Helpers.Time;
+using CommonParsers.Time;
+using CommonParsers.Interval;
 using Serilog;
 using GenshinDiscordBotDomainLayer.DomainModels;
 using GenshinDiscordBotDomainLayer.ValidationLogic;
@@ -63,7 +64,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                if (!DateTimeBusinessLogic.ParseTimeSpan(timeSpanStr, out TimeSpan timeSpan))
+                if (!IntervalParser.TryParse(timeSpanStr, out TimeSpan timeSpan))
                 {
                     return ReminderResponseGenerator
                         .GetReminderTimeSpanInvalid(userLocale, userName);
@@ -129,7 +130,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                if (!DateTimeBusinessLogic.ParseTimeSpan(timeSpanStr, out TimeSpan timeSpan))
+                if (!IntervalParser.TryParse(timeSpanStr, out TimeSpan timeSpan))
                 {
                     return ReminderResponseGenerator
                         .GetReminderTimeSpanInvalid(userLocale, userName);
@@ -171,7 +172,7 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     return ReminderResponseGenerator
                         .GetReminderDateTimeNotInFuture(userLocale, userName);
                 }
-                if (!DateTimeBusinessLogic.ParseTimeSpan(timeSpanStr, out TimeSpan timeSpan))
+                if (!IntervalParser.TryParse(timeSpanStr, out TimeSpan timeSpan))
                 {
                     return ReminderResponseGenerator
                         .GetReminderTimeSpanInvalid(userLocale, userName);
@@ -224,13 +225,12 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                var parseSuccess = TimeParser.TryParseTime(time, out Time timeObject);
+                var parseSuccess = TimeParser.TryParseToTimeOnly(time, out TimeOnly timeOnly);
                 if (!parseSuccess)
                 {
                     return ReminderResponseGenerator
                         .GetReminderTimeInvalid(userLocale, userName);
                 }
-                var timeOnly = new TimeOnly(timeObject.Hours, timeObject.Minutes);
                 await ReminderService.UpdateOrCreateArtifactReminderWithCustomTimeAsync(messageContext, timeOnly);
                 return ReminderResponseGenerator
                     .GetArtifactReminderSetupSuccessMessageWithCustomTime(userLocale, timeOnly, userName);
@@ -313,12 +313,11 @@ namespace GenshinDiscordBotUI.CommandExecutors
                     GuildId = Context.DiscordContext.GuildId,
                     ChannelId = Context.DiscordContext.ChannelId,
                 };
-                var parseSuccess = TimeParser.TryParseTime(time, out Time timeObject);
+                var parseSuccess = TimeParser.TryParseToTimeOnly(time, out TimeOnly timeOnly);
                 if (!parseSuccess)
                 {
                     return ReminderResponseGenerator.GetReminderTimeInvalid(userLocale, userName);
                 }
-                var timeOnly = new TimeOnly(timeObject.Hours, timeObject.Minutes);
                 await ReminderService.UpdateOrCreateCheckInReminderWithCustomTimeAsync(messageContext, timeOnly);
                 return ReminderResponseGenerator
                     .GetCheckInReminderSetupSuccessMessageWithCustomTime(
