@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Autofac.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Sinks.WinForms.Base;
 using GenshinDiscordBotSQLiteDataAccessLayer;
 using GenshinDiscordBotSQLiteDataAccessLayer.Repositories;
 using GenshinDiscordBotSQLiteDataAccessLayer.DatabaseInteractionHandlers;
@@ -36,7 +35,6 @@ using Microsoft.Data.Sqlite;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using GenshinDiscordBotCrawler.Genshin;
 using GenshinDiscordBotCrawler.Honkai;
 using GenshinDiscordBotUI.SlashCommands;
@@ -83,7 +81,7 @@ namespace GenshinDiscordBotUI
             // Logger
             builder.Register<ILogger>(
                 c => new LoggerConfiguration()
-                .WriteToSimpleAndRichTextBox()
+                .WriteTo.Console()
                 .WriteTo.File("log-.log", rollingInterval: RollingInterval.Day, 
                     restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
                 .MinimumLevel.Information()
@@ -110,8 +108,6 @@ namespace GenshinDiscordBotUI
             // Providers
             builder.RegisterType<DateTimeNowProvider>()
                 .As<IDateTimeProvider>().SingleInstance();
-            // Forms
-            builder.RegisterType<FormMain>().AsSelf().SingleInstance();
             // Parsers
             builder.RegisterType<GenshinWikiPromoTableParser>().AsSelf().SingleInstance();
             builder.RegisterType<HonkaiWikiPromoTableParser>().AsSelf().SingleInstance();
@@ -222,18 +218,25 @@ namespace GenshinDiscordBotUI
         [STAThread]
         static async Task Main(string[] args)
         {
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            var container = CompositionRoot();
+            Logger = container.Resolve<ILogger>();
+            using var scope = container.BeginLifetimeScope();
             try
-            {   
-                var container = CompositionRoot();
-                Logger = container.Resolve<ILogger>();
-                using var scope = container.BeginLifetimeScope();
+            {
                 var databaseInitializer = scope.Resolve<DatabaseInitializer>();
                 databaseInitializer.InitializeDb();
-                var mainForm = scope.Resolve<FormMain>();
-                System.Windows.Forms.Application.Run(mainForm);
+            }
+            catch (Exception e)
+            {
+                Logger?.Error($"Unhandled exception in Main during initialization : {e}");
+                throw;
+            }
+            try
+            {
+                var app = scope.Resolve<Application>();
+                CancellationTokenSource cts = new();
+                var botTask = app.StartApplication(cts.Token);
+                await botTask;
             }
             catch (OperationCanceledException)
             {
@@ -242,7 +245,6 @@ namespace GenshinDiscordBotUI
             catch (Exception e)
             {
                 Logger?.Error($"Unhandled exception in Main : {e}");
-                throw;
             }
         }
     }

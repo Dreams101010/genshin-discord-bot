@@ -50,6 +50,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                 var databaseHandler = newScope.Resolve<INotificationDatabaseInteractionHandler>();
                 var jobs = await databaseHandler.GetNotificationJobsAsync();
                 await PerformJobsAsync(jobs, newScope);
+                Logger.Information("Finished performing notification jobs.");
             }
             catch (Exception e)
             {
@@ -58,7 +59,7 @@ namespace GenshinDiscordBotDomainLayer.Services
             finally
             {
                 // reset the timer
-                var nextDelay = GetStartDelay();
+                var nextDelay = 15 * 60 * 1000; // 15 minutes in ms
                 ExecutionTimer.Change(nextDelay, Timeout.Infinite);
             }
         }

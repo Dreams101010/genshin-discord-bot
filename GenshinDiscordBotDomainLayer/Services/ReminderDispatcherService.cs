@@ -77,7 +77,7 @@ namespace GenshinDiscordBotDomainLayer.Services
                         await reminderService.UpdateExpiredRecurrentRemindersAsync(currentTime);
                         await reminderService.RemoveExpiredNonRecurrentRemindersAsync(currentTime);
                     }
-                    await Task.Delay(120000, cancellation);
+                    await Task.Delay(5000, cancellation);
                 }
             }
             catch (OperationCanceledException) { }

@@ -9,7 +9,6 @@ using Discord;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using GenshinDiscordBotDomainLayer.Interfaces.Services;
-using System.Windows.Forms;
 using System.ComponentModel;
 using GenshinDiscordBotUI.Models.SlashCommand;
 using GenshinDiscordBotUI.SlashCommands;
